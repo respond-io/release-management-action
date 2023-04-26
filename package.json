@@ -1,0 +1,24 @@
+{
+  "name": "pr-metadata-action",
+  "version": "1.0.0",
+  "description": "Github action for update the pull request's label and comment based on the metadata.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hasithaishere/pr-metadata-action.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hasithaishere/pr-metadata-action/issues"
+  },
+  "homepage": "https://github.com/hasithaishere/pr-metadata-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1"
+  }
+}
