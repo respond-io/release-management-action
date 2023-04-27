@@ -112,7 +112,7 @@ const main = async () => {
             owner,
             repo,
             base: baseHash,
-            head: 'master'
+            head: 'main'
         });
 
 
