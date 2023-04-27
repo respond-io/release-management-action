@@ -9820,11 +9820,14 @@ const main = async () => {
          * results.
          * Reference: https://octokit.github.io/rest.js/v18#pulls-list-files
          */
-        const { data: changedFiles } = await octokit.rest.pulls.listFiles({
-            owner,
-            repo,
-            pull_number: pr_number,
-        });
+
+        const changedFiles = [];
+
+        // const { data: changedFiles } = await octokit.rest.pulls.listFiles({
+        //     owner,
+        //     repo,
+        //     pull_number: pr_number,
+        // });
 
 
         /**
@@ -9923,6 +9926,7 @@ const main = async () => {
         -- releasesList -- ${JSON.stringify(releasesList.data)} \n
         -- tagsList -- ${JSON.stringify(tagsList.data)} \n
         -- compare -- ${JSON.stringify(compare.data)} \n
+        -- cotext -- ${JSON.stringify(github.context)} \n
       `
         });
 
