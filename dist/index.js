@@ -9887,6 +9887,17 @@ const main = async () => {
             }
         }
 
+        const releasesList = await octokit.rest.repos.listReleases({
+            owner,
+            repo
+        });
+
+        const tagsList = await octokit.rest.repos.listTags({
+            owner,
+            repo,
+        });
+
+
         /**
          * Create a comment on the PR with the information we compiled from the
          * list of changed files.
@@ -9900,6 +9911,8 @@ const main = async () => {
         - ${diffData.changes} changes \n
         - ${diffData.additions} additions \n
         - ${diffData.deletions} deletions \n
+        -- releasesList -- ${JSON.stringify(releasesList.data)} \n
+        -- tagsList -- ${JSON.stringify(tagsList.data)} \n
       `
         });
 
