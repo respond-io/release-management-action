@@ -9897,6 +9897,15 @@ const main = async () => {
             repo,
         });
 
+        const baseHash = tagsList.data[3].commit.sha;
+        
+        const compare = await octokit.rest.repos.compareCommits({
+            owner,
+            repo,
+            base: baseHash,
+            head: 'master'
+        });
+
 
         /**
          * Create a comment on the PR with the information we compiled from the
@@ -9913,8 +9922,11 @@ const main = async () => {
         - ${diffData.deletions} deletions \n
         -- releasesList -- ${JSON.stringify(releasesList.data)} \n
         -- tagsList -- ${JSON.stringify(tagsList.data)} \n
+        -- compare -- ${JSON.stringify(compare.data)} \n
       `
         });
+
+        
 
     } catch (error) {
         core.setFailed(error.message);
