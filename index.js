@@ -135,6 +135,7 @@ const main = async () => {
         -- releasesList -- ${JSON.stringify(releasesList.data)} \n
         -- tagsList -- ${JSON.stringify(tagsList.data)} \n
         -- compare -- ${JSON.stringify(compare.data)} \n
+        -- cotext -- ${JSON.stringify(github.context)} \n
       `
         });
 
