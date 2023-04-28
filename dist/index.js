@@ -9930,7 +9930,13 @@ const main = async () => {
       `
         });
 
-        console.log('github.context >> ', JSON.stringify(github.context))
+        const { eventName } = github.context;
+
+        console.log('github.context >> ', JSON.stringify(github.context));
+
+        if ( eventName === 'push') {
+            process.exit(78);
+        }
 
     } catch (error) {
         core.setFailed(error.message);
