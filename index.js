@@ -139,7 +139,7 @@ const main = async () => {
       `
         });
 
-        
+        console.log('github.context >> ', JSON.stringify(github.context))
 
     } catch (error) {
         core.setFailed(error.message);
