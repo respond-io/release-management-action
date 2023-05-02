@@ -12873,21 +12873,21 @@ const main = async () => {
          * Create a comment on the PR with the information we compiled from the
          * list of changed files.
          */
-        await octokit.rest.issues.createComment({
-            owner,
-            repo,
-            issue_number: pr_number,
-            body: `
-        Pull Request #${pr_number} has been updated with: \n
-        - ${diffData.changes} changes \n
-        - ${diffData.additions} additions \n
-        - ${diffData.deletions} deletions \n
-        -- releasesList -- ${JSON.stringify(releasesList.data)} \n
-        -- tagsList -- ${JSON.stringify(tagsList.data)} \n
-        -- compare -- ${JSON.stringify(compare.data)} \n
-        -- cotext -- ${JSON.stringify(github.context)} \n
-      `
-        });
+    //     await octokit.rest.issues.createComment({
+    //         owner,
+    //         repo,
+    //         issue_number: pr_number,
+    //         body: `
+    //     Pull Request #${pr_number} has been updated with: \n
+    //     - ${diffData.changes} changes \n
+    //     - ${diffData.additions} additions \n
+    //     - ${diffData.deletions} deletions \n
+    //     -- releasesList -- ${JSON.stringify(releasesList.data)} \n
+    //     -- tagsList -- ${JSON.stringify(tagsList.data)} \n
+    //     -- compare -- ${JSON.stringify(compare.data)} \n
+    //     -- cotext -- ${JSON.stringify(github.context)} \n
+    //   `
+    //     });
 
         const { eventName } = github.context;
 
@@ -12898,8 +12898,8 @@ const main = async () => {
 
         try {
             await uploadToRepo(octokit, filesPaths, owner, repo, 'main');
-            //const newVersion = await Version.getNewVersion(owner, repo, github);
-            //console.log('New Version >>', newVersion);
+            const newVersion = await Version.getNewVersion(owner, repo, github);
+            console.log('New Version >>', newVersion);
         } catch (error) {
             console.log('error >> ', error);
         }
