@@ -1,7 +1,7 @@
 const { promises: fs } = require('fs');
 
 class ChangeLog {
-    static async generateChangeLogContent() {
+    static async generateChangeLogContent(octokit, owner, repo, github) {
         let currentChangelog = '';
 
         try {
@@ -11,3 +11,5 @@ class ChangeLog {
         console.log(currentChangelog);
     }
 }
+
+module.exports = ChangeLog;

@@ -158,7 +158,7 @@ const main = async () => {
             console.log('error >> ', error);
         }
 
-        const changeLog = await ChangeLog.getChangelog(octokit, owner, repo, github);
+        const changeLog = await ChangeLog.generateChangeLogContent(octokit, owner, repo, github);
         console.log('changeLog >> ', changeLog);
 
         // if ( eventName === 'push') {

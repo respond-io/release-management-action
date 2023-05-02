@@ -13357,12 +13357,12 @@ function wrappy (fn, cb) {
 /***/ }),
 
 /***/ 4157:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) => {
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { promises: fs } = __nccwpck_require__(7147);
 
 class ChangeLog {
-    static async generateChangeLogContent() {
+    static async generateChangeLogContent(octokit, owner, repo, github) {
         let currentChangelog = '';
 
         try {
@@ -13372,6 +13372,8 @@ class ChangeLog {
         console.log(currentChangelog);
     }
 }
+
+module.exports = ChangeLog;
 
 /***/ }),
 
@@ -13872,7 +13874,7 @@ const main = async () => {
             console.log('error >> ', error);
         }
 
-        const changeLog = await ChangeLog.getChangelog(octokit, owner, repo, github);
+        const changeLog = await ChangeLog.generateChangeLogContent(octokit, owner, repo, github);
         console.log('changeLog >> ', changeLog);
 
         // if ( eventName === 'push') {
