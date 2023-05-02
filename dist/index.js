@@ -22286,14 +22286,19 @@ const filterFiles = (files) => {
         const { filename } = file;
         let entity = filename;
         let type = 'Other';
+        let subProjectRoot = null;
 
         if (filename.startsWith('service/lambda/')) {
-            entity = capitalize(filename.split('/')[2]);
+            const lambdaName = filename.split('/')[2];
+            entity = capitalize(lambdaName);
             type = 'Lambda';
+            subProjectRoot = `service/lambda/${lambdaName}`;
             //fileList.push({ entity: capitalize(filename.split('/')[2]), type: 'Lambda' });
         } else if (filename.startsWith('service/')) {
-            entity = capitalize(filename.split('/')[1]);
+            const serviceName = filename.split('/')[1];
+            entity = capitalize(serviceName);
             type = 'ECS';
+            subProjectRoot = `service/${serviceName}`;
             //fileList.push({ entity: capitalize(filename.split('/')[1]), type: 'ECS' });
         } else if (filename.startsWith('infra/')) {
             entity = filename;
@@ -22303,7 +22308,7 @@ const filterFiles = (files) => {
         const entityHash = Crypto.generateHash(`${entity}-${type}`);
         if (!fileSetHashMap.has(entityHash)) {
             fileSetHashMap.add(entityHash);
-            fileList.push({ entity, type });
+            fileList.push({ entity, type, subProjectRoot });
         }
     });
 
