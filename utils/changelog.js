@@ -5,13 +5,12 @@ class ChangeLog {
         let currentChangelog = '';
 
         try {
-            //currentChangelog = await fs.readFile('./CHANGELOG.md', 'utf8');
-            const data = await octokit.rest.repos.getContent({
+            const response = await octokit.rest.repos.getContent({
                 owner,
                 repo,
                 path: 'CHANGELOG.md',
             });
-            console.log('data >> ', data);
+            currentChangelog = Buffer.from(response.data.content, 'base64').toString();
         } catch (e) {
             console.log(e)
         }
