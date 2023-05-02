@@ -22258,8 +22258,8 @@ const main = async () => {
             head: 'main'
         });
 
-        console.log('commits...>>', JSON.stringify(compare.data.commits[0]));
-        console.log('files...>>', JSON.stringify(compare.data.files[0]));
+        console.log('commits...>>', JSON.stringify(compare.data.commits[1]));
+        console.log('files...>>', JSON.stringify(compare.data.files[1]));
 
         
 
