@@ -14,7 +14,7 @@ class ChangeLog {
             currentChangelog = Buffer.from(response.data.content, 'base64').toString();
         } catch (e) {}
 
-        const templateSource = await fs.readFile('../templates/CHANGELOG.md.hbs', 'utf8');
+        const templateSource = await fs.readFile('./templates/CHANGELOG.md.hbs', 'utf8');
         const template = Handlebars.compile(templateSource);
 
         const data = {
