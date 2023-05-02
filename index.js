@@ -1,5 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const { uploadToRepo } = require('./utils/commits');
+const { promises: fs } = require('fs');
 
 const main = async () => {
     try {
@@ -142,6 +144,11 @@ const main = async () => {
         const { eventName } = github.context;
 
         console.log('github.context >> ', JSON.stringify(github.context));
+
+        await fs.writeFile('github-context.json', JSON.stringify(github.context));
+        const filesPaths = ['github-context.json'];
+
+        await uploadToRepo(octokit, filesPaths, owner, repo, 'main')
 
         // if ( eventName === 'push') {
         //     console.log('safe to exit');
