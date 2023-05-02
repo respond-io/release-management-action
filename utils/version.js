@@ -1,4 +1,4 @@
-const get = require('get-value');
+const get = require('lodash.get');
 
 class Version {
     static async getNewVersion(octokit, owner, repo, github, isMajorRelease = false) {
@@ -10,7 +10,7 @@ class Version {
         console.log('tags >> ', JSON.stringify(tags.data[0]));
         console.log('tags2 >> ', JSON.stringify(tags.data[0].name));
 
-        const latestTag = get(tags, 'data[0].name', '0.0.0');
+        const latestTag = get(tags, 'data[0].name');
 
         const branch = github.context.payload.pull_request.head.ref;
         const branchPrefix = branch.split('/')[0];
