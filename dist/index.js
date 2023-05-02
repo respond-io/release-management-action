@@ -22258,7 +22258,7 @@ const main = async () => {
             head: 'main'
         });
 
-        console.log('...>>', JSON.stringify(compare.data));
+        console.log('...>>', Object.keys(compare.data));
 
         
 
