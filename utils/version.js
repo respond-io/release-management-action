@@ -7,7 +7,8 @@ class Version {
             repo,
         });
         
-        console.log('tags >> ', JSON.stringify(tags));
+        console.log('tags >> ', JSON.stringify(tags.data[0]));
+        console.log('tags2 >> ', JSON.stringify(tags.data[0].name));
 
         const latestTag = get(tags, 'data[0].name', '0.0.0');
 
