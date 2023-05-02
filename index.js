@@ -143,13 +143,13 @@ const main = async () => {
 
         console.log('github.context >> ', JSON.stringify(github.context));
 
-        if ( eventName === 'push') {
-            console.log('safe to exit');
-            process.exit(0);
-        } else {
-            console.log('not safe to exit');
-            process.exit(1);
-        }
+        // if ( eventName === 'push') {
+        //     console.log('safe to exit');
+        //     process.exit(0);
+        // } else {
+        //     console.log('not safe to exit');
+        //     process.exit(1);
+        // }
 
     } catch (error) {
         core.setFailed(error.message);
