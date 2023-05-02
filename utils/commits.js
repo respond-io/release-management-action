@@ -1,14 +1,14 @@
 const path = require('path')
 const { readFile } = require('fs-extra');
 
-const COMMIT_MESSAGE = process.env.COMMIT_MESSAGE || 'Auto generated';
+const COMMIT_MESSAGE = process.env.COMMIT_MESSAGE || 'Auto generated'
 
 const uploadToRepo = async (octo, filesPaths, org, repo, branch) => {
     // gets commit's AND its tree's SHA
     const currentCommit = await getCurrentCommit(octo, org, repo, branch)
     //const filesPaths = await glob(coursePath)
     const filesBlobs = await Promise.all(filesPaths.map(createBlobForFile(octo, org, repo)))
-    const pathsForBlobs = filesPaths.map(fullPath => path.relative(filesPaths, fullPath))
+    const pathsForBlobs = filesPaths.map(fullPath => path.relative('./', fullPath))
     const newTree = await createNewTree(
         octo,
         org,
