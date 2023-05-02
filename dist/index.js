@@ -21914,19 +21914,25 @@ const filterCommits = (commits) => {
         let { message } = commitData.commit;
         const splits = message.split(':');
 
+        const commit = {
+            commit_name: message,
+            commit_hash: commitData.sha,
+            compact_commit_hash: commitData.sha.substring(0, 7),
+        };
+
         if (splits > 1) {
             const type = splits[0].trim().toLowerCase();
             splits.shift();
-            message = splits.join(' ').trim();
+            commit.commit_name = splits.join(' ').trim();
             switch (type) {
                 case 'feat':
-                    features.push(message);
+                    features.push(commit);
                     break;
                 case 'fix':
-                    bug_fixes.push(message);
+                    bug_fixes.push(commit);
                     break;
                 default:
-                    other_commits.push(message);
+                    other_commits.push(commit);
                     break;
             }
         } else {
@@ -21942,11 +21948,11 @@ const filterFiles = (files) => {
 
     files.forEach((file) => {
         const { filename } = file;
-        if (message.startsWith('services/lambda/')) {
+        if (filename.startsWith('services/lambda/')) {
             fileSet.add({ entity: filename.replace('services/lambda/', ''), type: 'Lambda' });
-        } else if (message.startsWith('services/')) {
+        } else if (filename.startsWith('services/')) {
             fileSet.add({ entity: filename.replace('services/', ''), type: 'ECS' });
-        } else if (message.startsWith('infra/')) {
+        } else if (filename.startsWith('infra/')) {
             fileSet.add({ entity: filename, type: 'Infrastructure' });
         } else {
             fileSet.add({ entity: filename, type: 'Other' });
