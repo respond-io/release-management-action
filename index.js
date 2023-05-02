@@ -2,6 +2,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const { uploadToRepo } = require('./utils/commits');
 const Version = require('./utils/version');
+const ChangeLog = require('./utils/changelog');
 const { promises: fs } = require('fs');
 
 const main = async () => {
@@ -156,6 +157,9 @@ const main = async () => {
         } catch (error) {
             console.log('error >> ', error);
         }
+
+        const changeLog = await ChangeLog.getChangelog(octokit, owner, repo, github);
+        console.log('changeLog >> ', changeLog);
 
         // if ( eventName === 'push') {
         //     console.log('safe to exit');

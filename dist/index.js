@@ -13356,6 +13356,25 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 4157:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const { promises: fs } = __nccwpck_require__(7147);
+
+class ChangeLog {
+    static async generateChangeLogContent() {
+        let currentChangelog = '';
+
+        try {
+            currentChangelog = await fs.readFile('./CHANGELOG.md', 'utf8');
+        } catch (e) {}
+
+        console.log(currentChangelog);
+    }
+}
+
+/***/ }),
+
 /***/ 4223:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -13697,6 +13716,7 @@ const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
 const { uploadToRepo } = __nccwpck_require__(4223);
 const Version = __nccwpck_require__(9591);
+const ChangeLog = __nccwpck_require__(4157);
 const { promises: fs } = __nccwpck_require__(7147);
 
 const main = async () => {
@@ -13851,6 +13871,9 @@ const main = async () => {
         } catch (error) {
             console.log('error >> ', error);
         }
+
+        const changeLog = await ChangeLog.getChangelog(octokit, owner, repo, github);
+        console.log('changeLog >> ', changeLog);
 
         // if ( eventName === 'push') {
         //     console.log('safe to exit');
