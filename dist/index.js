@@ -21911,13 +21911,26 @@ const filterCommits = (commits) => {
     const other_commits = [];
 
     commits.reverse().forEach((commitData) => {
-        const { message } = commitData.commit;
-        if (message.startsWith('feat')) {
-            features.push(commit);
-        } else if (message.startsWith('fix')) {
-            bug_fixes.push(commit);
+        let { message } = commitData.commit;
+        const splits = message.split(':');
+
+        if (splits > 1) {
+            const type = splits[0].trim().toLowerCase();
+            splits.shift();
+            message = splits.join(' ').trim();
+            switch (type) {
+                case 'feat':
+                    features.push(message);
+                    break;
+                case 'fix':
+                    bug_fixes.push(message);
+                    break;
+                default:
+                    other_commits.push(message);
+                    break;
+            }
         } else {
-            other_commits.push(commit);
+            other_commits.push(message);
         }
     });
 
