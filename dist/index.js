@@ -22331,6 +22331,8 @@ const main = async () => {
 
         console.log('commits...>>', JSON.stringify(filterCommits(compare.data.commits)));
         console.log('files...>>', JSON.stringify(filterFiles(compare.data.files)));
+        console.log('owner...>>', JSON.stringify(owner));
+        console.log('repo...>>', JSON.stringify(repo));
 
         const commitsDiff = filterCommits(compare.data.commits);
         const changedFilesList = filterFiles(compare.data.files);
