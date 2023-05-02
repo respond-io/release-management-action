@@ -22258,7 +22258,8 @@ const main = async () => {
             head: 'main'
         });
 
-        console.log('...>>', Object.keys(compare.data));
+        console.log('commits...>>', JSON.stringify(compare.data.commits));
+        console.log('files...>>', JSON.stringify(compare.data.commits));
 
         
 
