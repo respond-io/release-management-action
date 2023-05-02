@@ -22385,6 +22385,8 @@ const main = async () => {
             affected_areas: changedFilesList 
         };
 
+        console.log(">>", changelogDataSet)
+
         const changeLog = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);
         console.log('changeLog >> ', changeLog);
 
