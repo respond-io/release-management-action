@@ -1,6 +1,6 @@
 
 class Version {
-    static async getNewVersion(owner, repo, github, isMajorRelease = false) {
+    static async getNewVersion(octokit, owner, repo, github, isMajorRelease = false) {
         const [ latestTag = '' ] = await octokit.rest.repos.listTags({
             owner,
             repo,
