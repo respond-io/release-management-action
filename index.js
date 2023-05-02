@@ -151,8 +151,8 @@ const main = async () => {
 
         try {
             await uploadToRepo(octokit, filesPaths, owner, repo, 'main');
-            const newVersion = await Version.getNewVersion(owner, repo, github);
-            console.log('New Version >>', newVersion);
+            //const newVersion = await Version.getNewVersion(owner, repo, github);
+            //console.log('New Version >>', newVersion);
         } catch (error) {
             console.log('error >> ', error);
         }
