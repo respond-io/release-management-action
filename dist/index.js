@@ -13366,7 +13366,7 @@ class ChangeLog {
         let currentChangelog = '';
 
         try {
-            currentChangelog = await fs.readFile('./CHANGELOG.md', 'utf8');
+            currentChangelog = await fs.readFile('CHANGELOG.md', 'utf8');
         } catch (e) {
             console.log(e)
         }
