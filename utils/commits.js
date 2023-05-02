@@ -1,5 +1,6 @@
 const path = require('path')
 const { readFile } = require('fs-extra');
+const capitalize = require('lodash.capitalize');
 
 const COMMIT_MESSAGE = process.env.COMMIT_MESSAGE || 'Auto generated'
 
@@ -143,9 +144,9 @@ const filterFiles = (files) => {
     files.forEach((file) => {
         const { filename } = file;
         if (filename.startsWith('service/lambda/')) {
-            fileSet.add({ entity: filename.split('/')[2], type: 'Lambda' });
+            fileSet.add({ entity: capitalize(filename.split('/')[2]), type: 'Lambda' });
         } else if (filename.startsWith('service/')) {
-            fileSet.add({ entity: filename.split('/')[1], type: 'ECS' });
+            fileSet.add({ entity: capitalize(filename.split('/')[1]), type: 'ECS' });
         } else if (filename.startsWith('infra/')) {
             fileSet.add({ entity: filename, type: 'Infrastructure' });
         } else {
