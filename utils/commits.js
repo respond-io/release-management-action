@@ -128,7 +128,7 @@ const filterCommits = (commits) => {
                         break;
                 }
             } else {
-                other_commits.push(message);
+                other_commits.push(commit);
             }
         }
         
