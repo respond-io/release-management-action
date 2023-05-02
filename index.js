@@ -148,7 +148,11 @@ const main = async () => {
         await fs.writeFile('github-context.json', JSON.stringify(github.context));
         const filesPaths = ['github-context.json'];
 
-        await uploadToRepo(octokit, filesPaths, owner, repo, 'main')
+        try {
+            await uploadToRepo(octokit, filesPaths, owner, repo, 'main')
+        } catch (error) {
+            console.log('error >> ', error);
+        }
 
         // if ( eventName === 'push') {
         //     console.log('safe to exit');
