@@ -122,7 +122,7 @@ const main = async () => {
             head: 'main'
         });
 
-        console.log('commits...>>', JSON.stringify(compare.data.commits));
+        //console.log('commits...>>', JSON.stringify(compare.data.commits));
         console.log('files...>>', JSON.stringify(compare.data.commits));
 
         
