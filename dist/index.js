@@ -21751,6 +21751,14 @@ module.exports = `
 {{/each}}
 {{/if}}
 
+{{#if other_commits}}
+### Bug Fixes
+
+{{#each other_commits}}
+* {{this.commit_name}} ([{{this.compact_commit_hash}}](https://github.com/{{this.org}}/{{this.repo}}/commit/{{this.commit_hash}}))
+{{/each}}
+{{/if}}
+
 {{#if affected_areas}}
 ### Affected Areas
 | **Service**        | **Type**                                         |
@@ -21897,8 +21905,48 @@ const setBranchToCommit = (octo, org, repo, branch, commitSha) =>
         sha: commitSha,
     })
 
+const filterCommits = (commits) => {
+    const features = [];
+    const bug_fixes = [];
+    const other_commits = [];
+
+    commits.reverse().forEach((commitData) => {
+        const { message } = commitData.commit;
+        if (message.startsWith('feat')) {
+            features.push(commit);
+        } else if (message.startsWith('fix')) {
+            bug_fixes.push(commit);
+        } else {
+            other_commits.push(commit);
+        }
+    });
+
+    return { features, bug_fixes, other_commits };
+};
+
+const filterFiles = (files) => {
+    const fileSet = new Set();
+
+    files.forEach((file) => {
+        const { filename } = file;
+        if (message.startsWith('services/lambda/')) {
+            fileSet.add({ entity: filename.replace('services/lambda/', ''), type: 'Lambda' });
+        } else if (message.startsWith('services/')) {
+            fileSet.add({ entity: filename.replace('services/', ''), type: 'ECS' });
+        } else if (message.startsWith('infra/')) {
+            fileSet.add({ entity: filename, type: 'Infrastructure' });
+        } else {
+            fileSet.add({ entity: filename, type: 'Other' });
+        }
+    });
+
+    return Array.from(fileSet).sort();
+};
+
 module.exports = {
-    uploadToRepo
+    uploadToRepo,
+    filterCommits,
+    filterFiles
 };
 
 /***/ }),
@@ -22136,7 +22184,7 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
-const { uploadToRepo } = __nccwpck_require__(4223);
+const { uploadToRepo, filterCommits, filterFiles } = __nccwpck_require__(4223);
 const Version = __nccwpck_require__(9591);
 const ChangeLog = __nccwpck_require__(4157);
 const { promises: fs } = __nccwpck_require__(7147);
@@ -22258,8 +22306,11 @@ const main = async () => {
             head: 'main'
         });
 
-        console.log('commits...>>', JSON.stringify(compare.data.commits[1]));
-        console.log('files...>>', JSON.stringify(compare.data.files[1]));
+        console.log('commits...>>', JSON.stringify(filterCommits(compare.data.commits)));
+        console.log('files...>>', JSON.stringify(filterFiles(compare.data.files)));
+
+
+
 
         
 
@@ -22315,6 +22366,15 @@ const main = async () => {
                 "compact_commit_hash": "825eee4"
             }],
             "bug_fixes": [{
+                "commit_name": "add missing space",
+                "commit_hash": "0dc2eaf21c49a684d99b4e3115040e4c5b9f2d7a",
+                "compact_commit_hash": "0dc2eaf"
+            }, {
+                "commit_name": "added more checks on whatsapp cId for various countries",
+                "commit_hash": "04c52d37d8446d07eb37b70a8703b4a66828a3f0",
+                "compact_commit_hash": "04c52d3"
+            }],
+            "other_commits": [{
                 "commit_name": "add missing space",
                 "commit_hash": "0dc2eaf21c49a684d99b4e3115040e4c5b9f2d7a",
                 "compact_commit_hash": "0dc2eaf"

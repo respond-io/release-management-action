@@ -95,6 +95,46 @@ const setBranchToCommit = (octo, org, repo, branch, commitSha) =>
         sha: commitSha,
     })
 
+const filterCommits = (commits) => {
+    const features = [];
+    const bug_fixes = [];
+    const other_commits = [];
+
+    commits.reverse().forEach((commitData) => {
+        const { message } = commitData.commit;
+        if (message.startsWith('feat')) {
+            features.push(commit);
+        } else if (message.startsWith('fix')) {
+            bug_fixes.push(commit);
+        } else {
+            other_commits.push(commit);
+        }
+    });
+
+    return { features, bug_fixes, other_commits };
+};
+
+const filterFiles = (files) => {
+    const fileSet = new Set();
+
+    files.forEach((file) => {
+        const { filename } = file;
+        if (message.startsWith('services/lambda/')) {
+            fileSet.add({ entity: filename.replace('services/lambda/', ''), type: 'Lambda' });
+        } else if (message.startsWith('services/')) {
+            fileSet.add({ entity: filename.replace('services/', ''), type: 'ECS' });
+        } else if (message.startsWith('infra/')) {
+            fileSet.add({ entity: filename, type: 'Infrastructure' });
+        } else {
+            fileSet.add({ entity: filename, type: 'Other' });
+        }
+    });
+
+    return Array.from(fileSet).sort();
+};
+
 module.exports = {
-    uploadToRepo
+    uploadToRepo,
+    filterCommits,
+    filterFiles
 };

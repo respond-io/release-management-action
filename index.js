@@ -1,6 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-const { uploadToRepo } = require('./utils/commits');
+const { uploadToRepo, filterCommits, filterFiles } = require('./utils/commits');
 const Version = require('./utils/version');
 const ChangeLog = require('./utils/changelog');
 const { promises: fs } = require('fs');
@@ -122,8 +122,11 @@ const main = async () => {
             head: 'main'
         });
 
-        console.log('commits...>>', JSON.stringify(compare.data.commits[1]));
-        console.log('files...>>', JSON.stringify(compare.data.files[1]));
+        console.log('commits...>>', JSON.stringify(filterCommits(compare.data.commits)));
+        console.log('files...>>', JSON.stringify(filterFiles(compare.data.files)));
+
+
+
 
         
 
@@ -179,6 +182,15 @@ const main = async () => {
                 "compact_commit_hash": "825eee4"
             }],
             "bug_fixes": [{
+                "commit_name": "add missing space",
+                "commit_hash": "0dc2eaf21c49a684d99b4e3115040e4c5b9f2d7a",
+                "compact_commit_hash": "0dc2eaf"
+            }, {
+                "commit_name": "added more checks on whatsapp cId for various countries",
+                "commit_hash": "04c52d37d8446d07eb37b70a8703b4a66828a3f0",
+                "compact_commit_hash": "04c52d3"
+            }],
+            "other_commits": [{
                 "commit_name": "add missing space",
                 "commit_hash": "0dc2eaf21c49a684d99b4e3115040e4c5b9f2d7a",
                 "compact_commit_hash": "0dc2eaf"

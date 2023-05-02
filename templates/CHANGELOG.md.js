@@ -17,6 +17,14 @@ module.exports = `
 {{/each}}
 {{/if}}
 
+{{#if other_commits}}
+### Bug Fixes
+
+{{#each other_commits}}
+* {{this.commit_name}} ([{{this.compact_commit_hash}}](https://github.com/{{this.org}}/{{this.repo}}/commit/{{this.commit_hash}}))
+{{/each}}
+{{/if}}
+
 {{#if affected_areas}}
 ### Affected Areas
 | **Service**        | **Type**                                         |
