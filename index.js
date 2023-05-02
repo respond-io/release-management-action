@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const { uploadToRepo } = require('./utils/commits');
+const Version = require('./utils/version');
 const { promises: fs } = require('fs');
 
 const main = async () => {
@@ -149,7 +150,9 @@ const main = async () => {
         const filesPaths = ['github-context.json'];
 
         try {
-            await uploadToRepo(octokit, filesPaths, owner, repo, 'main')
+            await uploadToRepo(octokit, filesPaths, owner, repo, 'main');
+            const newVersion = await Version.getNewVersion(owner, repo, github);
+            console.log('New Version >>', newVersion);
         } catch (error) {
             console.log('error >> ', error);
         }
@@ -161,6 +164,9 @@ const main = async () => {
         //     console.log('not safe to exit');
         //     process.exit(1);
         // }
+
+        // Filed for testing purposes :D
+        process.exit(1);
 
     } catch (error) {
         core.setFailed(error.message);

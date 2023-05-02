@@ -12524,6 +12524,42 @@ module.exports = {
 
 /***/ }),
 
+/***/ 9591:
+/***/ ((module) => {
+
+
+class Version {
+    static async getNewVersion(owner, repo, github, isMajorRelease = false) {
+        const [ latestTag = '' ] = await octokit.rest.repos.listTags({
+            owner,
+            repo,
+        });
+
+        const branch = github.context.payload.pull_request.head.ref;
+        const branchPrefix = branch.split('/')[0];
+
+        const [major = 0, minor = 0, patch = 0] = latestTag.replace(/[^0-9\.]/g,'').split('.');
+
+        let newTag = `${major}.${minor}.${patch}`;
+
+        if (isMajorRelease) {
+            newTag = `${major + 1}.0.0`;
+        } else {
+            if (branchPrefix === 'flight') {
+                newTag = `${major}.${minor + 1}.0`;
+            } else if (branchPrefix === 'hotfix') {
+                newTag = `${major}.${minor}.${patch + 1}`;
+            }
+        }
+
+        return newTag;
+    }
+}
+
+module.exports = Version;
+
+/***/ }),
+
 /***/ 2877:
 /***/ ((module) => {
 
@@ -12712,6 +12748,7 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
 const { uploadToRepo } = __nccwpck_require__(4223);
+const Version = __nccwpck_require__(9591);
 const { promises: fs } = __nccwpck_require__(7147);
 
 const main = async () => {
@@ -12860,7 +12897,9 @@ const main = async () => {
         const filesPaths = ['github-context.json'];
 
         try {
-            await uploadToRepo(octokit, filesPaths, owner, repo, 'main')
+            await uploadToRepo(octokit, filesPaths, owner, repo, 'main');
+            const newVersion = await Version.getNewVersion(owner, repo, github);
+            console.log('New Version >>', newVersion);
         } catch (error) {
             console.log('error >> ', error);
         }
@@ -12872,6 +12911,9 @@ const main = async () => {
         //     console.log('not safe to exit');
         //     process.exit(1);
         // }
+
+        // Filed for testing purposes :D
+        process.exit(1);
 
     } catch (error) {
         core.setFailed(error.message);
