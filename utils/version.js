@@ -1,10 +1,13 @@
+const get = require('get-value');
 
 class Version {
     static async getNewVersion(octokit, owner, repo, github, isMajorRelease = false) {
-        const { data: [ latestTag = '' ] } = await octokit.rest.repos.listTags({
+        const tags = await octokit.rest.repos.listTags({
             owner,
             repo,
         });
+
+        const latestTag = get(data, 'data[0].name', '0.0.0');
 
         const branch = github.context.payload.pull_request.head.ref;
         const branchPrefix = branch.split('/')[0];
