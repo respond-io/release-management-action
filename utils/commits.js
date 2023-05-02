@@ -114,6 +114,7 @@ const filterCommits = (commits) => {
 
             if (splits > 1) {
                 const type = splits[0].trim().toLowerCase();
+                console.log('>>>>>>>>>>>>', type, '>>>>>>>>>>>>>>>')
                 splits.shift();
                 commit.commit_name = splits.join(' ').trim();
                 switch (type) {
