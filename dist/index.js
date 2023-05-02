@@ -21912,32 +21912,36 @@ const filterCommits = (commits) => {
 
     commits.reverse().forEach((commitData) => {
         let { message } = commitData.commit;
-        const splits = message.split(':');
 
-        const commit = {
-            commit_name: message,
-            commit_hash: commitData.sha,
-            compact_commit_hash: commitData.sha.substring(0, 7),
-        };
+        if (!message.startsWith('Merge pull request') && !message.startsWith('Merge branch')) {
+            const splits = message.split(':');
 
-        if (splits > 1) {
-            const type = splits[0].trim().toLowerCase();
-            splits.shift();
-            commit.commit_name = splits.join(' ').trim();
-            switch (type) {
-                case 'feat':
-                    features.push(commit);
-                    break;
-                case 'fix':
-                    bug_fixes.push(commit);
-                    break;
-                default:
-                    other_commits.push(commit);
-                    break;
+            const commit = {
+                commit_name: message,
+                commit_hash: commitData.sha,
+                compact_commit_hash: commitData.sha.substring(0, 7),
+            };
+
+            if (splits > 1) {
+                const type = splits[0].trim().toLowerCase();
+                splits.shift();
+                commit.commit_name = splits.join(' ').trim();
+                switch (type) {
+                    case 'feat':
+                        features.push(commit);
+                        break;
+                    case 'fix':
+                        bug_fixes.push(commit);
+                        break;
+                    default:
+                        other_commits.push(commit);
+                        break;
+                }
+            } else {
+                other_commits.push(message);
             }
-        } else {
-            other_commits.push(message);
         }
+        
     });
 
     return { features, bug_fixes, other_commits };
