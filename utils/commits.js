@@ -143,9 +143,9 @@ const filterFiles = (files) => {
     files.forEach((file) => {
         const { filename } = file;
         if (filename.startsWith('service/lambda/')) {
-            fileSet.add({ entity: filename.replace('services/lambda/', ''), type: 'Lambda' });
+            fileSet.add({ entity: filename.split('/')[2], type: 'Lambda' });
         } else if (filename.startsWith('service/')) {
-            fileSet.add({ entity: filename.replace('services/', ''), type: 'ECS' });
+            fileSet.add({ entity: filename.split('/')[1], type: 'ECS' });
         } else if (filename.startsWith('infra/')) {
             fileSet.add({ entity: filename, type: 'Infrastructure' });
         } else {
