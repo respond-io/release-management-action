@@ -1,3 +1,4 @@
+module.exports = `
 ## [{{version}}](https://github.com/{{org}}/{{repo}}/compare/{{previous_version}}...{{version}}) ({{date}})
 
 {{#if features}}
@@ -21,6 +22,7 @@
 | **Service**        | **Type**                                         |
 |--------------------|---------------------------------------------------------|
 {{#each affected_areas}}
-| `{{entity}}` | {{type}} |
+| \`{{entity}}\` | {{type}} |
 {{/each}}
 {{/if}}
+`;

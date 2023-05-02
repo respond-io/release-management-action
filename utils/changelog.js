@@ -1,6 +1,8 @@
 const { promises: fs } = require('fs');
 const Handlebars = require('handlebars');
 
+const CHANGELOG_TEMPLATE = require('../templates/CHANGELOG.md.js');
+
 class ChangeLog {
     static async generateChangeLogContent(octokit, owner, repo, github) {
         let currentChangelog = '';
@@ -14,8 +16,7 @@ class ChangeLog {
             currentChangelog = Buffer.from(response.data.content, 'base64').toString();
         } catch (e) {}
 
-        const templateSource = await fs.readFile('./templates/CHANGELOG.md.hbs', 'utf8');
-        const template = Handlebars.compile(templateSource);
+        const template = Handlebars.compile(CHANGELOG_TEMPLATE);
 
         const data = {
             "version": "3.2.0",
