@@ -22140,6 +22140,7 @@ module.exports = ChangeLog;
 const path = __nccwpck_require__(1017)
 const { readFile } = __nccwpck_require__(5630);
 const capitalize = __nccwpck_require__(3340);
+const Crypto = __nccwpck_require__(5275);
 
 const COMMIT_MESSAGE = process.env.COMMIT_MESSAGE || 'Auto generated'
 
@@ -22278,22 +22279,35 @@ const filterCommits = (commits) => {
 };
 
 const filterFiles = (files) => {
-    const fileSet = new Set();
+    const fileSetHashMap = new Set();
+    const fileList = [];
 
     files.forEach((file) => {
         const { filename } = file;
+        let entity = filename;
+        let type = 'Other';
+
         if (filename.startsWith('service/lambda/')) {
-            fileSet.add({ entity: capitalize(filename.split('/')[2]), type: 'Lambda' });
+            entity = capitalize(filename.split('/')[2]);
+            type = 'Lambda';
+            //fileList.push({ entity: capitalize(filename.split('/')[2]), type: 'Lambda' });
         } else if (filename.startsWith('service/')) {
-            fileSet.add({ entity: capitalize(filename.split('/')[1]), type: 'ECS' });
+            entity = capitalize(filename.split('/')[1]);
+            type = 'ECS';
+            //fileList.push({ entity: capitalize(filename.split('/')[1]), type: 'ECS' });
         } else if (filename.startsWith('infra/')) {
-            fileSet.add({ entity: filename, type: 'Infrastructure' });
-        } else {
-            fileSet.add({ entity: filename, type: 'Other' });
+            entity = filename;
+            type = 'Infrastructure';
+            //fileList.push({ entity: filename, type: 'Infrastructure' });
+        }
+        const entityHash = Crypto.generateHash(`${entity}-${type}`);
+        if (!fileSetHashMap.has(entityHash)) {
+            fileSetHashMap.add(entityHash);
+            fileList.push({ entity, type });
         }
     });
 
-    return Array.from(fileSet).sort();
+    return fileList.sort();
 };
 
 module.exports = {
@@ -22301,6 +22315,25 @@ module.exports = {
     filterCommits,
     filterFiles
 };
+
+/***/ }),
+
+/***/ 5275:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const crypto = __nccwpck_require__(6113);
+
+class Crypto {
+    // static function to generate a hash from a plain text
+    static generateHash(text) {
+        const hash = crypto.createHash('sha256');
+        hash.update(text);
+        return hash.digest('hex');
+    }
+
+}
+
+module.exports = Crypto;
 
 /***/ }),
 
