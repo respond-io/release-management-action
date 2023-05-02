@@ -8,7 +8,7 @@ const uploadToRepo = async (octo, filesPaths, org, repo, branch) => {
     const currentCommit = await getCurrentCommit(octo, org, repo, branch)
     //const filesPaths = await glob(coursePath)
     const filesBlobs = await Promise.all(filesPaths.map(createBlobForFile(octo, org, repo)))
-    const pathsForBlobs = filesPaths.map(fullPath => path.relative(coursePath, fullPath))
+    const pathsForBlobs = filesPaths.map(fullPath => path.relative(filesPaths, fullPath))
     const newTree = await createNewTree(
         octo,
         org,
