@@ -5,7 +5,7 @@ module.exports = `
 ### Features
 
 {{#each features}}
-* {{this.commit_name}} ([{{this.compact_commit_hash}}](https://github.com/{{this.org}}/{{this.repo}}/commit/{{this.commit_hash}}))
+* {{this.commit_name}} ([{{this.compact_commit_hash}}](https://github.com/{{org}}/{{repo}}/commit/{{this.commit_hash}}))
 {{/each}}
 {{/if}}
 
@@ -13,7 +13,7 @@ module.exports = `
 ### Bug Fixes
 
 {{#each bug_fixes}}
-* {{this.commit_name}} ([{{this.compact_commit_hash}}](https://github.com/{{this.org}}/{{this.repo}}/commit/{{this.commit_hash}}))
+* {{this.commit_name}} ([{{this.compact_commit_hash}}](https://github.com/{{org}}/{{repo}}/commit/{{this.commit_hash}}))
 {{/each}}
 {{/if}}
 
@@ -21,7 +21,7 @@ module.exports = `
 ### Bug Fixes
 
 {{#each other_commits}}
-* {{this.commit_name}} ([{{this.compact_commit_hash}}](https://github.com/{{this.org}}/{{this.repo}}/commit/{{this.commit_hash}}))
+* {{this.commit_name}} ([{{this.compact_commit_hash}}](https://github.com/{{org}}/{{repo}}/commit/{{this.commit_hash}}))
 {{/each}}
 {{/if}}
 
