@@ -13366,7 +13366,13 @@ class ChangeLog {
         let currentChangelog = '';
 
         try {
-            currentChangelog = await fs.readFile('./CHANGELOG.md', 'utf8');
+            //currentChangelog = await fs.readFile('./CHANGELOG.md', 'utf8');
+            const data = await octokit.rest.repos.getContent({
+                owner,
+                repo,
+                path: 'CHANGELOG.md',
+            });
+            console.log('data >> ', data);
         } catch (e) {
             console.log(e)
         }
