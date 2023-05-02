@@ -113,7 +113,7 @@ const main = async () => {
             repo,
         });
 
-        const baseHash = tagsList.data[3].commit.sha;
+        const baseHash = tagsList.data[0].commit.sha;
         
         const compare = await octokit.rest.repos.compareCommits({
             owner,
