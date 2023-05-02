@@ -21922,9 +21922,8 @@ const filterCommits = (commits) => {
                 compact_commit_hash: commitData.sha.substring(0, 7),
             };
 
-            if (splits > 1) {
+            if (splits.length > 1) {
                 const type = splits[0].trim().toLowerCase();
-                console.log('>>>>>>>>>>>>', type, '>>>>>>>>>>>>>>>')
                 splits.shift();
                 commit.commit_name = splits.join(' ').trim();
                 switch (type) {
