@@ -13839,6 +13839,355 @@ module.exports = get;
 
 /***/ }),
 
+/***/ 354:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.findMadeSync = exports.findMade = void 0;
+const path_1 = __nccwpck_require__(1017);
+const findMade = async (opts, parent, path) => {
+    // we never want the 'made' return value to be a root directory
+    if (path === parent) {
+        return;
+    }
+    return opts.statAsync(parent).then(st => (st.isDirectory() ? path : undefined), // will fail later
+    // will fail later
+    er => {
+        const fer = er;
+        return fer && fer.code === 'ENOENT'
+            ? (0, exports.findMade)(opts, (0, path_1.dirname)(parent), parent)
+            : undefined;
+    });
+};
+exports.findMade = findMade;
+const findMadeSync = (opts, parent, path) => {
+    if (path === parent) {
+        return undefined;
+    }
+    try {
+        return opts.statSync(parent).isDirectory() ? path : undefined;
+    }
+    catch (er) {
+        const fer = er;
+        return fer && fer.code === 'ENOENT'
+            ? (0, exports.findMadeSync)(opts, (0, path_1.dirname)(parent), parent)
+            : undefined;
+    }
+};
+exports.findMadeSync = findMadeSync;
+//# sourceMappingURL=find-made.js.map
+
+/***/ }),
+
+/***/ 7280:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.mkdirp = exports.nativeSync = exports.native = exports.manualSync = exports.manual = exports.sync = exports.mkdirpSync = exports.useNativeSync = exports.useNative = exports.mkdirpNativeSync = exports.mkdirpNative = exports.mkdirpManualSync = exports.mkdirpManual = void 0;
+const mkdirp_manual_js_1 = __nccwpck_require__(6386);
+const mkdirp_native_js_1 = __nccwpck_require__(3842);
+const opts_arg_js_1 = __nccwpck_require__(2110);
+const path_arg_js_1 = __nccwpck_require__(8577);
+const use_native_js_1 = __nccwpck_require__(8918);
+/* c8 ignore start */
+var mkdirp_manual_js_2 = __nccwpck_require__(6386);
+Object.defineProperty(exports, "mkdirpManual", ({ enumerable: true, get: function () { return mkdirp_manual_js_2.mkdirpManual; } }));
+Object.defineProperty(exports, "mkdirpManualSync", ({ enumerable: true, get: function () { return mkdirp_manual_js_2.mkdirpManualSync; } }));
+var mkdirp_native_js_2 = __nccwpck_require__(3842);
+Object.defineProperty(exports, "mkdirpNative", ({ enumerable: true, get: function () { return mkdirp_native_js_2.mkdirpNative; } }));
+Object.defineProperty(exports, "mkdirpNativeSync", ({ enumerable: true, get: function () { return mkdirp_native_js_2.mkdirpNativeSync; } }));
+var use_native_js_2 = __nccwpck_require__(8918);
+Object.defineProperty(exports, "useNative", ({ enumerable: true, get: function () { return use_native_js_2.useNative; } }));
+Object.defineProperty(exports, "useNativeSync", ({ enumerable: true, get: function () { return use_native_js_2.useNativeSync; } }));
+/* c8 ignore stop */
+const mkdirpSync = (path, opts) => {
+    path = (0, path_arg_js_1.pathArg)(path);
+    const resolved = (0, opts_arg_js_1.optsArg)(opts);
+    return (0, use_native_js_1.useNativeSync)(resolved)
+        ? (0, mkdirp_native_js_1.mkdirpNativeSync)(path, resolved)
+        : (0, mkdirp_manual_js_1.mkdirpManualSync)(path, resolved);
+};
+exports.mkdirpSync = mkdirpSync;
+exports.sync = exports.mkdirpSync;
+exports.manual = mkdirp_manual_js_1.mkdirpManual;
+exports.manualSync = mkdirp_manual_js_1.mkdirpManualSync;
+exports.native = mkdirp_native_js_1.mkdirpNative;
+exports.nativeSync = mkdirp_native_js_1.mkdirpNativeSync;
+exports.mkdirp = Object.assign(async (path, opts) => {
+    path = (0, path_arg_js_1.pathArg)(path);
+    const resolved = (0, opts_arg_js_1.optsArg)(opts);
+    return (0, use_native_js_1.useNative)(resolved)
+        ? (0, mkdirp_native_js_1.mkdirpNative)(path, resolved)
+        : (0, mkdirp_manual_js_1.mkdirpManual)(path, resolved);
+}, {
+    mkdirpSync: exports.mkdirpSync,
+    mkdirpNative: mkdirp_native_js_1.mkdirpNative,
+    mkdirpNativeSync: mkdirp_native_js_1.mkdirpNativeSync,
+    mkdirpManual: mkdirp_manual_js_1.mkdirpManual,
+    mkdirpManualSync: mkdirp_manual_js_1.mkdirpManualSync,
+    sync: exports.mkdirpSync,
+    native: mkdirp_native_js_1.mkdirpNative,
+    nativeSync: mkdirp_native_js_1.mkdirpNativeSync,
+    manual: mkdirp_manual_js_1.mkdirpManual,
+    manualSync: mkdirp_manual_js_1.mkdirpManualSync,
+    useNative: use_native_js_1.useNative,
+    useNativeSync: use_native_js_1.useNativeSync,
+});
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ 6386:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.mkdirpManual = exports.mkdirpManualSync = void 0;
+const path_1 = __nccwpck_require__(1017);
+const opts_arg_js_1 = __nccwpck_require__(2110);
+const mkdirpManualSync = (path, options, made) => {
+    const parent = (0, path_1.dirname)(path);
+    const opts = { ...(0, opts_arg_js_1.optsArg)(options), recursive: false };
+    if (parent === path) {
+        try {
+            return opts.mkdirSync(path, opts);
+        }
+        catch (er) {
+            // swallowed by recursive implementation on posix systems
+            // any other error is a failure
+            const fer = er;
+            if (fer && fer.code !== 'EISDIR') {
+                throw er;
+            }
+            return;
+        }
+    }
+    try {
+        opts.mkdirSync(path, opts);
+        return made || path;
+    }
+    catch (er) {
+        const fer = er;
+        if (fer && fer.code === 'ENOENT') {
+            return (0, exports.mkdirpManualSync)(path, opts, (0, exports.mkdirpManualSync)(parent, opts, made));
+        }
+        if (fer && fer.code !== 'EEXIST' && fer && fer.code !== 'EROFS') {
+            throw er;
+        }
+        try {
+            if (!opts.statSync(path).isDirectory())
+                throw er;
+        }
+        catch (_) {
+            throw er;
+        }
+    }
+};
+exports.mkdirpManualSync = mkdirpManualSync;
+exports.mkdirpManual = Object.assign(async (path, options, made) => {
+    const opts = (0, opts_arg_js_1.optsArg)(options);
+    opts.recursive = false;
+    const parent = (0, path_1.dirname)(path);
+    if (parent === path) {
+        return opts.mkdirAsync(path, opts).catch(er => {
+            // swallowed by recursive implementation on posix systems
+            // any other error is a failure
+            const fer = er;
+            if (fer && fer.code !== 'EISDIR') {
+                throw er;
+            }
+        });
+    }
+    return opts.mkdirAsync(path, opts).then(() => made || path, async (er) => {
+        const fer = er;
+        if (fer && fer.code === 'ENOENT') {
+            return (0, exports.mkdirpManual)(parent, opts).then((made) => (0, exports.mkdirpManual)(path, opts, made));
+        }
+        if (fer && fer.code !== 'EEXIST' && fer.code !== 'EROFS') {
+            throw er;
+        }
+        return opts.statAsync(path).then(st => {
+            if (st.isDirectory()) {
+                return made;
+            }
+            else {
+                throw er;
+            }
+        }, () => {
+            throw er;
+        });
+    });
+}, { sync: exports.mkdirpManualSync });
+//# sourceMappingURL=mkdirp-manual.js.map
+
+/***/ }),
+
+/***/ 3842:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.mkdirpNative = exports.mkdirpNativeSync = void 0;
+const path_1 = __nccwpck_require__(1017);
+const find_made_js_1 = __nccwpck_require__(354);
+const mkdirp_manual_js_1 = __nccwpck_require__(6386);
+const opts_arg_js_1 = __nccwpck_require__(2110);
+const mkdirpNativeSync = (path, options) => {
+    const opts = (0, opts_arg_js_1.optsArg)(options);
+    opts.recursive = true;
+    const parent = (0, path_1.dirname)(path);
+    if (parent === path) {
+        return opts.mkdirSync(path, opts);
+    }
+    const made = (0, find_made_js_1.findMadeSync)(opts, path);
+    try {
+        opts.mkdirSync(path, opts);
+        return made;
+    }
+    catch (er) {
+        const fer = er;
+        if (fer && fer.code === 'ENOENT') {
+            return (0, mkdirp_manual_js_1.mkdirpManualSync)(path, opts);
+        }
+        else {
+            throw er;
+        }
+    }
+};
+exports.mkdirpNativeSync = mkdirpNativeSync;
+exports.mkdirpNative = Object.assign(async (path, options) => {
+    const opts = { ...(0, opts_arg_js_1.optsArg)(options), recursive: true };
+    const parent = (0, path_1.dirname)(path);
+    if (parent === path) {
+        return await opts.mkdirAsync(path, opts);
+    }
+    return (0, find_made_js_1.findMade)(opts, path).then((made) => opts
+        .mkdirAsync(path, opts)
+        .then(m => made || m)
+        .catch(er => {
+        const fer = er;
+        if (fer && fer.code === 'ENOENT') {
+            return (0, mkdirp_manual_js_1.mkdirpManual)(path, opts);
+        }
+        else {
+            throw er;
+        }
+    }));
+}, { sync: exports.mkdirpNativeSync });
+//# sourceMappingURL=mkdirp-native.js.map
+
+/***/ }),
+
+/***/ 2110:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.optsArg = void 0;
+const fs_1 = __nccwpck_require__(7147);
+const optsArg = (opts) => {
+    if (!opts) {
+        opts = { mode: 0o777 };
+    }
+    else if (typeof opts === 'object') {
+        opts = { mode: 0o777, ...opts };
+    }
+    else if (typeof opts === 'number') {
+        opts = { mode: opts };
+    }
+    else if (typeof opts === 'string') {
+        opts = { mode: parseInt(opts, 8) };
+    }
+    else {
+        throw new TypeError('invalid options argument');
+    }
+    const resolved = opts;
+    const optsFs = opts.fs || {};
+    opts.mkdir = opts.mkdir || optsFs.mkdir || fs_1.mkdir;
+    opts.mkdirAsync = opts.mkdirAsync
+        ? opts.mkdirAsync
+        : async (path, options) => {
+            return new Promise((res, rej) => resolved.mkdir(path, options, (er, made) => er ? rej(er) : res(made)));
+        };
+    opts.stat = opts.stat || optsFs.stat || fs_1.stat;
+    opts.statAsync = opts.statAsync
+        ? opts.statAsync
+        : async (path) => new Promise((res, rej) => resolved.stat(path, (err, stats) => (err ? rej(err) : res(stats))));
+    opts.statSync = opts.statSync || optsFs.statSync || fs_1.statSync;
+    opts.mkdirSync = opts.mkdirSync || optsFs.mkdirSync || fs_1.mkdirSync;
+    return resolved;
+};
+exports.optsArg = optsArg;
+//# sourceMappingURL=opts-arg.js.map
+
+/***/ }),
+
+/***/ 8577:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.pathArg = void 0;
+const platform = process.env.__TESTING_MKDIRP_PLATFORM__ || process.platform;
+const path_1 = __nccwpck_require__(1017);
+const pathArg = (path) => {
+    if (/\0/.test(path)) {
+        // simulate same failure that node raises
+        throw Object.assign(new TypeError('path must be a string without null bytes'), {
+            path,
+            code: 'ERR_INVALID_ARG_VALUE',
+        });
+    }
+    path = (0, path_1.resolve)(path);
+    if (platform === 'win32') {
+        const badWinChars = /[*|"<>?:]/;
+        const { root } = (0, path_1.parse)(path);
+        if (badWinChars.test(path.substring(root.length))) {
+            throw Object.assign(new Error('Illegal characters in path.'), {
+                path,
+                code: 'EINVAL',
+            });
+        }
+    }
+    return path;
+};
+exports.pathArg = pathArg;
+//# sourceMappingURL=path-arg.js.map
+
+/***/ }),
+
+/***/ 8918:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.useNative = exports.useNativeSync = void 0;
+const fs_1 = __nccwpck_require__(7147);
+const opts_arg_js_1 = __nccwpck_require__(2110);
+const version = process.env.__TESTING_MKDIRP_NODE_VERSION__ || process.version;
+const versArr = version.replace(/^v/, '').split('.');
+const hasNative = +versArr[0] > 10 || (+versArr[0] === 10 && +versArr[1] >= 12);
+exports.useNativeSync = !hasNative
+    ? () => false
+    : (opts) => (0, opts_arg_js_1.optsArg)(opts).mkdirSync === fs_1.mkdirSync;
+exports.useNative = Object.assign(!hasNative
+    ? () => false
+    : (opts) => (0, opts_arg_js_1.optsArg)(opts).mkdir === fs_1.mkdir, {
+    sync: exports.useNativeSync,
+});
+//# sourceMappingURL=use-native.js.map
+
+/***/ }),
+
 /***/ 9623:
 /***/ (function(module, __unused_webpack_exports, __nccwpck_require__) {
 
@@ -28051,6 +28400,8 @@ module.exports = Crypto;
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { promises: fs } = __nccwpck_require__(7147);
+const { mkdirp } = __nccwpck_require__(7280);
+const path = __nccwpck_require__(1017)
 
 class PackageFile {
     static async generatePackageFileContent(octokit, owner, repo, path, version) {
@@ -28073,6 +28424,7 @@ class PackageFile {
     }
 
     static async updatePackageFile(content, path) {
+        await mkdirp(path.parse(path).dir);
         await fs.writeFile(path, content);
         return path;
     }
