@@ -1,12 +1,13 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-const { uploadToRepo, filterCommits, filterFiles, getFoldersInGivenPath } = require('./utils/commits');
 const Version = require('./utils/version');
-const ChangeLog = require('./utils/changelog');
-const PackageFile = require('./utils/packageFile');
+const ChangeLog = require('./utils/fileHelpers/changelog');
+const PackageFile = require('./utils/fileHelpers/packageFile');
+const Git = require('./utils/git');
 const moment = require('moment');
 
 const main = async () => {
+    const gitHelper = new Git();
     try {
         /**
          * We need to fetch all the inputs that were provided to our action
@@ -131,8 +132,8 @@ const main = async () => {
         // console.log('owner...>>', JSON.stringify(owner));
         // console.log('repo...>>', JSON.stringify(repo));
 
-        const commitsDiff = filterCommits(compare.data.commits);
-        const changedFilesList = filterFiles(compare.data.files);
+        const commitsDiff = gitHelper.filterCommits(compare.data.commits);
+        const changedFilesList = gitHelper.filterFiles(compare.data.files);
 
 
 
@@ -212,7 +213,7 @@ const main = async () => {
 
                 if (type === 'Lambda') {
                     // Analyze the layers and add the package.json files to the list
-                    const layers = await getFoldersInGivenPath(octokit, owner, repo, `${subProjectRoot}/layers`);
+                    const layers = await gitHelper.getFoldersInGivenPath(octokit, owner, repo, `${subProjectRoot}/layers`);
                     layers.forEach(layer => {
                         packageFilePaths.push(`${layer.path}/nodejs/node_modules/${layer.name}/package.json`);
                     });
@@ -230,7 +231,7 @@ const main = async () => {
 
         console.log('updatedFiles >> ', updatedFiles);
 
-        const newCommitSha = await uploadToRepo(octokit, updatedFiles, owner, repo, 'main', newVersion);
+        const newCommitSha = await gitHelper.uploadToRepo(octokit, updatedFiles, owner, repo, 'main', newVersion);
 
         console.log('....3');
 
