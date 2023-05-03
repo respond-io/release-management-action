@@ -129,14 +129,9 @@ class Git {
                 };
 
                 if (splits.length > 1) {
-                    console.log('...1', splits)
                     const type = splits[0].trim().toLowerCase();
-                    console.log('...2', type)
                     splits.shift();
-                    console.log('...3', splits)
                     commit.commit_name = capitalize(splits.join(' ').trim());
-                    console.log('...4', commit.commit_name)
-                    console.log('...5', type)
                     switch (type) {
                         case 'feat':
                             features.push(commit);
@@ -150,13 +145,10 @@ class Git {
                     }
                 } else {
                     other_commits.push(commit);
-                    console.log('...6', commit)
                 }
             }
 
         });
-
-        console.log('...7', features, bug_fixes, other_commits)
 
         return { features, bug_fixes, other_commits };
     };
