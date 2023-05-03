@@ -204,7 +204,7 @@ const main = async () => {
         updatedFiles.push(rootPackageFilePath);
         console.log('rootPackageFile >> ', rootPackageFileContent);
 
-        const newCommitSha = await uploadToRepo(octokit, updatedFiles, owner, repo, 'main');
+        const newCommitSha = await uploadToRepo(octokit, updatedFiles, owner, repo, 'main', newVersion);
 
         await octokit.rest.git.createTag({
             owner,

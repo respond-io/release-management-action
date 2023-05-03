@@ -3,9 +3,9 @@ const { readFile } = require('fs-extra');
 const capitalize = require('lodash.capitalize');
 const Crypto = require('./crypto');
 
-const COMMIT_MESSAGE = process.env.COMMIT_MESSAGE || 'Auto generated - New Release'
+const COMMIT_MESSAGE_PREFIX = 'Auto generated - New Release';
 
-const uploadToRepo = async (octo, filesPaths, org, repo, branch) => {
+const uploadToRepo = async (octo, filesPaths, org, repo, branch, version) => {
     // gets commit's AND its tree's SHA
     const currentCommit = await getCurrentCommit(octo, org, repo, branch)
     //const filesPaths = await glob(coursePath)
@@ -23,7 +23,7 @@ const uploadToRepo = async (octo, filesPaths, org, repo, branch) => {
         octo,
         org,
         repo,
-        COMMIT_MESSAGE,
+        `${COMMIT_MESSAGE_PREFIX} (${version})`,
         newTree.sha,
         currentCommit.commitSha
     );
@@ -108,7 +108,7 @@ const filterCommits = (commits) => {
     commits.reverse().forEach((commitData) => {
         let { message } = commitData.commit;
 
-        if (!message.startsWith('Merge pull request') && !message.startsWith('Merge branch')) {
+        if (!message.startsWith('Merge pull request') && !message.startsWith('Merge branch') && !message.startsWith('Auto generated - ')) {
             const splits = message.split(':');
 
             const commit = {

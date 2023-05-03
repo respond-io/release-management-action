@@ -27844,9 +27844,9 @@ const { readFile } = __nccwpck_require__(5630);
 const capitalize = __nccwpck_require__(3340);
 const Crypto = __nccwpck_require__(5275);
 
-const COMMIT_MESSAGE = process.env.COMMIT_MESSAGE || 'Auto generated - New Release'
+const COMMIT_MESSAGE_PREFIX = 'Auto generated - New Release';
 
-const uploadToRepo = async (octo, filesPaths, org, repo, branch) => {
+const uploadToRepo = async (octo, filesPaths, org, repo, branch, version) => {
     // gets commit's AND its tree's SHA
     const currentCommit = await getCurrentCommit(octo, org, repo, branch)
     //const filesPaths = await glob(coursePath)
@@ -27864,7 +27864,7 @@ const uploadToRepo = async (octo, filesPaths, org, repo, branch) => {
         octo,
         org,
         repo,
-        COMMIT_MESSAGE,
+        `${COMMIT_MESSAGE_PREFIX} (${version})`,
         newTree.sha,
         currentCommit.commitSha
     );
@@ -27949,7 +27949,7 @@ const filterCommits = (commits) => {
     commits.reverse().forEach((commitData) => {
         let { message } = commitData.commit;
 
-        if (!message.startsWith('Merge pull request') && !message.startsWith('Merge branch')) {
+        if (!message.startsWith('Merge pull request') && !message.startsWith('Merge branch') && !message.startsWith('Auto generated - ')) {
             const splits = message.split(':');
 
             const commit = {
@@ -28529,7 +28529,7 @@ const main = async () => {
         updatedFiles.push(rootPackageFilePath);
         console.log('rootPackageFile >> ', rootPackageFileContent);
 
-        const newCommitSha = await uploadToRepo(octokit, updatedFiles, owner, repo, 'main');
+        const newCommitSha = await uploadToRepo(octokit, updatedFiles, owner, repo, 'main', newVersion);
 
         await octokit.rest.git.createTag({
             owner,
