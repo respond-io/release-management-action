@@ -28898,6 +28898,8 @@ const main = async () => {
         updatedFiles.push(ROOT_LEVEL_PACKAGE_FILE_PATH);
         //console.log('rootPackageFile >> ', rootPackageFileContent);
 
+        console.log('changedFilesList>>>', changedFilesList)
+
         for (const { type, subProjectRoot } of changedFilesList) {
             if (type === 'Lambda' || type === 'ECS') {
                 const packageFilePaths = [`${subProjectRoot}/package.json`];
