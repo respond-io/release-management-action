@@ -72,7 +72,7 @@ class Git {
         };
     }
 
-    async _createNewTree(octokit, owner, repo, blobs, paths, parentTreeSha){
+    async _createNewTree(octokit, owner, repo, blobs, paths, parentTreeSha) {
         // My custom config. Could be taken as parameters
         const tree = blobs.map(({ sha }, index) => ({
             path: paths[index],

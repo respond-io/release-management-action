@@ -10,11 +10,11 @@ class PackageFile {
                 repo,
                 path
             });
-    
+
             let currentPackageFileContent = JSON.parse(Buffer.from(response.data.content, 'base64').toString());
-    
+
             currentPackageFileContent.version = version;
-    
+
             return JSON.stringify(currentPackageFileContent, null, 2);
         } catch (error) {
             // Unable to find or process the package.json file

@@ -16,7 +16,7 @@ class ChangeLog {
                 path: CHANGELOG_PATH,
             });
             currentChangelog = Buffer.from(response.data.content, 'base64').toString();
-        } catch (e) {}
+        } catch (e) { }
 
         const template = Handlebars.compile(CHANGELOG_TEMPLATE);
 

@@ -6,16 +6,13 @@ class Version {
             owner,
             repo,
         });
-        
-        console.log('tags >> ', JSON.stringify(tags.data[0]));
-        console.log('tags2 >> ', JSON.stringify(tags.data[0].name));
 
         const latestTag = get(tags, 'data[0].name');
 
         const branch = github.context.payload.pull_request.head.ref;
         const branchPrefix = branch.split('/')[0];
 
-        let [major = 0, minor = 0, patch = 0] = latestTag.replace(/[^0-9\.]/g,'').split('.');
+        let [major = 0, minor = 0, patch = 0] = latestTag.replace(/[^0-9\.]/g, '').split('.');
 
         major = parseInt(major);
         minor = parseInt(minor);
