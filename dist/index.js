@@ -28536,8 +28536,8 @@ const main = async () => {
             object: newCommitSha,
             type: 'commit',
             tagger: {
-                name: 'Hasitha Gamage',
-                email: 'hasitha@rocketbots.io'
+                name: "Hasitha Prabhath Gamage",
+                email: "hasithaishere@users.noreply.github.com",
             }
         });
 
