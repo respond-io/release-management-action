@@ -28122,7 +28122,7 @@ module.exports = `
 {{/if}}
 
 {{#if other_commits}}
-### Bug Fixes
+### Other Commits
 
 {{#each other_commits}}
 * {{this.commit_name}} ([{{this.compact_commit_hash}}](https://github.com/{{../org}}/{{../repo}}/commit/{{this.commit_hash}}))
