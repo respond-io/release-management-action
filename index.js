@@ -211,7 +211,8 @@ const main = async () => {
                 // Analyze the layers and add the package.json files to the list
                 const layers = await getFoldersInGivenPath(octokit, owner, repo, `${subProjectRoot}/layers`);
                 layers.forEach(layer => {
-                    packageFilePaths.push(`${layer.path}/nodejs/node_modules/${layer.name}/package.json`);
+                    console.log('layer Path >>', `${layer.path}/nodejs/node_modules/${layer.name}/package.json`)
+                    //packageFilePaths.push(`${layer.path}/nodejs/node_modules/${layer.name}/package.json`);
                 });
 
                 for (const packageFilePath of packageFilePaths) {
