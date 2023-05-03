@@ -28923,7 +28923,11 @@ const main = async () => {
             }
         }
 
+        console.log('updatedFiles >> ', updatedFiles);
+
         const newCommitSha = await uploadToRepo(octokit, updatedFiles, owner, repo, 'main', newVersion);
+
+        console.log('....3');
 
         // Commented for testing
         // await octokit.rest.git.createTag({
