@@ -209,8 +209,10 @@ const main = async () => {
                 const packageFilePath = `${subProjectRoot}/package.json`;
                 console.log('packageFilePath >> ', packageFilePath);
                 const packageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, packageFilePath, newVersion);
-                await PackageFile.updatePackageFile(packageFileContent, packageFilePath);
-                updatedFiles.push(rootPackageFilePath);
+                if (packageFileContent !== null) {
+                    await PackageFile.updatePackageFile(packageFileContent, packageFilePath);
+                    updatedFiles.push(packageFilePath);
+                }
             }
         }
 
