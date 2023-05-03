@@ -108,7 +108,7 @@ const filterCommits = (commits) => {
     commits.reverse().forEach((commitData) => {
         let { message } = commitData.commit;
 
-        if (!message.startsWith('Merge pull request') && !message.startsWith('Merge branch') && !message.startsWith('Auto generated - ')) {
+        if (!message.startsWith('Merge pull request') && !message.startsWith('Merge branch') && !message.startsWith('Auto generated')) {
             const splits = message.split(':');
 
             const commit = {
