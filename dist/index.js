@@ -28786,8 +28786,6 @@ const main = async () => {
         await PackageFile.updatePackageFile(rootPackageFileContent, ROOT_LEVEL_PACKAGE_FILE_PATH);
         updatedFiles.push(ROOT_LEVEL_PACKAGE_FILE_PATH);
 
-        console.log('changedFilesList>>', changedFilesList);
-
         for (const { type, subProjectRoot } of changedFilesList) {
             if (type === 'Lambda' || type === 'ECS') {
                 const packageFilePath = `${subProjectRoot}/package.json`;
@@ -28799,35 +28797,33 @@ const main = async () => {
             }
         }
 
-        console.log('updatedFiles>>>>', updatedFiles)
-
         const newCommitSha = await gitHelper.uploadToRepo(octokit, updatedFiles, owner, repo, 'main', newVersion);
 
-        // await octokit.rest.git.createTag({
-        //     owner,
-        //     repo,
-        //     tag: newVersion,
-        //     message: `Release ${newVersion}`,
-        //     object: newCommitSha,
-        //     type: 'commit'
-        // });
+        await octokit.rest.git.createTag({
+            owner,
+            repo,
+            tag: newVersion,
+            message: `Release ${newVersion}`,
+            object: newCommitSha,
+            type: 'commit'
+        });
 
-        // await octokit.rest.git.createRef({
-        //     owner,
-        //     repo,
-        //     ref: `refs/tags/${newVersion}`,
-        //     sha: newCommitSha,
-        // });
+        await octokit.rest.git.createRef({
+            owner,
+            repo,
+            ref: `refs/tags/${newVersion}`,
+            sha: newCommitSha,
+        });
 
-        // await octokit.rest.repos.createRelease({
-        //     owner,
-        //     repo,
-        //     tag_name: newVersion,
-        //     name: `Release ${newVersion}`,
-        //     body: newChangeLogContent,
-        //     draft: false,
-        //     prerelease: false
-        // });
+        await octokit.rest.repos.createRelease({
+            owner,
+            repo,
+            tag_name: newVersion,
+            name: `Release ${newVersion}`,
+            body: newChangeLogContent,
+            draft: false,
+            prerelease: false
+        });
 
     } catch (error) {
         core.setFailed(error.message);
