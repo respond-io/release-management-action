@@ -20,10 +20,13 @@ class ChangeLog {
 
         const template = Handlebars.compile(CHANGELOG_TEMPLATE);
 
-        return `
-            ${template(data)}
+        const newChangeLogContent = template(data);
+        const fullChangeLogContent = `
+            ${newChangeLogContent}
             ${currentChangelog}
         `;
+
+        return { newChangeLogContent, fullChangeLogContent };
     }
 
     static async updateChangeLog(content) {

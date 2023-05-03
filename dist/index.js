@@ -27817,10 +27817,13 @@ class ChangeLog {
 
         const template = Handlebars.compile(CHANGELOG_TEMPLATE);
 
-        return `
-            ${template(data)}
+        const newChangeLogContent = template(data);
+        const fullChangeLogContent = `
+            ${newChangeLogContent}
             ${currentChangelog}
         `;
+
+        return { newChangeLogContent, fullChangeLogContent };
     }
 
     static async updateChangeLog(content) {
@@ -28515,10 +28518,10 @@ const main = async () => {
 
         //console.log(">>", changelogDataSet)
 
-        const changeLogContent = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);
-        const changeLogPath = await ChangeLog.updateChangeLog(changeLogContent);
+        const { newChangeLogContent, fullChangeLogContent } = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);
+        const changeLogPath = await ChangeLog.updateChangeLog(fullChangeLogContent);
         updatedFiles.push(changeLogPath);
-        console.log('changeLog >> ', changeLogContent);
+        console.log('changeLog >> ', fullChangeLogContent);
 
         const ROOT_LEVEL_PACKAGE_FILE_PATH = 'package.json';
         const rootPackageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, ROOT_LEVEL_PACKAGE_FILE_PATH, newVersion);
@@ -28542,6 +28545,16 @@ const main = async () => {
             repo,
             ref: `refs/tags/${newVersion}`,
             sha: newCommitSha,
+        });
+
+        await octokit.repos.createRelease({
+            owner,
+            repo,
+            tag_name: newVersion,
+            name: `Release ${newVersion}`,
+            body: newChangeLogContent,
+            draft: false,
+            prerelease: false
         });
 
         // if ( eventName === 'push') {
