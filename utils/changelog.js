@@ -3,6 +3,8 @@ const Handlebars = require('handlebars');
 
 const CHANGELOG_TEMPLATE = require('../templates/CHANGELOG.md.js');
 
+const CHANGELOG_PATH = 'CHANGELOG.md';
+
 class ChangeLog {
     static async generateChangeLogContent(octokit, owner, repo, data) {
         let currentChangelog = '';
@@ -11,7 +13,7 @@ class ChangeLog {
             const response = await octokit.rest.repos.getContent({
                 owner,
                 repo,
-                path: 'CHANGELOG.md',
+                path: CHANGELOG_PATH,
             });
             currentChangelog = Buffer.from(response.data.content, 'base64').toString();
         } catch (e) {}
@@ -22,6 +24,11 @@ class ChangeLog {
             ${template(data)}
             ${currentChangelog}
         `;
+    }
+
+    static async updateChangeLog(content) {
+        await fs.writeFile(CHANGELOG_PATH, content);
+        return CHANGELOG_PATH
     }
 }
 

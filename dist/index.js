@@ -22108,6 +22108,8 @@ const Handlebars = __nccwpck_require__(7492);
 
 const CHANGELOG_TEMPLATE = __nccwpck_require__(3646);
 
+const CHANGELOG_PATH = 'CHANGELOG.md';
+
 class ChangeLog {
     static async generateChangeLogContent(octokit, owner, repo, data) {
         let currentChangelog = '';
@@ -22116,7 +22118,7 @@ class ChangeLog {
             const response = await octokit.rest.repos.getContent({
                 owner,
                 repo,
-                path: 'CHANGELOG.md',
+                path: CHANGELOG_PATH,
             });
             currentChangelog = Buffer.from(response.data.content, 'base64').toString();
         } catch (e) {}
@@ -22127,6 +22129,11 @@ class ChangeLog {
             ${template(data)}
             ${currentChangelog}
         `;
+    }
+
+    static async updateChangeLog(content) {
+        await fs.writeFile(CHANGELOG_PATH, content);
+        return CHANGELOG_PATH
     }
 }
 
@@ -22339,6 +22346,41 @@ class Crypto {
 }
 
 module.exports = Crypto;
+
+/***/ }),
+
+/***/ 2188:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const { promises: fs } = __nccwpck_require__(7147);
+const Handlebars = __nccwpck_require__(7492);
+
+const CHANGELOG_TEMPLATE = __nccwpck_require__(3646);
+
+const CHANGELOG_PATH = 'CHANGELOG.md';
+
+class PackageFile {
+    static async generatePackageFileContent(octokit, owner, repo, path, version) {
+        const response = await octokit.rest.repos.getContent({
+            owner,
+            repo,
+            path
+        });
+
+        let currentPackageFileContent = JSON.parse(Buffer.from(response.data.content, 'base64').toString());
+
+        currentPackageFileContent.version = version;
+
+        return JSON.stringify(currentPackageFileContent, null, 2);
+    }
+
+    static async updatePackageFile(content, path) {
+        await fs.writeFile(path, content);
+        return path;
+    }
+}
+
+module.exports = PackageFile;
 
 /***/ }),
 
@@ -22578,6 +22620,7 @@ const github = __nccwpck_require__(5438);
 const { uploadToRepo, filterCommits, filterFiles } = __nccwpck_require__(4223);
 const Version = __nccwpck_require__(9591);
 const ChangeLog = __nccwpck_require__(4157);
+const PackageFile = __nccwpck_require__(2188);
 const { promises: fs } = __nccwpck_require__(7147);
 
 const main = async () => {
@@ -22609,7 +22652,7 @@ const main = async () => {
          * Reference: https://octokit.github.io/rest.js/v18#pulls-list-files
          */
 
-        const changedFiles = [];
+        //const changedFiles = [];
 
         // const { data: changedFiles } = await octokit.rest.pulls.listFiles({
         //     owner,
@@ -22622,66 +22665,69 @@ const main = async () => {
          * Contains the sum of all the additions, deletions, and changes
          * in all the files in the Pull Request.
          **/
-        let diffData = {
-            additions: 0,
-            deletions: 0,
-            changes: 0
-        };
+        // let diffData = {
+        //     additions: 0,
+        //     deletions: 0,
+        //     changes: 0
+        // };
 
         // Reference for how to use Array.reduce():
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce
-        diffData = changedFiles.reduce((acc, file) => {
-            acc.additions += file.additions;
-            acc.deletions += file.deletions;
-            acc.changes += file.changes;
-            return acc;
-        }, diffData);
+        // diffData = changedFiles.reduce((acc, file) => {
+        //     acc.additions += file.additions;
+        //     acc.deletions += file.deletions;
+        //     acc.changes += file.changes;
+        //     return acc;
+        // }, diffData);
 
         /**
          * Loop over all the files changed in the PR and add labels according 
          * to files types.
          **/
-        for (const file of changedFiles) {
-            /**
-             * Add labels according to file types.
-             */
-            const fileExtension = file.filename.split('.').pop();
-            switch (fileExtension) {
-                case 'md':
-                    await octokit.rest.issues.addLabels({
-                        owner,
-                        repo,
-                        issue_number: pr_number,
-                        labels: ['markdown'],
-                    });
-                case 'js':
-                    await octokit.rest.issues.addLabels({
-                        owner,
-                        repo,
-                        issue_number: pr_number,
-                        labels: ['javascript'],
-                    });
-                case 'yml':
-                    await octokit.rest.issues.addLabels({
-                        owner,
-                        repo,
-                        issue_number: pr_number,
-                        labels: ['yaml'],
-                    });
-                case 'yaml':
-                    await octokit.rest.issues.addLabels({
-                        owner,
-                        repo,
-                        issue_number: pr_number,
-                        labels: ['yaml'],
-                    });
-            }
-        }
+        // for (const file of changedFiles) {
+        //     /**
+        //      * Add labels according to file types.
+        //      */
+        //     const fileExtension = file.filename.split('.').pop();
+        //     switch (fileExtension) {
+        //         case 'md':
+        //             await octokit.rest.issues.addLabels({
+        //                 owner,
+        //                 repo,
+        //                 issue_number: pr_number,
+        //                 labels: ['markdown'],
+        //             });
+        //         case 'js':
+        //             await octokit.rest.issues.addLabels({
+        //                 owner,
+        //                 repo,
+        //                 issue_number: pr_number,
+        //                 labels: ['javascript'],
+        //             });
+        //         case 'yml':
+        //             await octokit.rest.issues.addLabels({
+        //                 owner,
+        //                 repo,
+        //                 issue_number: pr_number,
+        //                 labels: ['yaml'],
+        //             });
+        //         case 'yaml':
+        //             await octokit.rest.issues.addLabels({
+        //                 owner,
+        //                 repo,
+        //                 issue_number: pr_number,
+        //                 labels: ['yaml'],
+        //             });
+        //     }
+        // }
 
-        const releasesList = await octokit.rest.repos.listReleases({
-            owner,
-            repo
-        });
+        // const releasesList = await octokit.rest.repos.listReleases({
+        //     owner,
+        //     repo
+        // });
+
+        // Files need to commit after version update
+        const updatedFiles = [];
 
         const tagsList = await octokit.rest.repos.listTags({
             owner,
@@ -22697,10 +22743,10 @@ const main = async () => {
             head: 'main'
         });
 
-        console.log('commits...>>', JSON.stringify(filterCommits(compare.data.commits)));
-        console.log('files...>>', JSON.stringify(filterFiles(compare.data.files)));
-        console.log('owner...>>', JSON.stringify(owner));
-        console.log('repo...>>', JSON.stringify(repo));
+        // console.log('commits...>>', JSON.stringify(filterCommits(compare.data.commits)));
+        // console.log('files...>>', JSON.stringify(filterFiles(compare.data.files)));
+        // console.log('owner...>>', JSON.stringify(owner));
+        // console.log('repo...>>', JSON.stringify(repo));
 
         const commitsDiff = filterCommits(compare.data.commits);
         const changedFilesList = filterFiles(compare.data.files);
@@ -22735,18 +22781,22 @@ const main = async () => {
 
         //console.log('github.context >> ', JSON.stringify(github.context));
 
-        await fs.writeFile('github-context.json', JSON.stringify(github.context));
-        const filesPaths = ['github-context.json'];
+        //await fs.writeFile('github-context.json', JSON.stringify(github.context));
+        //const filesPaths = ['github-context.json'];
 
-        try {
+        // try {
             
-            console.log('New Version >>', newVersion);
-        } catch (error) {
-            console.log('error >> ', error);
-        }
+        //     console.log('New Version >>', newVersion);
+        // } catch (error) {
+        //     console.log('error >> ', error);
+        // }
+
+        const newVersion = await Version.getNewVersion(octokit, owner, repo, github);
+
+        console.log('New Version >>', newVersion);
 
         const changelogDataSet = {
-            version: "3.2.0",
+            version: newVersion,
             previous_version: "3.1.0",
             org: owner,
             repo,
@@ -22755,10 +22805,17 @@ const main = async () => {
             affected_areas: changedFilesList 
         };
 
-        console.log(">>", changelogDataSet)
+        //console.log(">>", changelogDataSet)
 
-        const changeLog = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);
+        const changeLogContent = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);
+        const changeLogPath = await ChangeLog.updateChangeLog(changeLogContent);
+        updatedFiles.push(changeLogPath);
         console.log('changeLog >> ', changeLog);
+
+        const rootPackageFileContent = await PackageFile.updatePackageFile(octokit, owner, repo, 'package.json', newVersion);
+        const rootPackageFilePath = await PackageFile.updatePackageFile(rootPackageFileContent);
+        updatedFiles.push(rootPackageFilePath);
+        console.log('rootPackageFile >> ', rootPackageFile);
 
         // if ( eventName === 'push') {
         //     console.log('safe to exit');
