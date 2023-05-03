@@ -206,7 +206,7 @@ const main = async () => {
 
         const newCommitSha = await uploadToRepo(octokit, updatedFiles, owner, repo, 'main');
 
-        await octokit.rest.git.createTag({
+        const res = await octokit.rest.git.createTag({
             owner,
             repo,
             tag: newVersion,
@@ -219,13 +219,13 @@ const main = async () => {
             }
         });
 
+        console.log('>>>>', res);
         console.log('>>>>', {
             owner,
             repo,
             tag: newVersion,
             message: `Release ${newVersion}`,
-            object: 'a061365f8e6fee69a2eb0e1343c5780fec43ef62',
-            //object: newCommitSha,
+            object: newCommitSha,
             type: 'commit',
             tagger: {
                 name: 'Hasitha Gamage',
