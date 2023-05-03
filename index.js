@@ -212,7 +212,11 @@ const main = async () => {
             tag: newVersion,
             message: `Release ${newVersion}`,
             object: newCommitSha,
-            type: 'commit'
+            type: 'commit',
+            tagger: {
+                name: 'Hasitha Gamage',
+                email: 'hasitha@rocketbots.io'
+            }
         });
 
         console.log('>>>>', {
