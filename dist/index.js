@@ -28547,7 +28547,7 @@ const main = async () => {
             sha: newCommitSha,
         });
 
-        await octokit.repos.createRelease({
+        await octokit.rest.repos.createRelease({
             owner,
             repo,
             tag_name: newVersion,
