@@ -28799,7 +28799,9 @@ const main = async () => {
             }
         }
 
-        // const newCommitSha = await gitHelper.uploadToRepo(octokit, updatedFiles, owner, repo, 'main', newVersion);
+        console.log('updatedFiles>>>>', updatedFiles)
+
+        const newCommitSha = await gitHelper.uploadToRepo(octokit, updatedFiles, owner, repo, 'main', newVersion);
 
         // await octokit.rest.git.createTag({
         //     owner,
