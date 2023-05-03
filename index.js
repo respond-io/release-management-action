@@ -82,33 +82,33 @@ const main = async () => {
             }
         }
 
-        const newCommitSha = await gitHelper.uploadToRepo(octokit, updatedFiles, owner, repo, 'main', newVersion);
+        //const newCommitSha = await gitHelper.uploadToRepo(octokit, updatedFiles, owner, repo, 'main', newVersion);
 
-        await octokit.rest.git.createTag({
-            owner,
-            repo,
-            tag: newVersion,
-            message: `Release ${newVersion}`,
-            object: newCommitSha,
-            type: 'commit'
-        });
+        // await octokit.rest.git.createTag({
+        //     owner,
+        //     repo,
+        //     tag: newVersion,
+        //     message: `Release ${newVersion}`,
+        //     object: newCommitSha,
+        //     type: 'commit'
+        // });
 
-        await octokit.rest.git.createRef({
-            owner,
-            repo,
-            ref: `refs/tags/${newVersion}`,
-            sha: newCommitSha,
-        });
+        // await octokit.rest.git.createRef({
+        //     owner,
+        //     repo,
+        //     ref: `refs/tags/${newVersion}`,
+        //     sha: newCommitSha,
+        // });
 
-        await octokit.rest.repos.createRelease({
-            owner,
-            repo,
-            tag_name: newVersion,
-            name: `Release ${newVersion}`,
-            body: newChangeLogContent,
-            draft: false,
-            prerelease: false
-        });
+        // await octokit.rest.repos.createRelease({
+        //     owner,
+        //     repo,
+        //     tag_name: newVersion,
+        //     name: `Release ${newVersion}`,
+        //     body: newChangeLogContent,
+        //     draft: false,
+        //     prerelease: false
+        // });
 
     } catch (error) {
         core.setFailed(error.message);

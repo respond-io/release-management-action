@@ -28376,9 +28376,14 @@ class Git {
                 };
 
                 if (splits.length > 1) {
+                    console.log('...1', splits)
                     const type = splits[0].trim().toLowerCase();
+                    console.log('...2', type)
                     splits.shift();
+                    console.log('...3', splits)
                     commit.commit_name = capitalize(splits.join(' ').trim());
+                    console.log('...4', commit.commit_name)
+                    console.log('...5', type)
                     switch (type) {
                         case 'feat':
                             features.push(commit);
@@ -28392,10 +28397,13 @@ class Git {
                     }
                 } else {
                     other_commits.push(commit);
+                    console.log('...6', commit)
                 }
             }
 
         });
+
+        console.log('...7', features, bug_fixes, other_commits)
 
         return { features, bug_fixes, other_commits };
     };
@@ -28785,33 +28793,33 @@ const main = async () => {
             }
         }
 
-        const newCommitSha = await gitHelper.uploadToRepo(octokit, updatedFiles, owner, repo, 'main', newVersion);
+        //const newCommitSha = await gitHelper.uploadToRepo(octokit, updatedFiles, owner, repo, 'main', newVersion);
 
-        await octokit.rest.git.createTag({
-            owner,
-            repo,
-            tag: newVersion,
-            message: `Release ${newVersion}`,
-            object: newCommitSha,
-            type: 'commit'
-        });
+        // await octokit.rest.git.createTag({
+        //     owner,
+        //     repo,
+        //     tag: newVersion,
+        //     message: `Release ${newVersion}`,
+        //     object: newCommitSha,
+        //     type: 'commit'
+        // });
 
-        await octokit.rest.git.createRef({
-            owner,
-            repo,
-            ref: `refs/tags/${newVersion}`,
-            sha: newCommitSha,
-        });
+        // await octokit.rest.git.createRef({
+        //     owner,
+        //     repo,
+        //     ref: `refs/tags/${newVersion}`,
+        //     sha: newCommitSha,
+        // });
 
-        await octokit.rest.repos.createRelease({
-            owner,
-            repo,
-            tag_name: newVersion,
-            name: `Release ${newVersion}`,
-            body: newChangeLogContent,
-            draft: false,
-            prerelease: false
-        });
+        // await octokit.rest.repos.createRelease({
+        //     owner,
+        //     repo,
+        //     tag_name: newVersion,
+        //     name: `Release ${newVersion}`,
+        //     body: newChangeLogContent,
+        //     draft: false,
+        //     prerelease: false
+        // });
 
     } catch (error) {
         core.setFailed(error.message);
