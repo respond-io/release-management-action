@@ -26,8 +26,11 @@ const uploadToRepo = async (octo, filesPaths, org, repo, branch) => {
         COMMIT_MESSAGE,
         newTree.sha,
         currentCommit.commitSha
-    )
-    await setBranchToCommit(octo, org, repo, branch, newCommit.sha)
+    );
+
+    await setBranchToCommit(octo, org, repo, branch, newCommit.sha);
+
+    return newCommit.sha;
 }
 
 

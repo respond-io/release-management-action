@@ -204,7 +204,16 @@ const main = async () => {
         updatedFiles.push(rootPackageFilePath);
         console.log('rootPackageFile >> ', rootPackageFileContent);
 
-        await uploadToRepo(octokit, updatedFiles, owner, repo, 'main');
+        const newCommitSha = await uploadToRepo(octokit, updatedFiles, owner, repo, 'main');
+
+        await octokit.rest.git.createTag({
+            owner,
+            repo,
+            tag: newVersion,
+            message: `Release ${newVersion}`,
+            object: newCommitSha,
+            type: 'commit'
+        });
 
         // if ( eventName === 'push') {
         //     console.log('safe to exit');
