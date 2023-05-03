@@ -28437,22 +28437,6 @@ class Git {
 
 module.exports = Git;
 
-
-
-
-
-
-
-
-
-
-module.exports = {
-    uploadToRepo,
-    filterCommits,
-    filterFiles,
-    getFoldersInGivenPath
-};
-
 /***/ }),
 
 /***/ 9591:
