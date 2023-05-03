@@ -4,7 +4,7 @@ const { uploadToRepo, filterCommits, filterFiles } = require('./utils/commits');
 const Version = require('./utils/version');
 const ChangeLog = require('./utils/changelog');
 const PackageFile = require('./utils/packageFile');
-const { promises: fs } = require('fs');
+const moment = require('moment');
 
 const main = async () => {
     try {
