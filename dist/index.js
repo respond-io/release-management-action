@@ -28369,10 +28369,22 @@ const filterFiles = (files) => {
     return fileList.sort();
 };
 
+const getFoldersInGivenPath = async (octokit, owner, repo, basePath) => {
+    const response = await octokit.rest.repos.getContent({
+        owner,
+        repo,
+        path: basePath,
+    });
+      
+    // Filter the response to only include folder objects
+    return response.data.filter((item) => item.type === "dir");
+};
+
 module.exports = {
     uploadToRepo,
     filterCommits,
-    filterFiles
+    filterFiles,
+    getFoldersInGivenPath
 };
 
 /***/ }),
@@ -28682,7 +28694,7 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
-const { uploadToRepo, filterCommits, filterFiles } = __nccwpck_require__(4223);
+const { uploadToRepo, filterCommits, filterFiles, getFoldersInGivenPath } = __nccwpck_require__(4223);
 const Version = __nccwpck_require__(9591);
 const ChangeLog = __nccwpck_require__(4157);
 const PackageFile = __nccwpck_require__(2188);
@@ -28888,12 +28900,19 @@ const main = async () => {
 
         for (const { type, subProjectRoot } of changedFilesList) {
             if (type === 'Lambda' || type === 'ECS') {
-                const packageFilePath = `${subProjectRoot}/package.json`;
-                console.log('packageFilePath >> ', packageFilePath);
-                const packageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, packageFilePath, newVersion);
-                if (packageFileContent !== null) {
-                    await PackageFile.updatePackageFile(packageFileContent, packageFilePath);
-                    updatedFiles.push(packageFilePath);
+                const packageFilePaths = [`${subProjectRoot}/package.json`];
+
+                // Analyze the layers and add the package.json files to the list
+                const layers = await getFoldersInGivenPath(octokit, owner, repo, `${subProjectRoot}/layers`);
+                console.log('layers >> ', layers);
+
+                for (const packageFilePath of packageFilePaths) {
+                    console.log('packageFilePath >> ', packageFilePath);
+                    const packageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, packageFilePath, newVersion);
+                    if (packageFileContent !== null) {
+                        await PackageFile.updatePackageFile(packageFileContent, packageFilePath);
+                        updatedFiles.push(packageFilePath);
+                    }
                 }
             }
         }

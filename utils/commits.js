@@ -179,8 +179,20 @@ const filterFiles = (files) => {
     return fileList.sort();
 };
 
+const getFoldersInGivenPath = async (octokit, owner, repo, basePath) => {
+    const response = await octokit.rest.repos.getContent({
+        owner,
+        repo,
+        path: basePath,
+    });
+      
+    // Filter the response to only include folder objects
+    return response.data.filter((item) => item.type === "dir");
+};
+
 module.exports = {
     uploadToRepo,
     filterCommits,
-    filterFiles
+    filterFiles,
+    getFoldersInGivenPath
 };

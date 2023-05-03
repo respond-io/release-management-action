@@ -1,6 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-const { uploadToRepo, filterCommits, filterFiles } = require('./utils/commits');
+const { uploadToRepo, filterCommits, filterFiles, getFoldersInGivenPath } = require('./utils/commits');
 const Version = require('./utils/version');
 const ChangeLog = require('./utils/changelog');
 const PackageFile = require('./utils/packageFile');
@@ -206,12 +206,19 @@ const main = async () => {
 
         for (const { type, subProjectRoot } of changedFilesList) {
             if (type === 'Lambda' || type === 'ECS') {
-                const packageFilePath = `${subProjectRoot}/package.json`;
-                console.log('packageFilePath >> ', packageFilePath);
-                const packageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, packageFilePath, newVersion);
-                if (packageFileContent !== null) {
-                    await PackageFile.updatePackageFile(packageFileContent, packageFilePath);
-                    updatedFiles.push(packageFilePath);
+                const packageFilePaths = [`${subProjectRoot}/package.json`];
+
+                // Analyze the layers and add the package.json files to the list
+                const layers = await getFoldersInGivenPath(octokit, owner, repo, `${subProjectRoot}/layers`);
+                console.log('layers >> ', layers);
+
+                for (const packageFilePath of packageFilePaths) {
+                    console.log('packageFilePath >> ', packageFilePath);
+                    const packageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, packageFilePath, newVersion);
+                    if (packageFileContent !== null) {
+                        await PackageFile.updatePackageFile(packageFileContent, packageFilePath);
+                        updatedFiles.push(packageFilePath);
+                    }
                 }
             }
         }
