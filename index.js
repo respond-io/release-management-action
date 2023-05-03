@@ -224,7 +224,8 @@ const main = async () => {
             repo,
             tag: newVersion,
             message: `Release ${newVersion}`,
-            object: newCommitSha,
+            object: 'a061365f8e6fee69a2eb0e1343c5780fec43ef62',
+            //object: newCommitSha,
             type: 'commit',
             tagger: {
                 name: 'Hasitha Gamage',
