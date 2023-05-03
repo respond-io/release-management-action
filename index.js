@@ -174,16 +174,19 @@ const main = async () => {
         //     console.log('error >> ', error);
         // }
 
-        const newVersion = await Version.getNewVersion(octokit, owner, repo, github);
+        const {
+            newVersion,
+            currentVersion
+        } = await Version.getVersions(octokit, owner, repo, github);
 
         console.log('New Version >>', newVersion);
 
         const changelogDataSet = {
             version: newVersion,
-            previous_version: "3.1.0",
+            previous_version: currentVersion,
             org: owner,
             repo,
-            date: "2023-04-18",
+            date: moment().utcOffset('+0800').format('YYYY-MM-DD'), 
             ...commitsDiff,
             affected_areas: changedFilesList 
         };

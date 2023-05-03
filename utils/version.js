@@ -1,7 +1,7 @@
 const get = require('lodash.get');
 
 class Version {
-    static async getNewVersion(octokit, owner, repo, github, isMajorRelease = false) {
+    static async getVersions(octokit, owner, repo, github, isMajorRelease = false, tagPrefix = 'v', tagSuffix = '') {
         const tags = await octokit.rest.repos.listTags({
             owner,
             repo,
@@ -33,7 +33,10 @@ class Version {
             }
         }
 
-        return newTag;
+        return {
+            newVersion: `${tagPrefix}${newTag}${tagSuffix}`,
+            currentVersion: latestTag,
+        };
     }
 }
 

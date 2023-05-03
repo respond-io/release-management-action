@@ -22385,7 +22385,7 @@ module.exports = PackageFile;
 const get = __nccwpck_require__(9197);
 
 class Version {
-    static async getNewVersion(octokit, owner, repo, github, isMajorRelease = false) {
+    static async getVersions(octokit, owner, repo, github, isMajorRelease = false, tagPrefix = 'v', tagSuffix = '') {
         const tags = await octokit.rest.repos.listTags({
             owner,
             repo,
@@ -22417,7 +22417,10 @@ class Version {
             }
         }
 
-        return newTag;
+        return {
+            newVersion: `${tagPrefix}${newTag}${tagSuffix}`,
+            currentVersion: latestTag,
+        };
     }
 }
 
@@ -22786,16 +22789,19 @@ const main = async () => {
         //     console.log('error >> ', error);
         // }
 
-        const newVersion = await Version.getNewVersion(octokit, owner, repo, github);
+        const {
+            newVersion,
+            currentVersion
+        } = await Version.getVersions(octokit, owner, repo, github);
 
         console.log('New Version >>', newVersion);
 
         const changelogDataSet = {
             version: newVersion,
-            previous_version: "3.1.0",
+            previous_version: currentVersion,
             org: owner,
             repo,
-            date: "2023-04-18",
+            date: moment().utcOffset('+0800').format('YYYY-MM-DD'), 
             ...commitsDiff,
             affected_areas: changedFilesList 
         };
