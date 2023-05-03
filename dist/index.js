@@ -28532,6 +28532,7 @@ const main = async () => {
         for (const { type, subProjectRoot } of changedFilesList) {
             if (type === 'Lambda' || type === 'ECS') {
                 const packageFilePath = `${subProjectRoot}/package.json`;
+                console.log('packageFilePath >> ', packageFilePath);
                 const packageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, packageFilePath, newVersion);
                 await PackageFile.updatePackageFile(packageFileContent, packageFilePath);
                 updatedFiles.push(rootPackageFilePath);
