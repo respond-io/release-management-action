@@ -48,7 +48,7 @@ const main = async () => {
             repo,
             date: moment().utcOffset('+0800').format('YYYY-MM-DD'),
             ...commitsDiff,
-            affected_areas: ChangeLog.filterDuplicateAffectedAreas(changedFilesList),
+            affected_areas: changedFilesList
         };
 
         const { newChangeLogContent, fullChangeLogContent } = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);

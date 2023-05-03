@@ -28134,7 +28134,9 @@ module.exports = `
 | **Service**        | **Type**                                         |
 |--------------------|---------------------------------------------------------|
 {{#each affected_areas}}
+{{#if visible}}
 | \`{{entity}}\` | {{type}} |
+{{/if}}
 {{/each}}
 {{/if}}
 `;
@@ -28197,19 +28199,6 @@ class ChangeLog {
     static async updateChangeLog(content) {
         await fs.writeFile(CHANGELOG_PATH, content);
         return CHANGELOG_PATH
-    }
-
-    static filterDuplicateAffectedAreas(affectedAreas) {
-        const entitySet = new Set();
-        return affectedAreas.filter(({ entity, type }) => {
-            if (type === 'Lambda') {
-                if (entitySet.has(entity)) {
-                    return false;
-                }
-                entitySet.add(entity);
-            }
-            return true;
-        });
     }
 }
 
@@ -28424,6 +28413,7 @@ class Git {
             let subProjectRoot = null;
 
             const fileNameSplits = filename.split('/');
+            const visible = true;
 
             if (filename.startsWith('service/lambda/')) {
                 const lambdaName = fileNameSplits[2];
@@ -28433,11 +28423,19 @@ class Git {
                 const folderType = fileNameSplits[3];
                 const folderTypeName = folderType.trim().toLowerCase();
 
-                if (folderTypeName === 'layers') {
-                    const layerName = fileNameSplits[4];
-                    subProjectRoot = `service/lambda/${lambdaName}/${folderType}/${layerName}/nodejs/node_modules/${layerName}`;
-                } else if (folderTypeName === 'functions') {
-                    subProjectRoot = `service/lambda/${lambdaName}/${folderType}/${fileNameSplits[4]}`;
+                if (folderTypeName === 'functions' || folderTypeName === 'layers') {
+                    const subEntity = fileNameSplits[4];
+                    subProjectRoot = `service/lambda/${lambdaName}/${folderType}/${subEntity}`;
+                    isVisible = false;
+
+                    if (folderTypeName === 'layers') subProjectRoot = `${subProjectRoot}/nodejs/node_modules/${subEntity}`;
+
+                    // If only layer or function is changed, need to update root level package.json also
+                    const entityHash = Crypto.generateHash(`service/lambda/${lambdaName}-${type}`);
+                    if (!fileSetHashMap.has(entityHash)) {
+                        fileSetHashMap.add(entityHash);
+                        fileList.push({ entity, type, subProjectRoot: `service/lambda/${lambdaName}`, visible: true });
+                    }
                 }
 
                 //fileList.push({ entity: capitalize(filename.split('/')[2]), type: 'Lambda' });
@@ -28455,7 +28453,7 @@ class Git {
             const entityHash = Crypto.generateHash(`${subProjectRoot}-${type}`);
             if (!fileSetHashMap.has(entityHash)) {
                 fileSetHashMap.add(entityHash);
-                fileList.push({ entity, type, subProjectRoot });
+                fileList.push({ entity, type, subProjectRoot, visible });
             }
         });
 
@@ -28776,7 +28774,7 @@ const main = async () => {
             repo,
             date: moment().utcOffset('+0800').format('YYYY-MM-DD'),
             ...commitsDiff,
-            affected_areas: ChangeLog.filterDuplicateAffectedAreas(changedFilesList),
+            affected_areas: changedFilesList
         };
 
         const { newChangeLogContent, fullChangeLogContent } = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);

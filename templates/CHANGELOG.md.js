@@ -30,7 +30,9 @@ module.exports = `
 | **Service**        | **Type**                                         |
 |--------------------|---------------------------------------------------------|
 {{#each affected_areas}}
+{{#if visible}}
 | \`{{entity}}\` | {{type}} |
+{{/if}}
 {{/each}}
 {{/if}}
 `;

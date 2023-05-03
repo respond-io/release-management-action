@@ -33,19 +33,6 @@ class ChangeLog {
         await fs.writeFile(CHANGELOG_PATH, content);
         return CHANGELOG_PATH
     }
-
-    static filterDuplicateAffectedAreas(affectedAreas) {
-        const entitySet = new Set();
-        return affectedAreas.filter(({ entity, type }) => {
-            if (type === 'Lambda') {
-                if (entitySet.has(entity)) {
-                    return false;
-                }
-                entitySet.add(entity);
-            }
-            return true;
-        });
-    }
 }
 
 module.exports = ChangeLog;
