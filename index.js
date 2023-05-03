@@ -196,41 +196,51 @@ const main = async () => {
         const { newChangeLogContent, fullChangeLogContent } = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);
         const changeLogPath = await ChangeLog.updateChangeLog(fullChangeLogContent);
         updatedFiles.push(changeLogPath);
-        console.log('changeLog >> ', fullChangeLogContent);
+        //console.log('changeLog >> ', fullChangeLogContent);
 
         const ROOT_LEVEL_PACKAGE_FILE_PATH = 'package.json';
         const rootPackageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, ROOT_LEVEL_PACKAGE_FILE_PATH, newVersion);
-        const rootPackageFilePath = await PackageFile.updatePackageFile(rootPackageFileContent, ROOT_LEVEL_PACKAGE_FILE_PATH);
-        updatedFiles.push(rootPackageFilePath);
-        console.log('rootPackageFile >> ', rootPackageFileContent);
+        await PackageFile.updatePackageFile(rootPackageFileContent, ROOT_LEVEL_PACKAGE_FILE_PATH);
+        updatedFiles.push(ROOT_LEVEL_PACKAGE_FILE_PATH);
+        //console.log('rootPackageFile >> ', rootPackageFileContent);
+
+        for (const { type, subProjectRoot } of changedFilesList) {
+            if (type === 'Lambda' || type === 'ECS') {
+                const packageFilePath = `${subProjectRoot}/package.json`;
+                const packageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, packageFilePath, newVersion);
+                await PackageFile.updatePackageFile(packageFileContent, packageFilePath);
+                updatedFiles.push(rootPackageFilePath);
+            }
+        }
 
         const newCommitSha = await uploadToRepo(octokit, updatedFiles, owner, repo, 'main', newVersion);
 
-        await octokit.rest.git.createTag({
-            owner,
-            repo,
-            tag: newVersion,
-            message: `Release ${newVersion}`,
-            object: newCommitSha,
-            type: 'commit'
-        });
+        // Commented for testing
+        // await octokit.rest.git.createTag({
+        //     owner,
+        //     repo,
+        //     tag: newVersion,
+        //     message: `Release ${newVersion}`,
+        //     object: newCommitSha,
+        //     type: 'commit'
+        // });
 
-        await octokit.rest.git.createRef({
-            owner,
-            repo,
-            ref: `refs/tags/${newVersion}`,
-            sha: newCommitSha,
-        });
+        // await octokit.rest.git.createRef({
+        //     owner,
+        //     repo,
+        //     ref: `refs/tags/${newVersion}`,
+        //     sha: newCommitSha,
+        // });
 
-        await octokit.rest.repos.createRelease({
-            owner,
-            repo,
-            tag_name: newVersion,
-            name: `Release ${newVersion}`,
-            body: newChangeLogContent,
-            draft: false,
-            prerelease: false
-        });
+        // await octokit.rest.repos.createRelease({
+        //     owner,
+        //     repo,
+        //     tag_name: newVersion,
+        //     name: `Release ${newVersion}`,
+        //     body: newChangeLogContent,
+        //     draft: false,
+        //     prerelease: false
+        // });
 
         // if ( eventName === 'push') {
         //     console.log('safe to exit');
