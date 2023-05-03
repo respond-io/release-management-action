@@ -215,6 +215,15 @@ const main = async () => {
             type: 'commit'
         });
 
+        console.log('>>>>', {
+            owner,
+            repo,
+            tag: newVersion,
+            message: `Release ${newVersion}`,
+            object: newCommitSha,
+            type: 'commit'
+        });
+
         // if ( eventName === 'push') {
         //     console.log('safe to exit');
         //     process.exit(0);
