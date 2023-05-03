@@ -22810,12 +22810,12 @@ const main = async () => {
         const changeLogContent = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);
         const changeLogPath = await ChangeLog.updateChangeLog(changeLogContent);
         updatedFiles.push(changeLogPath);
-        console.log('changeLog >> ', changeLog);
+        console.log('changeLog >> ', changeLogContent);
 
         const rootPackageFileContent = await PackageFile.updatePackageFile(octokit, owner, repo, 'package.json', newVersion);
         const rootPackageFilePath = await PackageFile.updatePackageFile(rootPackageFileContent);
         updatedFiles.push(rootPackageFilePath);
-        console.log('rootPackageFile >> ', rootPackageFile);
+        console.log('rootPackageFile >> ', rootPackageFileContent);
 
         // if ( eventName === 'push') {
         //     console.log('safe to exit');
