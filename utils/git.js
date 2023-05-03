@@ -72,6 +72,25 @@ class Git {
         };
     }
 
+    async _createNewTree(octokit, owner, repo, blobs, paths, parentTreeSha){
+        // My custom config. Could be taken as parameters
+        const tree = blobs.map(({ sha }, index) => ({
+            path: paths[index],
+            mode: `100644`,
+            type: `blob`,
+            sha,
+        }));
+
+        const { data } = await octokit.rest.git.createTree({
+            owner,
+            repo,
+            tree,
+            base_tree: parentTreeSha,
+        });
+
+        return data;
+    }
+
     async _createNewCommit(octokit, org, repo, message, currentTreeSha, currentCommitSha) {
         const { data } = await octokit.rest.git.createCommit({
             owner: org,
