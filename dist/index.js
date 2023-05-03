@@ -28413,7 +28413,7 @@ class Git {
             let subProjectRoot = null;
 
             const fileNameSplits = filename.split('/');
-            const visible = true;
+            let visible = true;
 
             if (filename.startsWith('service/lambda/')) {
                 const lambdaName = fileNameSplits[2];
