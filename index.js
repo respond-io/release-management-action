@@ -201,6 +201,8 @@ const main = async () => {
         updatedFiles.push(rootPackageFilePath);
         console.log('rootPackageFile >> ', rootPackageFileContent);
 
+        await uploadToRepo(octokit, updatedFiles, owner, repo, 'main');
+
         // if ( eventName === 'push') {
         //     console.log('safe to exit');
         //     process.exit(0);

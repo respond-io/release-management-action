@@ -3,7 +3,7 @@ const { readFile } = require('fs-extra');
 const capitalize = require('lodash.capitalize');
 const Crypto = require('./crypto');
 
-const COMMIT_MESSAGE = process.env.COMMIT_MESSAGE || 'Auto generated'
+const COMMIT_MESSAGE = process.env.COMMIT_MESSAGE || 'Auto generated - New Release'
 
 const uploadToRepo = async (octo, filesPaths, org, repo, branch) => {
     // gets commit's AND its tree's SHA

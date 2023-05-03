@@ -22149,7 +22149,7 @@ const { readFile } = __nccwpck_require__(5630);
 const capitalize = __nccwpck_require__(3340);
 const Crypto = __nccwpck_require__(5275);
 
-const COMMIT_MESSAGE = process.env.COMMIT_MESSAGE || 'Auto generated'
+const COMMIT_MESSAGE = process.env.COMMIT_MESSAGE || 'Auto generated - New Release'
 
 const uploadToRepo = async (octo, filesPaths, org, repo, branch) => {
     // gets commit's AND its tree's SHA
@@ -22812,6 +22812,8 @@ const main = async () => {
         const rootPackageFilePath = await PackageFile.updatePackageFile(rootPackageFileContent, ROOT_LEVEL_PACKAGE_FILE_PATH);
         updatedFiles.push(rootPackageFilePath);
         console.log('rootPackageFile >> ', rootPackageFileContent);
+
+        await uploadToRepo(octokit, updatedFiles, owner, repo, 'main');
 
         // if ( eventName === 'push') {
         //     console.log('safe to exit');
