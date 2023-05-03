@@ -1,9 +1,4 @@
 const { promises: fs } = require('fs');
-const Handlebars = require('handlebars');
-
-const CHANGELOG_TEMPLATE = require('../templates/CHANGELOG.md.js');
-
-const CHANGELOG_PATH = 'CHANGELOG.md';
 
 class PackageFile {
     static async generatePackageFileContent(octokit, owner, repo, path, version) {

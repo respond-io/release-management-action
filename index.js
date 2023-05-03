@@ -195,7 +195,7 @@ const main = async () => {
         updatedFiles.push(changeLogPath);
         console.log('changeLog >> ', changeLogContent);
 
-        const rootPackageFileContent = await PackageFile.updatePackageFile(octokit, owner, repo, 'package.json', newVersion);
+        const rootPackageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, 'package.json', newVersion);
         const rootPackageFilePath = await PackageFile.updatePackageFile(rootPackageFileContent);
         updatedFiles.push(rootPackageFilePath);
         console.log('rootPackageFile >> ', rootPackageFileContent);

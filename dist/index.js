@@ -22353,11 +22353,6 @@ module.exports = Crypto;
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { promises: fs } = __nccwpck_require__(7147);
-const Handlebars = __nccwpck_require__(7492);
-
-const CHANGELOG_TEMPLATE = __nccwpck_require__(3646);
-
-const CHANGELOG_PATH = 'CHANGELOG.md';
 
 class PackageFile {
     static async generatePackageFileContent(octokit, owner, repo, path, version) {
@@ -22812,7 +22807,7 @@ const main = async () => {
         updatedFiles.push(changeLogPath);
         console.log('changeLog >> ', changeLogContent);
 
-        const rootPackageFileContent = await PackageFile.updatePackageFile(octokit, owner, repo, 'package.json', newVersion);
+        const rootPackageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, 'package.json', newVersion);
         const rootPackageFilePath = await PackageFile.updatePackageFile(rootPackageFileContent);
         updatedFiles.push(rootPackageFilePath);
         console.log('rootPackageFile >> ', rootPackageFileContent);
