@@ -177,7 +177,7 @@ class Git {
                 if (folderTypeName === 'functions' || folderTypeName === 'layers') {
                     const subEntity = fileNameSplits[4];
                     subProjectRoot = `service/lambda/${lambdaName}/${folderType}/${subEntity}`;
-                    isVisible = false;
+                    visible = false;
 
                     if (folderTypeName === 'layers') subProjectRoot = `${subProjectRoot}/nodejs/node_modules/${subEntity}`;
 
