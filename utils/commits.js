@@ -120,7 +120,7 @@ const filterCommits = (commits) => {
             if (splits.length > 1) {
                 const type = splits[0].trim().toLowerCase();
                 splits.shift();
-                commit.commit_name = splits.join(' ').trim();
+                commit.commit_name = capitalize(splits.join(' ').trim());
                 switch (type) {
                     case 'feat':
                         features.push(commit);
