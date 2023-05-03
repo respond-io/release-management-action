@@ -1,6 +1,6 @@
 const { promises: fs } = require('fs');
 const { mkdirp } = require('mkdirp');
-const path = require("path")
+const Path = require("path")
 
 class PackageFile {
     static async generatePackageFileContent(octokit, owner, repo, path, version) {
@@ -23,7 +23,7 @@ class PackageFile {
     }
 
     static async updatePackageFile(content, path) {
-        await mkdirp(path.parse(path).dir);
+        await mkdirp(Path.parse(path).dir);
         await fs.writeFile(path, content);
         return path;
     }

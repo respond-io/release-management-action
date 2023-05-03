@@ -28401,7 +28401,7 @@ module.exports = Crypto;
 
 const { promises: fs } = __nccwpck_require__(7147);
 const { mkdirp } = __nccwpck_require__(7280);
-const path = __nccwpck_require__(1017)
+const Path = __nccwpck_require__(1017)
 
 class PackageFile {
     static async generatePackageFileContent(octokit, owner, repo, path, version) {
@@ -28424,7 +28424,7 @@ class PackageFile {
     }
 
     static async updatePackageFile(content, path) {
-        await mkdirp(path.parse(path).dir);
+        await mkdirp(Path.parse(path).dir);
         await fs.writeFile(path, content);
         return path;
     }
