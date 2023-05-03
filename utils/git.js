@@ -163,14 +163,26 @@ class Git {
             let type = 'Other';
             let subProjectRoot = null;
 
+            const fileNameSplits = filename.split('/');
+
             if (filename.startsWith('service/lambda/')) {
-                const lambdaName = filename.split('/')[2];
+                const lambdaName = fileNameSplits[2];
                 entity = capitalize(lambdaName);
                 type = 'Lambda';
-                subProjectRoot = `service/lambda/${lambdaName}`;
+                subProjectRoot = `service/lambda/${lambdaName}`
+                const folderType = fileNameSplits[3];
+                const folderTypeName = folderType.trim().toLowerCase();
+
+                if (folderTypeName === 'layers') {
+                    const layerName = fileNameSplits[4];
+                    subProjectRoot = `service/lambda/${lambdaName}/${folderType}/${layerName}/nodejs/node_modules/${layerName}`;
+                } else if (folderTypeName === 'functions') {
+                    subProjectRoot = `service/lambda/${lambdaName}/${folderType}/${fileNameSplits[4]}`;
+                }
+
                 //fileList.push({ entity: capitalize(filename.split('/')[2]), type: 'Lambda' });
             } else if (filename.startsWith('service/')) {
-                const serviceName = filename.split('/')[1];
+                const serviceName = fileNameSplits[1];
                 entity = capitalize(serviceName);
                 type = 'ECS';
                 subProjectRoot = `service/${serviceName}`;
@@ -180,7 +192,7 @@ class Git {
                 type = 'Infrastructure';
                 //fileList.push({ entity: filename, type: 'Infrastructure' });
             }
-            const entityHash = Crypto.generateHash(`${entity}-${type}`);
+            const entityHash = Crypto.generateHash(`${subProjectRoot}-${type}`);
             if (!fileSetHashMap.has(entityHash)) {
                 fileSetHashMap.add(entityHash);
                 fileList.push({ entity, type, subProjectRoot });

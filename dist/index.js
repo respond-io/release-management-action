@@ -28198,6 +28198,19 @@ class ChangeLog {
         await fs.writeFile(CHANGELOG_PATH, content);
         return CHANGELOG_PATH
     }
+
+    static filterDuplicateAffectedAreas(affectedAreas) {
+        const entitySet = new Set();
+        return affectedAreas.filter(({ entity, type }) => {
+            if (type === 'Lambda') {
+                if (entitySet.has(entity)) {
+                    return false;
+                }
+                entitySet.add(entity);
+            }
+            return true;
+        });
+    }
 }
 
 module.exports = ChangeLog;
@@ -28410,14 +28423,26 @@ class Git {
             let type = 'Other';
             let subProjectRoot = null;
 
+            const fileNameSplits = filename.split('/');
+
             if (filename.startsWith('service/lambda/')) {
-                const lambdaName = filename.split('/')[2];
+                const lambdaName = fileNameSplits[2];
                 entity = capitalize(lambdaName);
                 type = 'Lambda';
-                subProjectRoot = `service/lambda/${lambdaName}`;
+                subProjectRoot = `service/lambda/${lambdaName}`
+                const folderType = fileNameSplits[3];
+                const folderTypeName = folderType.trim().toLowerCase();
+
+                if (folderTypeName === 'layers') {
+                    const layerName = fileNameSplits[4];
+                    subProjectRoot = `service/lambda/${lambdaName}/${folderType}/${layerName}/nodejs/node_modules/${layerName}`;
+                } else if (folderTypeName === 'functions') {
+                    subProjectRoot = `service/lambda/${lambdaName}/${folderType}/${fileNameSplits[4]}`;
+                }
+
                 //fileList.push({ entity: capitalize(filename.split('/')[2]), type: 'Lambda' });
             } else if (filename.startsWith('service/')) {
-                const serviceName = filename.split('/')[1];
+                const serviceName = fileNameSplits[1];
                 entity = capitalize(serviceName);
                 type = 'ECS';
                 subProjectRoot = `service/${serviceName}`;
@@ -28427,7 +28452,7 @@ class Git {
                 type = 'Infrastructure';
                 //fileList.push({ entity: filename, type: 'Infrastructure' });
             }
-            const entityHash = Crypto.generateHash(`${entity}-${type}`);
+            const entityHash = Crypto.generateHash(`${subProjectRoot}-${type}`);
             if (!fileSetHashMap.has(entityHash)) {
                 fileSetHashMap.add(entityHash);
                 fileList.push({ entity, type, subProjectRoot });
@@ -28751,7 +28776,7 @@ const main = async () => {
             repo,
             date: moment().utcOffset('+0800').format('YYYY-MM-DD'),
             ...commitsDiff,
-            affected_areas: changedFilesList
+            affected_areas: ChangeLog.filterDuplicateAffectedAreas(changedFilesList),
         };
 
         const { newChangeLogContent, fullChangeLogContent } = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);
@@ -28766,15 +28791,6 @@ const main = async () => {
         for (const { type, subProjectRoot } of changedFilesList) {
             if (type === 'Lambda' || type === 'ECS') {
                 const packageFilePaths = [`${subProjectRoot}/package.json`];
-
-                if (type === 'Lambda') {
-                    // Analyze the layers and add the package.json files to the list
-                    const layers = await gitHelper.getFoldersInGivenPath(octokit, owner, repo, `${subProjectRoot}/layers`);
-                    layers.forEach(layer => {
-                        packageFilePaths.push(`${layer.path}/nodejs/node_modules/${layer.name}/package.json`);
-                    });
-                }
-
                 for (const packageFilePath of packageFilePaths) {
                     const packageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, packageFilePath, newVersion);
                     if (packageFileContent !== null) {

@@ -48,7 +48,7 @@ const main = async () => {
             repo,
             date: moment().utcOffset('+0800').format('YYYY-MM-DD'),
             ...commitsDiff,
-            affected_areas: changedFilesList
+            affected_areas: ChangeLog.filterDuplicateAffectedAreas(changedFilesList),
         };
 
         const { newChangeLogContent, fullChangeLogContent } = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);
@@ -63,15 +63,6 @@ const main = async () => {
         for (const { type, subProjectRoot } of changedFilesList) {
             if (type === 'Lambda' || type === 'ECS') {
                 const packageFilePaths = [`${subProjectRoot}/package.json`];
-
-                if (type === 'Lambda') {
-                    // Analyze the layers and add the package.json files to the list
-                    const layers = await gitHelper.getFoldersInGivenPath(octokit, owner, repo, `${subProjectRoot}/layers`);
-                    layers.forEach(layer => {
-                        packageFilePaths.push(`${layer.path}/nodejs/node_modules/${layer.name}/package.json`);
-                    });
-                }
-
                 for (const packageFilePath of packageFilePaths) {
                     const packageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, packageFilePath, newVersion);
                     if (packageFileContent !== null) {
