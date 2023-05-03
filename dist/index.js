@@ -28932,32 +28932,32 @@ const main = async () => {
 
         console.log('....3');
 
-        // Commented for testing
-        // await octokit.rest.git.createTag({
-        //     owner,
-        //     repo,
-        //     tag: newVersion,
-        //     message: `Release ${newVersion}`,
-        //     object: newCommitSha,
-        //     type: 'commit'
-        // });
+        //Commented for testing
+        await octokit.rest.git.createTag({
+            owner,
+            repo,
+            tag: newVersion,
+            message: `Release ${newVersion}`,
+            object: newCommitSha,
+            type: 'commit'
+        });
 
-        // await octokit.rest.git.createRef({
-        //     owner,
-        //     repo,
-        //     ref: `refs/tags/${newVersion}`,
-        //     sha: newCommitSha,
-        // });
+        await octokit.rest.git.createRef({
+            owner,
+            repo,
+            ref: `refs/tags/${newVersion}`,
+            sha: newCommitSha,
+        });
 
-        // await octokit.rest.repos.createRelease({
-        //     owner,
-        //     repo,
-        //     tag_name: newVersion,
-        //     name: `Release ${newVersion}`,
-        //     body: newChangeLogContent,
-        //     draft: false,
-        //     prerelease: false
-        // });
+        await octokit.rest.repos.createRelease({
+            owner,
+            repo,
+            tag_name: newVersion,
+            name: `Release ${newVersion}`,
+            body: newChangeLogContent,
+            draft: false,
+            prerelease: false
+        });
 
         // if ( eventName === 'push') {
         //     console.log('safe to exit');
@@ -28968,7 +28968,7 @@ const main = async () => {
         // }
 
         // Filed for testing purposes :D
-        process.exit(1);
+        //process.exit(1);
 
     } catch (error) {
         core.setFailed(error.message);
