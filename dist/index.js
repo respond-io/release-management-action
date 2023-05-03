@@ -28370,11 +28370,15 @@ const filterFiles = (files) => {
 };
 
 const getFoldersInGivenPath = async (octokit, owner, repo, basePath) => {
-    const response = await octokit.rest.repos.getContent({
-        owner,
-        repo,
-        path: basePath,
-    });
+    let response = [];
+
+    try {
+        response = await octokit.rest.repos.getContent({
+            owner,
+            repo,
+            path: basePath,
+        });
+    } catch (error) { }
       
     // Filter the response to only include folder objects
     return response.data.filter((item) => item.type === "dir");
@@ -28904,21 +28908,18 @@ const main = async () => {
             if (type === 'Lambda' || type === 'ECS') {
                 const packageFilePaths = [`${subProjectRoot}/package.json`];
 
-                // Analyze the layers and add the package.json files to the list
-                const layers = await getFoldersInGivenPath(octokit, owner, repo, `${subProjectRoot}/layers`);
-                layers.forEach(layer => {
-                    console.log('layer Path >>', `${layer.path}/nodejs/node_modules/${layer.name}/package.json`)
-                    //packageFilePaths.push(`${layer.path}/nodejs/node_modules/${layer.name}/package.json`);
-                });
+                if (type === 'Lambda') {
+                    // Analyze the layers and add the package.json files to the list
+                    const layers = await getFoldersInGivenPath(octokit, owner, repo, `${subProjectRoot}/layers`);
+                    layers.forEach(layer => {
+                        packageFilePaths.push(`${layer.path}/nodejs/node_modules/${layer.name}/package.json`);
+                    });
+                }
 
                 for (const packageFilePath of packageFilePaths) {
-                    console.log('packageFilePath >> ', packageFilePath);
                     const packageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, packageFilePath, newVersion);
-                    console.log('....1');
                     if (packageFileContent !== null) {
-                        console.log('....1.1');
                         await PackageFile.updatePackageFile(packageFileContent, packageFilePath);
-                        console.log('....2');
                         updatedFiles.push(packageFilePath);
                     }
                 }

@@ -180,11 +180,15 @@ const filterFiles = (files) => {
 };
 
 const getFoldersInGivenPath = async (octokit, owner, repo, basePath) => {
-    const response = await octokit.rest.repos.getContent({
-        owner,
-        repo,
-        path: basePath,
-    });
+    let response = [];
+
+    try {
+        response = await octokit.rest.repos.getContent({
+            owner,
+            repo,
+            path: basePath,
+        });
+    } catch (error) { }
       
     // Filter the response to only include folder objects
     return response.data.filter((item) => item.type === "dir");
