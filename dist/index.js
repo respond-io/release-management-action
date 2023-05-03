@@ -28528,7 +28528,7 @@ const main = async () => {
 
         const newCommitSha = await uploadToRepo(octokit, updatedFiles, owner, repo, 'main');
 
-        const res = await octokit.rest.git.createTag({
+        const res = await octokit.git.createTag({
             owner,
             repo,
             tag: newVersion,
