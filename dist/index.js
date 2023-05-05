@@ -28493,7 +28493,7 @@ class Version {
             repo,
         });
 
-        const latestTag = get(tags, 'data[0].name');
+        let latestTag = get(tags, 'data[0].name');
 
         const branch = github.context.payload.pull_request.head.ref;
         const branchPrefix = branch.split('/')[0];
@@ -28503,6 +28503,14 @@ class Version {
         major = parseInt(major);
         minor = parseInt(minor);
         patch = parseInt(patch);
+
+        major = isNaN(major) ? 0 : major;
+        minor = isNaN(minor) ? 0 : minor;
+        patch = isNaN(patch) ? 0 : patch;
+
+        if (major === 0 && minor === 0 && patch === 0) {
+            latestTag = '0.0.0';
+        }
 
         let newTag = `${major}.${minor}.${patch}`;
 
@@ -28755,9 +28763,15 @@ const main = async () => {
         const compare = await octokit.rest.repos.compareCommits({
             owner,
             repo,
-            base: baseHash,
             head: 'main'
         });
+        
+
+        console.log('compare length', compare.data.commits.length);
+        console.log('compare length', compare.data.commits.length[0]);
+        console.log('compare last', compare.data.files[compare.data.commits.length - 1]);
+
+        process.exit(0);
 
         const commitsDiff = gitHelper.filterCommits(compare.data.commits);
         const changedFilesList = gitHelper.filterFiles(compare.data.files);

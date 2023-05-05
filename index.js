@@ -29,9 +29,15 @@ const main = async () => {
         const compare = await octokit.rest.repos.compareCommits({
             owner,
             repo,
-            base: baseHash,
             head: 'main'
         });
+        
+
+        console.log('compare length', compare.data.commits.length);
+        console.log('compare length', compare.data.commits.length[0]);
+        console.log('compare last', compare.data.files[compare.data.commits.length - 1]);
+
+        process.exit(0);
 
         const commitsDiff = gitHelper.filterCommits(compare.data.commits);
         const changedFilesList = gitHelper.filterFiles(compare.data.files);
