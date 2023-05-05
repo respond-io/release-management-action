@@ -47,7 +47,8 @@ const main = async () => {
             // If there are no tags, use the oldest commit as the base
             const { data: previousCommits } = await octokit.rest.repos.listCommits({
                 owner,
-                repo
+                repo,
+                per_page: 100
             });
 
             console.log('t4', previousCommits)
@@ -57,6 +58,8 @@ const main = async () => {
                 console.log('ERROR :: No previous commits found');
                 process.exit(1);
             }
+
+            console.log('t4.1', previousCommits.length)
 
             // Max returns 100 commits, assume that the oldest commit is in the last index
             const oldestCommit = previousCommits[previousCommits.length - 1];
