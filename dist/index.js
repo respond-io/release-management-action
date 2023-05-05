@@ -28754,6 +28754,8 @@ const main = async () => {
         // Files need to commit after version update
         const updatedFiles = [];
 
+        console.log('t1', branch)
+
         const tagsList = await octokit.rest.repos.listTags({
             owner,
             repo,
@@ -28761,9 +28763,12 @@ const main = async () => {
 
         let baseHash = null;
 
+        console.log('t2', branch)
+
         // If there are tags, use the latest tag as the base
         if (tagsList.data.length > 0) {
             baseHash = tagsList.data[0].commit.sha;
+            console.log('t3')
         } else {
             // If there are no tags, use the oldest commit as the base
             const { data: previousCommits } = await octokit.rest.repos.getCommits({
@@ -28771,6 +28776,8 @@ const main = async () => {
                 repo,
                 sha: branch
             });
+
+            console.log('t4', previousCommits)
 
             // If there are no commits, exit
             if (previousCommits.length === 0) {
@@ -28782,6 +28789,8 @@ const main = async () => {
             const oldestCommit = previousCommits[previousCommits.length - 1];
             baseHash = oldestCommit.sha;
         }
+
+        console.log('t5', baseHash)
 
         // If there are no tags and no commits, exit
         if (baseHash === null) {
