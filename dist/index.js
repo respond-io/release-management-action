@@ -28756,18 +28756,25 @@ const main = async () => {
 
         console.log('t1', branch)
 
-        const tagsList = await octokit.rest.repos.listTags({
-            owner,
-            repo,
-        });
+        let tagsList;
+        
+        try {
+            const tagsListData = await octokit.rest.repos.listTags({
+                owner,
+                repo,
+            });
+            tagsList = tagsListData.data;
+        } catch (error) {
+            tagsList = [];
+        }
 
         let baseHash = null;
 
         console.log('t2', branch)
 
         // If there are tags, use the latest tag as the base
-        if (tagsList.data.length > 0) {
-            baseHash = tagsList.data[0].commit.sha;
+        if (tagsList.length > 0) {
+            baseHash = tagsList[0].commit.sha;
             console.log('t3')
         } else {
             // If there are no tags, use the oldest commit as the base
