@@ -43,6 +43,7 @@ const main = async () => {
             baseHash = tagsList[0].commit.sha;
             console.log('t3')
         } else {
+            console.log('t3.1',owner,repo)
             // If there are no tags, use the oldest commit as the base
             const { data: previousCommits } = await octokit.rest.repos.listCommits({
                 owner,
