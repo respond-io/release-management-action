@@ -28780,8 +28780,7 @@ const main = async () => {
             // If there are no tags, use the oldest commit as the base
             const { data: previousCommits } = await octokit.rest.repos.listCommits({
                 owner,
-                repo,
-                sha: branch
+                repo
             });
 
             console.log('t4', previousCommits)
