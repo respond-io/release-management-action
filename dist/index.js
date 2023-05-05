@@ -28778,7 +28778,7 @@ const main = async () => {
             console.log('t3')
         } else {
             // If there are no tags, use the oldest commit as the base
-            const { data: previousCommits } = await octokit.repos.getCommits({
+            const { data: previousCommits } = await octokit.rest.repos.listCommits({
                 owner,
                 repo,
                 sha: branch
