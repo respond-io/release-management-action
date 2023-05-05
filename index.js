@@ -29,6 +29,7 @@ const main = async () => {
         const compare = await octokit.rest.repos.compareCommits({
             owner,
             repo,
+            base: baseHash,
             head: 'main'
         });
         
