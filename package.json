@@ -1,22 +1,22 @@
 {
-  "name": "pr-metadata-action",
+  "name": "release-management-action",
   "version": "1.0.0",
-  "description": "Github action for update the pull request's label and comment based on the metadata.",
+  "description": "Github action for managing the release version and tags based on the release type.",
   "main": "index.js",
   "scripts": {
     "build": "ncc build index.js -o dist"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hasithaishere/pr-metadata-action.git"
+    "url": "git+https://github.com/respond-io/release-management-action.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Hasitha Gamage <hasitha@rocketbots.io>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/hasithaishere/pr-metadata-action/issues"
+    "url": "https://github.com/respond-io/release-management-action/issues"
   },
-  "homepage": "https://github.com/hasithaishere/pr-metadata-action#readme",
+  "homepage": "https://github.com/respond-io/release-management-action#readme",
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1",
