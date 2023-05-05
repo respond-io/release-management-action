@@ -13,6 +13,7 @@ const main = async () => {
         const owner = core.getInput('owner', { required: true });
         const repo = core.getInput('repo', { required: true });
         const token = core.getInput('token', { required: true });
+        const branch = core.getInput('branch', { required: true });
 
         const octokit = new github.getOctokit(token);
 
@@ -24,13 +25,41 @@ const main = async () => {
             repo,
         });
 
-        const baseHash = tagsList.data[0].commit.sha;
+        let baseHash = null;
+
+        // If there are tags, use the latest tag as the base
+        if (tagsList.data.length > 0) {
+            baseHash = tagsList.data[0].commit.sha;
+        } else {
+            // If there are no tags, use the oldest commit as the base
+            const { data: previousCommits } = await octokit.rest.repos.getCommits({
+                owner,
+                repo,
+                sha: branch
+            });
+
+            // If there are no commits, exit
+            if (previousCommits.length === 0) {
+                console.log('ERROR :: No previous commits found');
+                process.exit(1);
+            }
+
+            // Max returns 100 commits, assume that the oldest commit is in the last index
+            const oldestCommit = previousCommits[previousCommits.length - 1];
+            baseHash = oldestCommit.sha;
+        }
+
+        // If there are no tags and no commits, exit
+        if (baseHash === null) {
+            console.log('ERROR :: No previous tags found');
+            process.exit(1);
+        }
 
         const compare = await octokit.rest.repos.compareCommits({
             owner,
             repo,
             base: baseHash,
-            head: 'main'
+            head: branch
         });
         
 
@@ -78,7 +107,7 @@ const main = async () => {
             }
         }
 
-        const newCommitSha = await gitHelper.uploadToRepo(octokit, updatedFiles, owner, repo, 'main', newVersion);
+        const newCommitSha = await gitHelper.uploadToRepo(octokit, updatedFiles, owner, repo, branch, newVersion);
 
         await octokit.rest.git.createTag({
             owner,
