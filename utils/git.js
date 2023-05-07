@@ -172,24 +172,28 @@ class Git {
                 type = 'Lambda';
                 subProjectRoot = `service/lambda/${lambdaName}`
                 const folderType = fileNameSplits[3];
-                if (folderType === undefined) console.log('>>>>>>>>>>>>>>>>>', filename);
-                const folderTypeName = folderType.trim().toLowerCase();
 
-                if (folderTypeName === 'functions' || folderTypeName === 'layers') {
-                    const subEntity = fileNameSplits[4];
-                    subProjectRoot = `service/lambda/${lambdaName}/${folderType}/${subEntity}`;
-                    visible = false;
+                if (folderType !== undefined) {
+                    const folderTypeName = folderType.trim().toLowerCase();
 
-                    if (folderTypeName === 'layers') subProjectRoot = `${subProjectRoot}/nodejs/node_modules/${subEntity}`;
+                    if (folderTypeName === 'functions' || folderTypeName === 'layers') {
+                        const subEntity = fileNameSplits[4];
+                        subProjectRoot = `service/lambda/${lambdaName}/${folderType}/${subEntity}`;
+                        visible = false;
 
-                    // If only layer or function is changed, need to update root level package.json also
-                    const entityHash = Crypto.generateHash(`service/lambda/${lambdaName}-${type}`);
-                    if (!fileSetHashMap.has(entityHash)) {
-                        fileSetHashMap.add(entityHash);
-                        fileList.push({ entity, type, subProjectRoot: `service/lambda/${lambdaName}`, visible: true });
+                        if (folderTypeName === 'layers') subProjectRoot = `${subProjectRoot}/nodejs/node_modules/${subEntity}`;
+
+                        // If only layer or function is changed, need to update root level package.json also
+                        const entityHash = Crypto.generateHash(`service/lambda/${lambdaName}-${type}`);
+                        if (!fileSetHashMap.has(entityHash)) {
+                            fileSetHashMap.add(entityHash);
+                            fileList.push({ entity, type, subProjectRoot: `service/lambda/${lambdaName}`, visible: true });
+                        }
                     }
+                } else {
+                    // For files in /service/lambda level
+                    fileList.push({ entity: filename, type: 'Other', subProjectRoot: null, visible: true });
                 }
-
                 //fileList.push({ entity: capitalize(filename.split('/')[2]), type: 'Lambda' });
             } else if (filename.startsWith('service/')) {
                 const serviceName = fileNameSplits[1];
