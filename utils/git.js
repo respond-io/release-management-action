@@ -275,7 +275,7 @@ class Git {
             compareCommits.total_commits = compareCommits.total_commits + commits.length;
 
             // If maxCommitCount is set, return the first maxCommitCount commits
-            if (maxCommitCount !== undefined && compareCommits.length >= maxCommitCount) {
+            if (maxCommitCount !== undefined && compareCommits.commits.length >= maxCommitCount) {
                 compareCommits.commits = compareCommits.commits.slice(0, maxCommitCount);
                 return compareCommits;
             }
