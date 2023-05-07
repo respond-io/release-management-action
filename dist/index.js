@@ -28199,7 +28199,7 @@ class ChangeLog {
     }
 
     static async updateChangeLog(content) {
-        console.log('write......')
+        console.log('write......', content);
         await fs.writeFile(CHANGELOG_PATH, content);
         return CHANGELOG_PATH
     }
