@@ -32,6 +32,7 @@ class ChangeLog {
     }
 
     static async updateChangeLog(content) {
+        console.log('write......')
         await fs.writeFile(CHANGELOG_PATH, content);
         return CHANGELOG_PATH
     }
