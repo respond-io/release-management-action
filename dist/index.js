@@ -28922,6 +28922,9 @@ const main = async () => {
         const commitsDiff = gitHelper.filterCommits(compare.commits);
         const changedFilesList = gitHelper.filterFiles(compare.files);
 
+        console.log('t6', commitsDiff)
+        console.log('t7', changedFilesList)
+
         const {
             newVersion,
             currentVersion
