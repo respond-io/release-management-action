@@ -250,6 +250,7 @@ class Git {
     
             return commits;
         } catch (error) {
+            console.log(error)
             // If the branch does not exist, return an empty array or existing commits
             return commits;
         }
