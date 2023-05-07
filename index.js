@@ -55,7 +55,7 @@ const main = async () => {
 
             //console.log('t3.2', allCommits.length)
 
-            console.log('t4', previousCommits)
+            //console.log('t4', previousCommits)
 
             // If there are no commits, exit
             if (previousCommits.length === 0) {
@@ -86,9 +86,10 @@ const main = async () => {
         });
         
 
-        console.log('compare length', compare.data.commits.length);
-        console.log('compare length', compare.data.commits.length[0]);
-        console.log('compare last', compare.data.files[compare.data.commits.length - 1]);
+        console.log('compare length - 1', compare.data.commits.length);
+        console.log('compare length - 2', Object.keys(compare.data));
+        console.log('compare length - 3', compare.data.files.length);
+        //console.log('compare last', compare.data.files[compare.data.commits.length - 1]);
 
         process.exit(0);
 
