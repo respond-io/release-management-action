@@ -28475,14 +28475,14 @@ class Git {
         return response.data.filter((item) => item.type === "dir");
     };
 
-    async listAllCommits(octokit, owner, repo, branch, maxCommitCount = -1, commits = []) {
+    async listAllCommits(octokit, owner, repo, branch, index = 1,maxCommitCount = -1, commits = []) {
         try {
             const { data } = await octokit.rest.repos.listCommits({
                 owner,
                 repo,
                 sha: branch,
                 per_page: 100,
-                page: 1,
+                page: index,
             });
     
             commits = commits.concat(data);
@@ -28494,7 +28494,7 @@ class Git {
     
             // If the response contains 100 commits, there might be more commits
             if (data.length === 100 && commits.length < maxCommitCount) {
-                return this.listAllCommits(octokit, owner, repo, branch, maxCommitCount, commits);
+                return this.listAllCommits(octokit, owner, repo, branch, index + 1, maxCommitCount, commits);
             }
     
             return commits;
