@@ -51,7 +51,7 @@ const main = async () => {
             //     per_page: 100
             // });
 
-            const previousCommits = await gitHelper.listAllCommits(octokit, owner, repo, branch);
+            const previousCommits = await gitHelper.listAllCommits(octokit, owner, repo, branch, 250);
 
             //console.log('t3.2', allCommits.length)
 
