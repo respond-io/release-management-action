@@ -28859,6 +28859,7 @@ const main = async () => {
         });
         
 
+        console.log('compare length - 0', compare.data.total_commits);
         console.log('compare length - 1', compare.data.commits.length);
         console.log('compare length - 2', Object.keys(compare.data));
         console.log('compare length - 3', compare.data.files.length);
