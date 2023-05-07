@@ -151,8 +151,10 @@ const main = async () => {
 
         const ROOT_LEVEL_PACKAGE_FILE_PATH = 'package.json';
         const rootPackageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, ROOT_LEVEL_PACKAGE_FILE_PATH, newVersion);
-        await PackageFile.updatePackageFile(rootPackageFileContent, ROOT_LEVEL_PACKAGE_FILE_PATH);
+        if (rootPackageFileContent !== null) {
+            await PackageFile.updatePackageFile(rootPackageFileContent, ROOT_LEVEL_PACKAGE_FILE_PATH);
         updatedFiles.push(ROOT_LEVEL_PACKAGE_FILE_PATH);
+        }
 
         console.log('Called...>>>', updatedFiles)
 
