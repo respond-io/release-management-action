@@ -154,6 +154,8 @@ const main = async () => {
         await PackageFile.updatePackageFile(rootPackageFileContent, ROOT_LEVEL_PACKAGE_FILE_PATH);
         updatedFiles.push(ROOT_LEVEL_PACKAGE_FILE_PATH);
 
+        console.log('Called...>>>', updatedFiles)
+
         for (const { type, subProjectRoot } of changedFilesList) {
             if (type === 'Lambda' || type === 'ECS') {
                 const packageFilePath = `${subProjectRoot}/package.json`;
