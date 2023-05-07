@@ -104,9 +104,10 @@ const main = async () => {
         );
 
         console.log('compare length - 0', compare.data.total_commits);
-        console.log('compare length - 0.2', compare2.data.total_commits);
+        console.log('compare length - 0.2', compare2.total_commits);
         console.log('compare length - 1', compare.data.commits.length);
-        console.log('compare length - 1.2', compare2.data.commits.length);
+        console.log('compare length - 1.2', compare2.commits.length);
+        console.log('compare length - 1.2 - files', compare2.files.length);
         console.log('compare length - 2', Object.keys(compare.data));
         console.log('compare length - 3', compare.data.files.length);
         //console.log('compare last', compare.data.files[compare.data.commits.length - 1]);
