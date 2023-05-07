@@ -87,13 +87,21 @@ const main = async () => {
         });
         
 
-        const compare2 = await octokit.rest.repos.compareCommits({
+        // const compare2 = await octokit.rest.repos.compareCommits({
+        //     owner,
+        //     repo,
+        //     base: baseHash,
+        //     head: branch,
+        //     page: 2
+        // });
+
+        const compare2 = await gitHelper.compareCommits(
+            octokit,
             owner,
             repo,
-            base: baseHash,
-            head: branch,
-            page: 2
-        });
+            baseHash,
+            branch,
+        );
 
         console.log('compare length - 0', compare.data.total_commits);
         console.log('compare length - 0.2', compare2.data.total_commits);

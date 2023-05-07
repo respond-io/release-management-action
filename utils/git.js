@@ -226,7 +226,7 @@ class Git {
         return response.data.filter((item) => item.type === "dir");
     };
 
-    async listAllCommits(octokit, owner, repo, branch, index = 1, maxCommitCount, commits = []) {
+    async listAllCommits(octokit, owner, repo, branch, maxCommitCount, index = 1, commits = []) {
         const PAGE_SIZE = 100;
 
         try {
@@ -247,7 +247,7 @@ class Git {
 
             // If the response contains 100 commits, there might be more commits
             if (data.length === PAGE_SIZE) {
-                return this.listAllCommits(octokit, owner, repo, branch, index + 1, maxCommitCount, commits);
+                return this.listAllCommits(octokit, owner, repo, branch, maxCommitCount, index + 1, commits);
             }
 
             return commits;
@@ -258,15 +258,7 @@ class Git {
         }
     }
 
-    async getInitialCommit(octokit, owner, repo, branch) {
-        const commits = await this.listAllCommits(octokit, owner, repo, branch);
-        // If there are commits, return the last commit as the initial commit
-        if (commits.length > 0) return commits[commits.length - 1];
-        // If there are no commits, return null
-        return null;
-    }
-
-    async compareCommits(octokit, owner, repo, base, head, index = 1, maxCommitCount, compareCommits = { commits: [], files: [], total_commits: 0 }) {
+    async compareCommits(octokit, owner, repo, base, head, maxCommitCount, index = 1, compareCommits = { commits: [], files: [], total_commits: 0 }) {
         const PAGE_SIZE = 250;
 
         try {
@@ -290,7 +282,7 @@ class Git {
 
             // If the response contains 100 commits, there might be more commits
             if (commits.length === PAGE_SIZE) {
-                return this.compareCommits(octokit, owner, repo, base, head, index + 1, maxCommitCount, compareCommits);
+                return this.compareCommits(octokit, owner, repo, base, head, maxCommitCount, index + 1, compareCommits);
             }
 
             return compareCommits;
