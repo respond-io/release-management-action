@@ -7,7 +7,7 @@ class Version {
             repo,
         });
 
-        let latestTag = get(tags, 'data[0].name');
+        let latestTag = get(tags, 'data[0].name') || '';
 
         const branch = github.context.payload.pull_request.head.ref;
         const branchPrefix = branch.split('/')[0];
