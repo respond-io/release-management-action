@@ -51,6 +51,10 @@ const main = async () => {
                 per_page: 100
             });
 
+            const allCommits = await gitHelper.listAllCommits(octokit, owner, repo, branch);
+
+            console.log('t3.2', allCommits.length)
+
             console.log('t4', previousCommits)
 
             // If there are no commits, exit

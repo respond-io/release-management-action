@@ -226,6 +226,35 @@ class Git {
         return response.data.filter((item) => item.type === "dir");
     };
 
+    async listAllCommits(octokit, owner, repo, branch, maxCommitCount = -1, commits = []) {
+        try {
+            const { data } = await octokit.rest.repos.listCommits({
+                owner,
+                repo,
+                sha: branch,
+                per_page: 100,
+                page: 1,
+            });
+    
+            commits = commits.concat(data);
+
+            // If maxCommitCount is set, return the first maxCommitCount commits
+            if (maxCommitCount !== undefined && commits.length >= maxCommitCount) {
+                return commits.slice(0, maxCommitCount);
+            }
+    
+            // If the response contains 100 commits, there might be more commits
+            if (data.length === 100 && commits.length < maxCommitCount) {
+                return this.listAllCommits(octokit, owner, repo, branch, maxCommitCount, commits);
+            }
+    
+            return commits;
+        } catch (error) {
+            // If the branch does not exist, return an empty array or existing commits
+            return commits;
+        }
+    }
+
 }
 
 module.exports = Git;
