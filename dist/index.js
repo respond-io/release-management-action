@@ -28819,6 +28819,9 @@ const main = async () => {
         //const repo = github.event.repository.name;
         //const branch = github.context.payload.pull_request.base.ref;
 
+        console.log('....***...', JSON.stringify(github))
+        console.log('....***...', JSON.stringify(github.context.payload))
+
         const { 
             repository_owner: owner, 
             event: {
