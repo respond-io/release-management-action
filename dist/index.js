@@ -28824,7 +28824,9 @@ const main = async () => {
 
         console.log('....>>>', commitLimit)
         console.log('....>>>@', process.env.GITHUB_BASE_REF)
-        console.log('....>>>@', JSON.stringify(github.context.payload.pull_request))
+        console.log('....>>>@', JSON.stringify(github.context.payload))
+        //console.log('....>>>@', JSON.stringify(github.context.payload.pull_request))
+        console.log('....>>>@', github.context.payload.pull_request.base.ref)
 
         const octokit = new github.getOctokit(token);
 
