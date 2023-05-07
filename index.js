@@ -13,14 +13,17 @@ const main = async () => {
         const owner = core.getInput('owner', { required: true });
         const repo = core.getInput('repo', { required: true });
         const token = core.getInput('token', { required: true });
-        const branch = core.getInput('branch', { required: true });
+        let branch = core.getInput('branch', { required: true });
         let commitLimit = parseInt(core.getInput('commit-limit', { required: false }));
+
+        //if (branch === '') branch = github.context.payload.pull_request.head.ref;
 
         // If commit limit is not a number, set it to 250 as default
         if (isNaN(commitLimit)) commitLimit = 250;
 
         console.log('....>>>', commitLimit)
-        console.log('....>>>', process.env.GITHUB_BASE_REF)
+        console.log('....>>>@', process.env.GITHUB_BASE_REF)
+        console.log('....>>>@', github.context.payload.pull_request.head.ref)
 
         const octokit = new github.getOctokit(token);
 
