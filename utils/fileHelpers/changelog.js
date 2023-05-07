@@ -20,6 +20,8 @@ class ChangeLog {
 
         const template = Handlebars.compile(CHANGELOG_TEMPLATE);
 
+        console.log('....', data);
+
         const newChangeLogContent = template(data);
         const fullChangeLogContent = `
             ${newChangeLogContent}
