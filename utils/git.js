@@ -257,6 +257,14 @@ class Git {
         }
     }
 
+    async getInitialCommit(octokit, owner, repo, branch) {
+        const commits = await this.listAllCommits(octokit, owner, repo, branch);
+        // If there are commits, return the last commit as the initial commit
+        if (commits.length > 0) return commits[commits.length - 1];
+        // If there are no commits, return null
+        return null;
+    }
+
 }
 
 module.exports = Git;

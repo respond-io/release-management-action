@@ -45,15 +45,15 @@ const main = async () => {
         } else {
             console.log('t3.1',owner,repo)
             // If there are no tags, use the oldest commit as the base
-            const { data: previousCommits } = await octokit.rest.repos.listCommits({
-                owner,
-                repo,
-                per_page: 100
-            });
+            // const { data: previousCommits } = await octokit.rest.repos.listCommits({
+            //     owner,
+            //     repo,
+            //     per_page: 100
+            // });
 
-            const allCommits = await gitHelper.listAllCommits(octokit, owner, repo, branch);
+            const previousCommits = await gitHelper.listAllCommits(octokit, owner, repo, branch);
 
-            console.log('t3.2', allCommits.length)
+            //console.log('t3.2', allCommits.length)
 
             console.log('t4', previousCommits)
 
