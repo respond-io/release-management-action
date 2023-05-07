@@ -118,7 +118,8 @@ const main = async () => {
             commitLimit
         );
 
-        console.log('t5.1', JSON.stringify(compare));
+        console.log('t5.1', JSON.stringify(compare.files));
+        console.log('t5.2', JSON.stringify(compare.commits[0]));
 
         const commitsDiff = gitHelper.filterCommits(compare.commits);
         const changedFilesList = gitHelper.filterFiles(compare.files);
