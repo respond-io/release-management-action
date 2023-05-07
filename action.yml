@@ -1,15 +1,12 @@
 name: "Release Management Action"
 description: "Github action for managing the release version and tags based on the release type."
 inputs:
-  owner:
-    description: "The owner of the repository"
-    required: true
-  repo:
-    description: "The name of the repository"
-    required: true
   token:
     description: "The token to use to access the GitHub API"
     required: true
+  "commit-limit":
+    description: "Number of commits use for analyzing to generate next release version, default limit is 250"
+    required: false
 runs:
   using: "node16"
   main: "dist/index.js"

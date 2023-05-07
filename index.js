@@ -9,23 +9,42 @@ const moment = require('moment');
 const main = async () => {
     const gitHelper = new Git();
     try {
-
-        const owner = core.getInput('owner', { required: true });
-        const repo = core.getInput('repo', { required: true });
         const token = core.getInput('token', { required: true });
-        let branch = core.getInput('branch', { required: true });
         let commitLimit = parseInt(core.getInput('commit-limit', { required: false }));
+
+        if (isNaN(commitLimit)) commitLimit = 250;
+
+        //const owner = github.repository_owner;
+        //const repo = github.event.repository.name;
+        //const branch = github.context.payload.pull_request.base.ref;
+
+        const { 
+            repository_owner: owner, 
+            event: {
+                repository: { name: repo }
+            },
+            context: { payload: contextPayload }
+        } = github;
+
+        
 
         //if (branch === '') branch = github.context.payload.pull_request.head.ref;
 
         // If commit limit is not a number, set it to 250 as default
-        if (isNaN(commitLimit)) commitLimit = 250;
+        
 
-        console.log('....>>>', commitLimit)
-        console.log('....>>>@', process.env.GITHUB_BASE_REF)
-        console.log('....>>>@', JSON.stringify(github.context.payload))
-        //console.log('....>>>@', JSON.stringify(github.context.payload.pull_request))
-        console.log('....>>>@', github.context.payload.pull_request.base.ref)
+        // console.log('....>>>', commitLimit)
+        // console.log('....>>>@', process.env.GITHUB_BASE_REF)
+        // console.log('....>>>@', JSON.stringify(github.context.payload))
+        // //console.log('....>>>@', JSON.stringify(github.context.payload.pull_request))
+        // console.log('....>>>@', github.context.payload.pull_request.base.ref)
+
+        if (contextPayload.pull_request === undefined || contextPayload.action !== 'closed' || contextPayload.pull_request.base.ref !== branch || contextPayload.pull_request.merged !== true || contextPayload.pull_request.draft === true) {
+            console.log('ERROR :: This action should only be run on a closed pull request that has been merged');
+            process.exit(1);
+        }
+
+        const branch = contextPayload.pull_request.base.ref;
 
         const octokit = new github.getOctokit(token);
 
