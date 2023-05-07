@@ -28475,7 +28475,7 @@ class Git {
         return response.data.filter((item) => item.type === "dir");
     };
 
-    async listAllCommits(octokit, owner, repo, branch, index = 1,maxCommitCount = -1, commits = []) {
+    async listAllCommits(octokit, owner, repo, branch, index = 1, maxCommitCount, commits = []) {
         try {
             const { data } = await octokit.rest.repos.listCommits({
                 owner,
