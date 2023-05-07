@@ -18,6 +18,7 @@ const main = async () => {
         //const repo = github.event.repository.name;
         //const branch = github.context.payload.pull_request.base.ref;
 
+        console.log('....***...', github.repository_owner)
         console.log('....***...', JSON.stringify(github))
         console.log('....***...', JSON.stringify(github.context.payload))
 
