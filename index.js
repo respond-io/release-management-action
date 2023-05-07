@@ -101,6 +101,7 @@ const main = async () => {
             repo,
             baseHash,
             branch,
+            250
         );
 
         console.log('compare length - 0', compare.data.total_commits);
