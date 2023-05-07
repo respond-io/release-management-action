@@ -28815,9 +28815,9 @@ const main = async () => {
         const repo = core.getInput('repo', { required: true });
         const token = core.getInput('token', { required: true });
         const branch = core.getInput('branch', { required: true });
-        let commitLimit = core.getInput('commit-limit', { required: false });
+        let commitLimit = parseInt(core.getInput('commit-limit', { required: false }));
 
-        if (commitLimit !== '') commitLimit = parseInt(commitLimit);
+        // If commit limit is not a number, set it to 250 as default
         if (isNaN(commitLimit)) commitLimit = 250;
 
         console.log('....>>>', commitLimit)
