@@ -28477,6 +28477,7 @@ class Git {
 
     async listAllCommits(octokit, owner, repo, branch, index = 1, maxCommitCount, commits = []) {
         const PAGE_SIZE = 100;
+
         try {
             const { data } = await octokit.rest.repos.listCommits({
                 owner,
@@ -28485,22 +28486,22 @@ class Git {
                 per_page: PAGE_SIZE,
                 page: index,
             });
-    
+
             commits = commits.concat(data);
 
             // If maxCommitCount is set, return the first maxCommitCount commits
             if (maxCommitCount !== undefined && commits.length >= maxCommitCount) {
                 return commits.slice(0, maxCommitCount);
             }
-    
+
             // If the response contains 100 commits, there might be more commits
             if (data.length === PAGE_SIZE) {
                 return this.listAllCommits(octokit, owner, repo, branch, index + 1, maxCommitCount, commits);
             }
-    
+
             return commits;
         } catch (error) {
-            console.log(error)
+            console.log(error);
             // If the branch does not exist, return an empty array or existing commits
             return commits;
         }
@@ -28512,6 +28513,41 @@ class Git {
         if (commits.length > 0) return commits[commits.length - 1];
         // If there are no commits, return null
         return null;
+    }
+
+    async compareCommits(octokit, owner, repo, base, head, index = 1, maxCommitCount, compareCommits = { commits: [], files: [], total_commits: 0 }) {
+        const PAGE_SIZE = 250;
+
+        try {
+            const { data: { commits, files } } = await octokit.rest.repos.compareCommits({
+                owner,
+                repo,
+                base,
+                head,
+                page: index
+            });
+
+            compareCommits.commits = compareCommits.commits.concat(commits);
+            compareCommits.files = compareCommits.files.concat(files);
+            compareCommits.total_commits = compareCommits.total_commits + commits.length;
+
+            // If maxCommitCount is set, return the first maxCommitCount commits
+            if (maxCommitCount !== undefined && compareCommits.length >= maxCommitCount) {
+                compareCommits.commits = compareCommits.commits.slice(0, maxCommitCount);
+                return compareCommits;
+            }
+
+            // If the response contains 100 commits, there might be more commits
+            if (commits.length === PAGE_SIZE) {
+                return this.compareCommits(octokit, owner, repo, base, head, index + 1, maxCommitCount, compareCommits);
+            }
+
+            return compareCommits;
+        } catch (error) {
+            console.log(error);
+            // If the branch does not exist, return an empty array or existing commits
+            return compareCommits;
+        }
     }
 
 }
