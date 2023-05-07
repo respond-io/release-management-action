@@ -28815,6 +28815,12 @@ const main = async () => {
         const repo = core.getInput('repo', { required: true });
         const token = core.getInput('token', { required: true });
         const branch = core.getInput('branch', { required: true });
+        let commitLimit = core.getInput('commit-limit', { required: false });
+
+        if (commitLimit !== '') commitLimit = parseInt(commitLimit);
+        if (isNaN(commitLimit)) commitLimit = 250;
+
+        console.log('....>>>', commitLimit)
 
         const octokit = new github.getOctokit(token);
 
