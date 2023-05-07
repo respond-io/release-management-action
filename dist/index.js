@@ -28910,24 +28910,7 @@ const main = async () => {
             process.exit(1);
         }
 
-        const compare = await octokit.rest.repos.compareCommits({
-            owner,
-            repo,
-            base: baseHash,
-            head: branch,
-            page: 1
-        });
-        
-
-        // const compare2 = await octokit.rest.repos.compareCommits({
-        //     owner,
-        //     repo,
-        //     base: baseHash,
-        //     head: branch,
-        //     page: 2
-        // });
-
-        const compare2 = await gitHelper.compareCommits(
+        const compare = await gitHelper.compareCommits(
             octokit,
             owner,
             repo,
@@ -28936,19 +28919,8 @@ const main = async () => {
             commitLimit
         );
 
-        console.log('compare length - 0', compare.data.total_commits);
-        console.log('compare length - 0.2', compare2.total_commits);
-        console.log('compare length - 1', compare.data.commits.length);
-        console.log('compare length - 1.2', compare2.commits.length);
-        console.log('compare length - 1.2 - files', compare2.files.length);
-        console.log('compare length - 2', Object.keys(compare.data));
-        console.log('compare length - 3', compare.data.files.length);
-        //console.log('compare last', compare.data.files[compare.data.commits.length - 1]);
-
-        process.exit(0);
-
-        const commitsDiff = gitHelper.filterCommits(compare.data.commits);
-        const changedFilesList = gitHelper.filterFiles(compare.data.files);
+        const commitsDiff = gitHelper.filterCommits(compare.commits);
+        const changedFilesList = gitHelper.filterFiles(compare.files);
 
         const {
             newVersion,
