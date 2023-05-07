@@ -28819,9 +28819,9 @@ const main = async () => {
         //const repo = github.event.repository.name;
         //const branch = github.context.payload.pull_request.base.ref;
 
-        console.log('....***...', github.repository_owner)
-        console.log('....***...', JSON.stringify(github))
-        console.log('....***...', JSON.stringify(github.context.payload))
+        //console.log('....***...', github.repository_owner)
+        //console.log('....***...', JSON.stringify(github))
+        //console.log('....***...', JSON.stringify(github.context.payload))
 
         const { 
             context: { payload: contextPayload, eventName }
@@ -28834,13 +28834,13 @@ const main = async () => {
         // If commit limit is not a number, set it to 250 as default
         
 
-        // console.log('....>>>', commitLimit)
+        console.log('....>>>', eventName)
         // console.log('....>>>@', process.env.GITHUB_BASE_REF)
         // console.log('....>>>@', JSON.stringify(github.context.payload))
         // //console.log('....>>>@', JSON.stringify(github.context.payload.pull_request))
         // console.log('....>>>@', github.context.payload.pull_request.base.ref)
 
-        if (eventName == 'pull_request' || contextPayload.pull_request === undefined || contextPayload.action !== 'closed' || contextPayload.pull_request.base.ref !== branch || contextPayload.pull_request.merged !== true || contextPayload.pull_request.draft === true) {
+        if (eventName === 'pull_request' || contextPayload.pull_request === undefined || contextPayload.action !== 'closed' || contextPayload.pull_request.base.ref !== branch || contextPayload.pull_request.merged !== true || contextPayload.pull_request.draft === true) {
             console.log('ERROR :: This action should only be run on a closed pull request that has been merged');
             process.exit(1);
         }
