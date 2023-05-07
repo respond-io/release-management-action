@@ -194,17 +194,14 @@ class Git {
                     // For files in /service/lambda level
                     fileList.push({ entity: filename, type: 'Other', subProjectRoot: null, visible: true });
                 }
-                //fileList.push({ entity: capitalize(filename.split('/')[2]), type: 'Lambda' });
             } else if (filename.startsWith('service/')) {
                 const serviceName = fileNameSplits[1];
                 entity = capitalize(serviceName);
                 type = 'ECS';
                 subProjectRoot = `service/${serviceName}`;
-                //fileList.push({ entity: capitalize(filename.split('/')[1]), type: 'ECS' });
             } else if (filename.startsWith('infra/')) {
                 entity = filename;
                 type = 'Infrastructure';
-                //fileList.push({ entity: filename, type: 'Infrastructure' });
             }
             const entityHash = Crypto.generateHash(`${subProjectRoot}-${type}`);
             if (!fileSetHashMap.has(entityHash)) {

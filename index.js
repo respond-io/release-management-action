@@ -12,32 +12,14 @@ const main = async () => {
         const token = core.getInput('token', { required: true });
         let commitLimit = parseInt(core.getInput('commit-limit', { required: false }));
 
+        // If commit limit is not a number, set it to 250 as default
         if (isNaN(commitLimit)) commitLimit = 250;
-
-        //const owner = github.repository_owner;
-        //const repo = github.event.repository.name;
-        //const branch = github.context.payload.pull_request.base.ref;
-
-        //console.log('....***...', github.repository_owner)
-        //console.log('....***...', JSON.stringify(github))
-        //console.log('....***...', JSON.stringify(github.context.payload))
 
         const { 
             context: { payload: contextPayload, eventName }
         } = github;
 
         const [ owner, repo ] = process.env.GITHUB_REPOSITORY.split('/');
-
-        //if (branch === '') branch = github.context.payload.pull_request.head.ref;
-
-        // If commit limit is not a number, set it to 250 as default
-        
-
-        console.log('....>>>', eventName)
-        // console.log('....>>>@', process.env.GITHUB_BASE_REF)
-        // console.log('....>>>@', JSON.stringify(github.context.payload))
-        // //console.log('....>>>@', JSON.stringify(github.context.payload.pull_request))
-        // console.log('....>>>@', github.context.payload.pull_request.base.ref)
 
         if (eventName !== 'pull_request' || contextPayload.pull_request === undefined || contextPayload.action !== 'closed' || contextPayload.pull_request.merged !== true || contextPayload.pull_request.draft === true) {
             console.log('ERROR :: This action should only be run on a closed pull request that has been merged');
@@ -50,8 +32,6 @@ const main = async () => {
 
         // Files need to commit after version update
         const updatedFiles = [];
-
-        console.log('t1', branch)
 
         let tagsList;
         
@@ -67,26 +47,11 @@ const main = async () => {
 
         let baseHash = null;
 
-        console.log('t2', branch)
-
         // If there are tags, use the latest tag as the base
         if (tagsList.length > 0) {
             baseHash = tagsList[0].commit.sha;
-            console.log('t3')
         } else {
-            console.log('t3.1',owner,repo)
-            // If there are no tags, use the oldest commit as the base
-            // const { data: previousCommits } = await octokit.rest.repos.listCommits({
-            //     owner,
-            //     repo,
-            //     per_page: 100
-            // });
-
             const previousCommits = await gitHelper.listAllCommits(octokit, owner, repo, branch, commitLimit);
-
-            //console.log('t3.2', allCommits.length)
-
-            //console.log('t4', previousCommits)
 
             // If there are no commits, exit
             if (previousCommits.length === 0) {
@@ -94,14 +59,10 @@ const main = async () => {
                 process.exit(1);
             }
 
-            console.log('t4.1', previousCommits.length)
-
             // Max returns 100 commits, assume that the oldest commit is in the last index
             const oldestCommit = previousCommits[previousCommits.length - 1];
             baseHash = oldestCommit.sha;
         }
-
-        console.log('t5', baseHash)
 
         // If there are no tags and no commits, exit
         if (baseHash === null) {
@@ -118,17 +79,8 @@ const main = async () => {
             commitLimit
         );
 
-        // console.log('t5.1', JSON.stringify(compare.files));
-        // console.log('t5.2', JSON.stringify(compare.commits[0]));
-
-        console.log('t5.1', compare.commits.length);
-
         const commitsDiff = gitHelper.filterCommits(compare.commits);
-        console.log('t5.2', compare.files.length);
         const changedFilesList = gitHelper.filterFiles(compare.files);
-
-        console.log('t6', commitsDiff)
-        console.log('t7', changedFilesList)
 
         const {
             newVersion,
@@ -153,10 +105,8 @@ const main = async () => {
         const rootPackageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, ROOT_LEVEL_PACKAGE_FILE_PATH, newVersion);
         if (rootPackageFileContent !== null) {
             await PackageFile.updatePackageFile(rootPackageFileContent, ROOT_LEVEL_PACKAGE_FILE_PATH);
-        updatedFiles.push(ROOT_LEVEL_PACKAGE_FILE_PATH);
+            updatedFiles.push(ROOT_LEVEL_PACKAGE_FILE_PATH);
         }
-
-        console.log('Called...>>>', updatedFiles)
 
         for (const { type, subProjectRoot } of changedFilesList) {
             if (type === 'Lambda' || type === 'ECS') {

@@ -20,8 +20,6 @@ class ChangeLog {
 
         const template = Handlebars.compile(CHANGELOG_TEMPLATE);
 
-        console.log('....', data);
-
         const newChangeLogContent = template(data);
         const fullChangeLogContent = `
             ${newChangeLogContent}
@@ -32,7 +30,6 @@ class ChangeLog {
     }
 
     static async updateChangeLog(content) {
-        console.log('write......', content);
         await fs.writeFile(CHANGELOG_PATH, content);
         return CHANGELOG_PATH
     }
