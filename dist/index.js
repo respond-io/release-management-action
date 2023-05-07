@@ -28919,10 +28919,13 @@ const main = async () => {
             commitLimit
         );
 
-        console.log('t5.1', JSON.stringify(compare.files));
-        console.log('t5.2', JSON.stringify(compare.commits[0]));
+        // console.log('t5.1', JSON.stringify(compare.files));
+        // console.log('t5.2', JSON.stringify(compare.commits[0]));
+
+        console.log('t5.1', compare.commits.length);
 
         const commitsDiff = gitHelper.filterCommits(compare.commits);
+        console.log('t5.2', compare.files.length);
         const changedFilesList = gitHelper.filterFiles(compare.files);
 
         console.log('t6', commitsDiff)
