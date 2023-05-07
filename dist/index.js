@@ -28476,12 +28476,13 @@ class Git {
     };
 
     async listAllCommits(octokit, owner, repo, branch, index = 1, maxCommitCount, commits = []) {
+        const PAGE_SIZE = 100;
         try {
             const { data } = await octokit.rest.repos.listCommits({
                 owner,
                 repo,
                 sha: branch,
-                per_page: 100,
+                per_page: PAGE_SIZE,
                 page: index,
             });
     
@@ -28493,7 +28494,7 @@ class Git {
             }
     
             // If the response contains 100 commits, there might be more commits
-            if (data.length === 100 && commits.length < maxCommitCount) {
+            if (data.length === PAGE_SIZE) {
                 return this.listAllCommits(octokit, owner, repo, branch, index + 1, maxCommitCount, commits);
             }
     
