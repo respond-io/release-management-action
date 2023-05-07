@@ -28421,6 +28421,7 @@ class Git {
                 type = 'Lambda';
                 subProjectRoot = `service/lambda/${lambdaName}`
                 const folderType = fileNameSplits[3];
+                if (folderType === undefined) console.log('>>>>>>>>>>>>>>>>>', filename);
                 const folderTypeName = folderType.trim().toLowerCase();
 
                 if (folderTypeName === 'functions' || folderTypeName === 'layers') {
