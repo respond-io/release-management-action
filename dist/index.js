@@ -28807,7 +28807,7 @@ const PackageFile = __nccwpck_require__(9473);
 const Git = __nccwpck_require__(8050);
 const moment = __nccwpck_require__(9623);
 
-const main = async (eventc) => {
+const main = async () => {
     const gitHelper = new Git();
     try {
 
@@ -28821,7 +28821,7 @@ const main = async (eventc) => {
         if (isNaN(commitLimit)) commitLimit = 250;
 
         console.log('....>>>', commitLimit)
-        console.log('....>>>', JSON.stringify(eventc))
+        console.log('....>>>', process.env.GITHUB_BASE_REF)
 
         const octokit = new github.getOctokit(token);
 

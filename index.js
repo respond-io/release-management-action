@@ -6,7 +6,7 @@ const PackageFile = require('./utils/fileHelpers/packageFile');
 const Git = require('./utils/git');
 const moment = require('moment');
 
-const main = async (eventc) => {
+const main = async () => {
     const gitHelper = new Git();
     try {
 
@@ -20,7 +20,7 @@ const main = async (eventc) => {
         if (isNaN(commitLimit)) commitLimit = 250;
 
         console.log('....>>>', commitLimit)
-        console.log('....>>>', JSON.stringify(eventc))
+        console.log('....>>>', process.env.GITHUB_BASE_REF)
 
         const octokit = new github.getOctokit(token);
 
