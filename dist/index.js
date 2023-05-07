@@ -28821,6 +28821,7 @@ const main = async () => {
         if (isNaN(commitLimit)) commitLimit = 250;
 
         console.log('....>>>', commitLimit)
+        console.log('....>>>', JSON.stringify(github.event.pull_request))
 
         const octokit = new github.getOctokit(token);
 
@@ -28858,7 +28859,7 @@ const main = async () => {
             //     per_page: 100
             // });
 
-            const previousCommits = await gitHelper.listAllCommits(octokit, owner, repo, branch, 250);
+            const previousCommits = await gitHelper.listAllCommits(octokit, owner, repo, branch, commitLimit);
 
             //console.log('t3.2', allCommits.length)
 
@@ -28908,7 +28909,7 @@ const main = async () => {
             repo,
             baseHash,
             branch,
-            250
+            commitLimit
         );
 
         console.log('compare length - 0', compare.data.total_commits);
