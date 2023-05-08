@@ -1,7 +1,7 @@
 const get = require('lodash.get');
 
 class Version {
-    static async getVersions(octokit, owner, repo, github, isMajorRelease = false, tagPrefix = 'v', tagSuffix = '') {
+    static async getVersions(octokit, owner, repo, github, tagPrefix = 'v', tagSuffix = '', isMajorRelease = false) {
         const tags = await octokit.rest.repos.listTags({
             owner,
             repo,

@@ -7,6 +7,15 @@ inputs:
   "commit-limit":
     description: "Number of commits use for analyzing to generate next release version, default limit is 250"
     required: false
+  timezone:
+    description: "Timezone to use for generating release version, default timezone is Malaysia Time(+08:00). Ex - +04:00 (New york Time)"
+    required: false
+  "release-prefix":
+    description: "Release prefix to use for generating release version, default prefix is v"
+    required: false
+  "release-suffix":
+    description: "Release suffix to use for generating release version, default suffix is empty"
+    required: false
 runs:
   using: "node16"
   main: "dist/index.js"

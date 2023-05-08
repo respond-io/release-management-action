@@ -11,6 +11,17 @@ const main = async () => {
     try {
         const token = core.getInput('token', { required: true });
         let commitLimit = parseInt(core.getInput('commit-limit', { required: false }));
+        let timezone = parseInt(core.getInput('timezone', { required: false }));
+        let releasePrefix = parseInt(core.getInput('release-prefix', { required: false }));
+        let releaseSuffix = parseInt(core.getInput('release-suffix', { required: false }));
+
+        if (timezone === '') {
+            timezone = '+0800';
+        } else {
+            timezone = timezone.replace(/[^0-9\+]/g, '');
+        }
+
+        if (releasePrefix === '') releasePrefix = 'v';
 
         // If commit limit is not a number, set it to 250 as default
         if (isNaN(commitLimit)) commitLimit = 250;
@@ -18,8 +29,6 @@ const main = async () => {
         const { 
             context: { payload: contextPayload, eventName }
         } = github;
-
-        console.log('....', JSON.stringify(contextPayload));
 
         const [ owner, repo ] = process.env.GITHUB_REPOSITORY.split('/');
 
@@ -89,14 +98,14 @@ const main = async () => {
         const {
             newVersion,
             currentVersion
-        } = await Version.getVersions(octokit, owner, repo, github);
+        } = await Version.getVersions(octokit, owner, repo, github, releasePrefix, releaseSuffix);
 
         const changelogDataSet = {
             version: newVersion,
             previous_version: currentVersion,
             org: owner,
             repo,
-            date: moment().utcOffset('+0800').format('YYYY-MM-DD'),
+            date: moment().utcOffset(timezone).format('YYYY-MM-DD'),
             ...commitsDiff,
             affected_areas: changedFilesList,
             commitLimitReached
