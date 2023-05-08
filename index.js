@@ -11,9 +11,9 @@ const main = async () => {
     try {
         const token = core.getInput('token', { required: true });
         let commitLimit = parseInt(core.getInput('commit-limit', { required: false }));
-        let timezone = parseInt(core.getInput('timezone', { required: false }));
-        let releasePrefix = parseInt(core.getInput('release-prefix', { required: false }));
-        let releaseSuffix = parseInt(core.getInput('release-suffix', { required: false }));
+        let timezone = core.getInput('timezone', { required: false });
+        let releasePrefix = core.getInput('release-prefix', { required: false });
+        let releaseSuffix = core.getInput('release-suffix', { required: false });
 
         if (timezone === '') {
             timezone = '+0800';
