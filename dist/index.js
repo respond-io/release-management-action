@@ -28831,8 +28831,6 @@ const main = async () => {
             timezone = timezone.replace(/[^0-9\+]/g, '');
         }
 
-        if (releasePrefix === '') releasePrefix = 'v';
-
         // If commit limit is not a number, set it to 250 as default
         if (isNaN(commitLimit)) commitLimit = 250;
 

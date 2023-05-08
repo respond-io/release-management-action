@@ -13,6 +13,8 @@ name: Tag and Release
 on:
   pull_request:
     types: [ closed ]
+    branches:
+      - master
 
 jobs:
   release:
@@ -21,11 +23,10 @@ jobs:
     name: Tag and Release
     steps:
       - name: Release
-        uses: respond-io/release-management-action@main
+        uses: respond-io/release-management-action@v1.0.1
         with:
-          owner: ${{ github.repository_owner }}
-          repo: ${{ github.event.repository.name }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          release-prefix: 'v'
 ```
 
 For functioning this this action it requires, Github access token with following permissions.
