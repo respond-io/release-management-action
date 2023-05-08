@@ -19,6 +19,8 @@ const main = async () => {
             context: { payload: contextPayload, eventName }
         } = github;
 
+        console.log('....', JSON.stringify(contextPayload));
+
         const [ owner, repo ] = process.env.GITHUB_REPOSITORY.split('/');
 
         if (eventName !== 'pull_request' || contextPayload.pull_request === undefined || contextPayload.action !== 'closed' || contextPayload.pull_request.merged !== true || contextPayload.pull_request.draft === true) {

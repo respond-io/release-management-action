@@ -39,6 +39,6 @@ module.exports = `
 {{#if commitLimitReached}}
 <hr>
 
-> **Note:** This release reaches to the commit limit (Default Limit - 250), so above commit and files list were automatically capped.
+> **Note:** This release reaches to the commit limit (Default Limit - 250), so above commits and files list were automatically capped.
 {{/if}}
 `;
