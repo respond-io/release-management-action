@@ -28139,7 +28139,14 @@ module.exports = `
 {{/if}}
 {{/each}}
 {{/if}}
+
+{{#if commitLimitReached}}
+<hr>
+
+> **Note:** This release reaches to the commit limit (Default Limit - 250), so above commit and files list were automatically capped.
+{{/if}}
 `;
+
 
 /***/ }),
 
@@ -28882,6 +28889,8 @@ const main = async () => {
             commitLimit
         );
 
+        const commitLimitReached = compare.commits.length === commitLimit - 1;
+
         const commitsDiff = gitHelper.filterCommits(compare.commits);
         const changedFilesList = gitHelper.filterFiles(compare.files);
 
@@ -28897,7 +28906,8 @@ const main = async () => {
             repo,
             date: moment().utcOffset('+0800').format('YYYY-MM-DD'),
             ...commitsDiff,
-            affected_areas: changedFilesList
+            affected_areas: changedFilesList,
+            commitLimitReached
         };
 
         const { newChangeLogContent, fullChangeLogContent } = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);
