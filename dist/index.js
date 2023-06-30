@@ -32273,7 +32273,6 @@ class Config {
         try {
             const configurationContent = await gitHelper.fetchFileContent(octokit, org, repo, configPath, commitSha);
             const configObject = yaml.load(configurationContent);
-            console.log('.........', JSON.stringify(configObject, null, 2));
             global.ActionConfigs = configObject;
             return configObject;
         } catch (error) {
@@ -32558,6 +32557,7 @@ class Git {
     };
 
     filterFiles(files) {
+        console.log('.... Inside: filterFiles .....', JSON.stringify(global.ActionConfigs, null, 2));
         const fileSetHashMap = new Set();
         const fileList = [];
 

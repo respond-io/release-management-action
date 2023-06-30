@@ -165,6 +165,7 @@ class Git {
     };
 
     filterFiles(files) {
+        console.log('.... Inside: filterFiles .....', JSON.stringify(global.ActionConfigs, null, 2));
         const fileSetHashMap = new Set();
         const fileList = [];
 

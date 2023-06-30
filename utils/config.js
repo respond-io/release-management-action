@@ -7,7 +7,6 @@ class Config {
         try {
             const configurationContent = await gitHelper.fetchFileContent(octokit, org, repo, configPath, commitSha);
             const configObject = yaml.load(configurationContent);
-            console.log('.........', JSON.stringify(configObject, null, 2));
             global.ActionConfigs = configObject;
             return configObject;
         } catch (error) {
