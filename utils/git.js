@@ -177,6 +177,8 @@ class Git {
         const fileSetHashMap = new Set();
         const fileList = [];
 
+        let visible = true;
+
         files.forEach((file) => {
             const { filename } = file;
             let entity = filename;
