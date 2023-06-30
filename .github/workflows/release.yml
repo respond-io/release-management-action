@@ -13,7 +13,7 @@ jobs:
     name: Tag and Release
     steps:
       - name: Release
-        uses: respond-io/release-management-action@feat/integrate-config-files
+        uses: respond-io/release-management-action@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           config-path: .github/config/release-management.yaml
