@@ -39,6 +39,7 @@ class Version {
         }
 
         return {
+            newVersionNumber: newTag,
             newVersion: `${tagPrefix}${newTag}${tagSuffix}`,
             currentVersion: latestTag,
         };
