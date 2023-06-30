@@ -32561,7 +32561,7 @@ class Git {
 
         let basePaths = [];
         Object.keys(global.ActionConfigs.paths).forEach((key) => {
-            basePaths = configArray.concat(global.ActionConfigs.paths[key].map((path) => { return { ...path, type: key } }));
+            basePaths = basePaths.concat(global.ActionConfigs.paths[key].map((path) => { return { ...path, type: key } }));
         });
         
         console.log('.... Inside: basePaths .....', JSON.stringify(basePaths, null, 2));
