@@ -1,5 +1,5 @@
-import * as yaml from 'js-yaml';
-import Git from './git';
+const yaml = require('js-yaml');
+const Git = require('./git');
 
 class Config {
     static async loadConfig(octokit, org, repo, configPath, commitSha) {
