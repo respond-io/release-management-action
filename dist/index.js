@@ -32557,14 +32557,10 @@ class Git {
     };
 
     filterFiles(files) {
-        console.log('.... Inside: filterFiles .....', JSON.stringify(global.ActionConfigs, null, 2));
-
         let basePaths = [];
         Object.keys(global.ActionConfigs.paths).forEach((key) => {
             basePaths = basePaths.concat(global.ActionConfigs.paths[key].map((path) => { return { ...path, type: key } }));
         });
-        
-        console.log('.... Inside: basePaths .....', JSON.stringify(basePaths, null, 2));
 
         const fileSetHashMap = new Set();
         const fileList = [];
@@ -32620,8 +32616,6 @@ class Git {
                 fileList.push({ entity, type, subProjectRoot, visible });
             }
         });
-
-        console.log('.... Inside: fileList .....', JSON.stringify(fileList, null, 2));
 
         return fileList.sort();
     };
