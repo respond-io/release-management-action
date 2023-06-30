@@ -1,5 +1,21 @@
 
             
+## [v1.1.1](https://github.com/respond-io/release-management-action/compare/v1.1.0...v1.1.1) (2023-06-30)
+
+
+### Bug Fixes
+
+* Fix service name missing issue in change log table (#3) ([c01c552](https://github.com/respond-io/release-management-action/commit/c01c5523dfdafd70bf5ed3622b3cb933f80fa714))
+
+
+### Affected Areas
+| **Service**        | **Type**                                         |
+|--------------------|---------------------------------------------------------|
+| `dist/index.js` | Other |
+
+
+            
+            
 ## [v1.1.0](https://github.com/respond-io/release-management-action/compare/v1.0.1...v1.1.0) (2023-06-30)
 
 ### Features
@@ -39,4 +55,5 @@
 
 
             
+        
         
