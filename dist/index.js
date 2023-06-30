@@ -21628,8 +21628,11 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
 
 		if (headers['transfer-encoding'] === 'chunked' && !headers['content-length']) {
 			response.once('close', function (hadError) {
+				// tests for socket presence, as in some situations the
+				// the 'socket' event is not triggered for the request
+				// (happens in deno), avoids `TypeError`
 				// if a data listener is still present we didn't end cleanly
-				const hasDataListener = socket.listenerCount('data') > 0;
+				const hasDataListener = socket && socket.listenerCount('data') > 0;
 
 				if (hasDataListener && !hadError) {
 					const err = new Error('Premature close');
@@ -28150,6 +28153,39 @@ module.exports = `
 
 /***/ }),
 
+/***/ 2180:
+/***/ ((module, __webpack_exports__, __nccwpck_require__) => {
+
+"use strict";
+__nccwpck_require__.r(__webpack_exports__);
+/* harmony import */ var js_yaml__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(6350);
+/* harmony import */ var js_yaml__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(js_yaml__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _git__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(8050);
+/* harmony import */ var _git__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_git__WEBPACK_IMPORTED_MODULE_1__);
+/* module decorator */ module = __nccwpck_require__.hmd(module);
+
+
+
+class Config {
+    static async loadConfig(octokit, org, repo, configPath, commitSha) {
+        const gitHelper = new (_git__WEBPACK_IMPORTED_MODULE_1___default())();
+        try {
+            const configurationContent = gitHelper.fetchFileContent(octokit, org, repo, configPath, commitSha);
+            const configObject = js_yaml__WEBPACK_IMPORTED_MODULE_0__.load(configurationContent);
+            console.log('.........', JSON.stringify(configObject, null, 2));
+            global.ActionConfigs = configObject;
+            return configObject;
+        } catch (error) {
+            console.log('ERROR :: Unable to load configuration file');
+            process.exit(1);
+        }
+    }
+}
+
+module.exports = Config;
+
+/***/ }),
+
 /***/ 5275:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -28365,6 +28401,17 @@ class Git {
             ref: `heads/${branch}`,
             sha: commitSha,
         })
+    }
+
+    async fetchFileContent(octokit, org, repo, repoPath, commitSha) {
+        const response = await octokit.rest.repos.getContent({
+            owner: org,
+            repo,
+            path: repoPath,
+            ref: commitSha
+        });
+
+        return Buffer.from(response.data.content, response.data.encoding).toString();
     }
 
     filterCommits(commits) {
@@ -28601,6 +28648,7 @@ class Version {
         }
 
         return {
+            newVersionNumber: newTag,
             newVersion: `${tagPrefix}${newTag}${tagSuffix}`,
             currentVersion: latestTag,
         };
@@ -28615,6 +28663,14 @@ module.exports = Version;
 /***/ ((module) => {
 
 module.exports = eval("require")("encoding");
+
+
+/***/ }),
+
+/***/ 6350:
+/***/ ((module) => {
+
+module.exports = eval("require")("js-yaml");
 
 
 /***/ }),
@@ -28791,6 +28847,61 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__nccwpck_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__nccwpck_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/harmony module decorator */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.hmd = (module) => {
+/******/ 			module = Object.create(module);
+/******/ 			if (!module.children) module.children = [];
+/******/ 			Object.defineProperty(module, 'exports', {
+/******/ 				enumerable: true,
+/******/ 				set: () => {
+/******/ 					throw new Error('ES Modules may not assign module.exports or exports.*, Use ESM export syntax, instead: ' + module.id);
+/******/ 				}
+/******/ 			});
+/******/ 			return module;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/node module decorator */
 /******/ 	(() => {
 /******/ 		__nccwpck_require__.nmd = (module) => {
@@ -28814,12 +28925,15 @@ const Version = __nccwpck_require__(9591);
 const ChangeLog = __nccwpck_require__(5982);
 const PackageFile = __nccwpck_require__(9473);
 const Git = __nccwpck_require__(8050);
+const Config = __nccwpck_require__(2180);
 const moment = __nccwpck_require__(9623);
 
 const main = async () => {
     const gitHelper = new Git();
+
     try {
         const token = core.getInput('token', { required: true });
+        const configPath = core.getInput('config-path', { required: true });
         let commitLimit = parseInt(core.getInput('commit-limit', { required: false }));
         let timezone = core.getInput('timezone', { required: false });
         let releasePrefix = core.getInput('release-prefix', { required: false });
@@ -28848,6 +28962,9 @@ const main = async () => {
         const branch = contextPayload.pull_request.base.ref;
 
         const octokit = new github.getOctokit(token);
+
+        // Load configuration file
+        await Config.loadConfig(octokit, owner, repo, configPath, contextPayload.pull_request.head.sha);
 
         // Files need to commit after version update
         const updatedFiles = [];
@@ -28904,6 +29021,7 @@ const main = async () => {
         const changedFilesList = gitHelper.filterFiles(compare.files);
 
         const {
+            newVersionNumber,
             newVersion,
             currentVersion
         } = await Version.getVersions(octokit, owner, repo, github, releasePrefix, releaseSuffix);
@@ -28924,7 +29042,7 @@ const main = async () => {
         updatedFiles.push(changeLogPath);
 
         const ROOT_LEVEL_PACKAGE_FILE_PATH = 'package.json';
-        const rootPackageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, ROOT_LEVEL_PACKAGE_FILE_PATH, newVersion);
+        const rootPackageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, ROOT_LEVEL_PACKAGE_FILE_PATH, newVersionNumber);
         if (rootPackageFileContent !== null) {
             await PackageFile.updatePackageFile(rootPackageFileContent, ROOT_LEVEL_PACKAGE_FILE_PATH);
             updatedFiles.push(ROOT_LEVEL_PACKAGE_FILE_PATH);
@@ -28933,7 +29051,7 @@ const main = async () => {
         for (const { type, subProjectRoot } of changedFilesList) {
             if (type === 'Lambda' || type === 'ECS') {
                 const packageFilePath = `${subProjectRoot}/package.json`;
-                const packageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, packageFilePath, newVersion);
+                const packageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, packageFilePath, newVersionNumber);
                 if (packageFileContent !== null) {
                     await PackageFile.updatePackageFile(packageFileContent, packageFilePath);
                     updatedFiles.push(packageFilePath);
@@ -28963,7 +29081,7 @@ const main = async () => {
             owner,
             repo,
             tag_name: newVersion,
-            name: `Release ${newVersion}`,
+            name: newVersion,
             body: newChangeLogContent,
             draft: false,
             prerelease: false

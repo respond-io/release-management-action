@@ -4,12 +4,15 @@ const Version = require('./utils/version');
 const ChangeLog = require('./utils/fileHelpers/changelog');
 const PackageFile = require('./utils/fileHelpers/packageFile');
 const Git = require('./utils/git');
+const Config = require('./utils/config');
 const moment = require('moment');
 
 const main = async () => {
     const gitHelper = new Git();
+
     try {
         const token = core.getInput('token', { required: true });
+        const configPath = core.getInput('config-path', { required: true });
         let commitLimit = parseInt(core.getInput('commit-limit', { required: false }));
         let timezone = core.getInput('timezone', { required: false });
         let releasePrefix = core.getInput('release-prefix', { required: false });
@@ -38,6 +41,9 @@ const main = async () => {
         const branch = contextPayload.pull_request.base.ref;
 
         const octokit = new github.getOctokit(token);
+
+        // Load configuration file
+        await Config.loadConfig(octokit, owner, repo, configPath, contextPayload.pull_request.head.sha);
 
         // Files need to commit after version update
         const updatedFiles = [];
@@ -94,6 +100,7 @@ const main = async () => {
         const changedFilesList = gitHelper.filterFiles(compare.files);
 
         const {
+            newVersionNumber,
             newVersion,
             currentVersion
         } = await Version.getVersions(octokit, owner, repo, github, releasePrefix, releaseSuffix);
@@ -114,7 +121,7 @@ const main = async () => {
         updatedFiles.push(changeLogPath);
 
         const ROOT_LEVEL_PACKAGE_FILE_PATH = 'package.json';
-        const rootPackageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, ROOT_LEVEL_PACKAGE_FILE_PATH, newVersion);
+        const rootPackageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, ROOT_LEVEL_PACKAGE_FILE_PATH, newVersionNumber);
         if (rootPackageFileContent !== null) {
             await PackageFile.updatePackageFile(rootPackageFileContent, ROOT_LEVEL_PACKAGE_FILE_PATH);
             updatedFiles.push(ROOT_LEVEL_PACKAGE_FILE_PATH);
@@ -123,7 +130,7 @@ const main = async () => {
         for (const { type, subProjectRoot } of changedFilesList) {
             if (type === 'Lambda' || type === 'ECS') {
                 const packageFilePath = `${subProjectRoot}/package.json`;
-                const packageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, packageFilePath, newVersion);
+                const packageFileContent = await PackageFile.generatePackageFileContent(octokit, owner, repo, packageFilePath, newVersionNumber);
                 if (packageFileContent !== null) {
                     await PackageFile.updatePackageFile(packageFileContent, packageFilePath);
                     updatedFiles.push(packageFilePath);
@@ -153,7 +160,7 @@ const main = async () => {
             owner,
             repo,
             tag_name: newVersion,
-            name: `Release ${newVersion}`,
+            name: newVersion,
             body: newChangeLogContent,
             draft: false,
             prerelease: false

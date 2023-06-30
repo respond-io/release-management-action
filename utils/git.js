@@ -111,6 +111,17 @@ class Git {
         })
     }
 
+    async fetchFileContent(octokit, org, repo, repoPath, commitSha) {
+        const response = await octokit.rest.repos.getContent({
+            owner: org,
+            repo,
+            path: repoPath,
+            ref: commitSha
+        });
+
+        return Buffer.from(response.data.content, response.data.encoding).toString();
+    }
+
     filterCommits(commits) {
         const features = [];
         const bug_fixes = [];
