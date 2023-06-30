@@ -32271,7 +32271,7 @@ class Config {
     static async loadConfig(octokit, org, repo, configPath, commitSha) {
         const gitHelper = new Git();
         try {
-            const configurationContent = gitHelper.fetchFileContent(octokit, org, repo, configPath, commitSha);
+            const configurationContent = await gitHelper.fetchFileContent(octokit, org, repo, configPath, commitSha);
             const configObject = yaml.load(configurationContent);
             console.log('.........', JSON.stringify(configObject, null, 2));
             global.ActionConfigs = configObject;
