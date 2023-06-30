@@ -32558,6 +32558,14 @@ class Git {
 
     filterFiles(files) {
         console.log('.... Inside: filterFiles .....', JSON.stringify(global.ActionConfigs, null, 2));
+
+        let basePaths = [];
+        Object.keys(global.ActionConfigs.paths).forEach((key) => {
+            basePaths = configArray.concat(global.ActionConfigs.paths[key].map((path) => { return { ...path, type: key } }));
+        });
+        
+        console.log('.... Inside: basePaths .....', JSON.stringify(basePaths, null, 2));
+
         const fileSetHashMap = new Set();
         const fileList = [];
 
@@ -32567,52 +32575,51 @@ class Git {
             let type = 'Other';
             let subProjectRoot = null;
 
-            const fileNameSplits = filename.split('/');
-            let visible = true;
+            basePaths.forEach((basePath) => {
+                if (filename.startsWith(basePath.path)) {
+                    entity = capitalize(basePath.name);
+                    type = 'Lambda';
+                    subProjectRoot = basePath.path;
 
-            if (filename.startsWith('service/lambda/')) {
-                const lambdaName = fileNameSplits[2];
-                entity = capitalize(lambdaName);
-                type = 'Lambda';
-                subProjectRoot = `service/lambda/${lambdaName}`
-                const folderType = fileNameSplits[3];
+                    if (basePath.type === 'lambda') {
+                        const pathSuffix = filename.replace(basePath.path, '');
+                        const pathSuffixSplits = pathSuffix.split('/');
+                        const folderType = pathSuffixSplits[0];
 
-                if (folderType !== undefined) {
-                    const folderTypeName = folderType.trim().toLowerCase();
-
-                    if (folderTypeName === 'functions' || folderTypeName === 'layers') {
-                        const subEntity = fileNameSplits[4];
-                        subProjectRoot = `service/lambda/${lambdaName}/${folderType}/${subEntity}`;
-                        visible = false;
-
-                        if (folderTypeName === 'layers') subProjectRoot = `${subProjectRoot}/nodejs/node_modules/${subEntity}`;
-
-                        // If only layer or function is changed, need to update root level package.json also
-                        const entityHash = Crypto.generateHash(`service/lambda/${lambdaName}-${type}`);
-                        if (!fileSetHashMap.has(entityHash)) {
-                            fileSetHashMap.add(entityHash);
-                            fileList.push({ entity, type, subProjectRoot: `service/lambda/${lambdaName}`, visible: true });
+                        if (folderType !== undefined) {
+                            const folderTypeName = folderType.trim().toLowerCase();
+        
+                            if (folderTypeName === 'functions' || folderTypeName === 'layers') {
+                                const subEntity = pathSuffixSplits[1];
+                                subProjectRoot = `${subProjectRoot}/${folderType}/${subEntity}`;
+                                visible = false;
+        
+                                if (folderTypeName === 'layers') subProjectRoot = `${subProjectRoot}/nodejs/node_modules/${subEntity}`;
+        
+                                // If only layer or function is changed, need to update root level package.json also
+                                const entityHash = Crypto.generateHash(`${basePath.path}-${type}`);
+                                if (!fileSetHashMap.has(entityHash)) {
+                                    fileSetHashMap.add(entityHash);
+                                    fileList.push({ entity, type, subProjectRoot: basePath.path, visible: true });
+                                }
+                            }
                         }
+                    } else if (basePath.type === 'ecs') {
+                        type = 'ECS';
+                    } else if (basePath.type === 'infrastructure') {
+                        type = 'Infrastructure';
                     }
-                } else {
-                    // For files in /service/lambda level
-                    fileList.push({ entity: filename, type: 'Other', subProjectRoot: null, visible: true });
                 }
-            } else if (filename.startsWith('service/')) {
-                const serviceName = fileNameSplits[1];
-                entity = capitalize(serviceName);
-                type = 'ECS';
-                subProjectRoot = `service/${serviceName}`;
-            } else if (filename.startsWith('infra/')) {
-                entity = filename;
-                type = 'Infrastructure';
-            }
+            });
+
             const entityHash = Crypto.generateHash(`${subProjectRoot}-${type}`);
             if (!fileSetHashMap.has(entityHash)) {
                 fileSetHashMap.add(entityHash);
                 fileList.push({ entity, type, subProjectRoot, visible });
             }
         });
+
+        console.log('.... Inside: fileList .....', JSON.stringify(fileList, null, 2));
 
         return fileList.sort();
     };
