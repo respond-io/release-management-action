@@ -192,7 +192,7 @@ class Git {
                     subProjectRoot = basePath.path;
 
                     if (basePath.type === 'lambda') {
-                        const pathSuffix = filename.replace(basePath.path, '');
+                        const pathSuffix = filename.replace(`${basePath.path}/`, '');
                         const pathSuffixSplits = pathSuffix.split('/');
                         const folderType = pathSuffixSplits[0];
 
