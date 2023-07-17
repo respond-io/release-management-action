@@ -316,12 +316,21 @@ class Git {
         return `release/release_${version.replace(/\./g, '-')}_${moment().format('YYYYMMDDHHmmss')}}`;
     }
 
-    createBranch(octokit, owner, repo, branchName, sourceBranch) {
+    async createBranch(octokit, owner, repo, branchName, sourceBranch) {
+        const { data: baseRef } = await octokit.rest.git.getRef({
+            owner: owner,
+            repo: repo,
+            ref: `heads/${sourceBranch}`
+        });
+
+        console.log('...', JSON.stringify(baseRef))
+        const baseCommitSha = baseRef.object.sha;
+
         return octokit.rest.git.createRef({
             owner,
             repo,
             ref: `refs/heads/${branchName}`,
-            sha: sourceBranch,
+            sha: baseCommitSha,
         });
     }
 
