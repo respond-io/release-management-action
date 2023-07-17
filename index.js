@@ -46,24 +46,24 @@ const main = async () => {
         // Load configuration file
         await Config.loadConfig(octokit, owner, repo, configPath, contextPayload.pull_request.head.sha);
 
+        let tagsList;
+            
+        try {
+            const tagsListData = await octokit.rest.repos.listTags({
+                owner,
+                repo,
+            });
+            tagsList = tagsListData.data;
+        } catch (error) {
+            tagsList = [];
+        }
+
         if (action === 'release-pr') {
 
 
 
             // Files need to commit after version update
             const updatedFiles = [];
-
-            let tagsList;
-            
-            try {
-                const tagsListData = await octokit.rest.repos.listTags({
-                    owner,
-                    repo,
-                });
-                tagsList = tagsListData.data;
-            } catch (error) {
-                tagsList = [];
-            }
 
             let baseHash = null;
 
@@ -196,13 +196,22 @@ const main = async () => {
             // Get update CHANGELOG.md content
             const changeLog = await gitHelper.fetchFileContent(octokit, owner, repo, 'CHANGELOG.md', prRef);
 
-            const previousChangeLog = await gitHelper.fetchFileContent(octokit, owner, repo, 'CHANGELOG.md', `refs/tags/v1.32.0`);
+            let diff = changeLog;
+
+            if (tagsList.length > 0) {
+                const lastTaggedHash = tagsList[0].commit.sha;
+
+                const previousChangeLog = await gitHelper.fetchFileContent(octokit, owner, repo, 'CHANGELOG.md', lastTaggedHash);
+                console.log(previousChangeLog);
+            }
+
+            //
 
             // Get update package.json content
             const packageJson = await gitHelper.fetchFileContent(octokit, owner, repo, 'package.json', prRef);
 
-            console.log(changeLog);
-            console.log(previousChangeLog);
+            console.log(diff);
+            //console.log(previousChangeLog);
             console.log(packageJson);
 
         }
