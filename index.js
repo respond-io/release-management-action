@@ -196,13 +196,12 @@ const main = async () => {
             // Get update CHANGELOG.md content
             const changeLog = await gitHelper.fetchFileContent(octokit, owner, repo, 'CHANGELOG.md', prRef);
 
-            const previousChangeLog = await gitHelper.fetchFileContent(octokit, owner, repo, 'CHANGELOG.md', contextPayload.pull_request.base.ref);
+            const [ newChangeLogContent ] = changeLog.split(/\n{4}/);
 
             // Get update package.json content
             const packageJson = await gitHelper.fetchFileContent(octokit, owner, repo, 'package.json', prRef);
 
-            console.log(changeLog);
-            console.log(previousChangeLog);
+            console.log(newChangeLogContent);
             console.log(packageJson);
 
         }
