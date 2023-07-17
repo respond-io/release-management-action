@@ -32394,11 +32394,12 @@ const path = __nccwpck_require__(1017)
 const { readFile } = __nccwpck_require__(5630);
 const capitalize = __nccwpck_require__(3340);
 const Crypto = __nccwpck_require__(5275);
-
-const COMMIT_MESSAGE_PREFIX = 'Auto generated - New Release';
-
 class Git {
-    async uploadToRepo(octokit, filesPaths, org, repo, branch, version) {
+    _getReleaseCommitPrefix(branchName) {
+        return `chore(${branchName}): Auto generated - Release`;
+    }
+
+    async uploadToRepo(octokit, filesPaths, org, repo, branch, version, baseBranch) {
         // gets commit's AND its tree's SHA
         const currentCommit = await this._getCurrentCommit(octokit, org, repo, branch)
         //const filesPaths = await glob(coursePath)
@@ -32416,7 +32417,7 @@ class Git {
             octokit,
             org,
             repo,
-            `${COMMIT_MESSAGE_PREFIX} (${version})`,
+            `${this._getReleaseCommitPrefix(baseBranch)} (${version})`,
             newTree.sha,
             currentCommit.commitSha
         );
@@ -32514,7 +32515,7 @@ class Git {
         return Buffer.from(response.data.content, response.data.encoding).toString();
     }
 
-    filterCommits(commits) {
+    filterCommits(commits, baseBranch) {
         const features = [];
         const bug_fixes = [];
         const other_commits = [];
@@ -32522,7 +32523,7 @@ class Git {
         commits.reverse().forEach((commitData) => {
             let { message } = commitData.commit;
 
-            if (!message.startsWith('Merge pull request') && !message.startsWith('Merge branch') && !message.startsWith('Auto generated')) {
+            if (!message.startsWith('Merge pull request') && !message.startsWith('Merge branch') && !message.startsWith(this._getReleaseCommitPrefix(baseBranch))) {
                 const splits = message.split(':');
 
                 const commit = {
@@ -32701,6 +32702,33 @@ class Git {
         }
     }
 
+    generateReleaseBranchName(version) {
+        return `release/release_${version.replace(/\./g, '-')}_${moment().format('YYYYMMDDHHmmss')}}`;
+    }
+
+    createBranch(octokit, owner, repo, branchName, sourceBranch) {
+        return octokit.rest.git.createRef({
+            owner,
+            repo,
+            ref: `refs/heads/${branchName}`,
+            sha: sourceBranch,
+        });
+    }
+
+    createPullRequestTitle(branchName, version) {
+        return `chore(${branchName}): release ${version}`
+    }
+
+    createPullRequest(octokit, owner, repo, branchName, title, body, baseBranch) {
+        return octokit.rest.pulls.create({
+            owner,
+            repo,
+            title,
+            body,
+            head: branchName,
+            base: baseBranch,
+        });
+    }
 }
 
 module.exports = Git;
@@ -33057,7 +33085,7 @@ const main = async () => {
 
         const commitLimitReached = compare.commits.length === commitLimit - 1;
 
-        const commitsDiff = gitHelper.filterCommits(compare.commits);
+        const commitsDiff = gitHelper.filterCommits(compare.commits, branch);
         const changedFilesList = gitHelper.filterFiles(compare.files);
 
         const {
@@ -33099,33 +33127,51 @@ const main = async () => {
             }
         }
 
-        const newCommitSha = await gitHelper.uploadToRepo(octokit, updatedFiles, owner, repo, branch, newVersion);
+        // Create release branch name
+        const releaseBranch = gitHelper.generateReleaseBranchName(newVersion);
 
-        await octokit.rest.git.createTag({
-            owner,
-            repo,
-            tag: newVersion,
-            message: `Release ${newVersion}`,
-            object: newCommitSha,
-            type: 'commit'
-        });
+        // Create new branch in repo
+        await gitHelper.createBranch(octokit, owner, repo, releaseBranch, branch);
 
-        await octokit.rest.git.createRef({
-            owner,
-            repo,
-            ref: `refs/tags/${newVersion}`,
-            sha: newCommitSha,
-        });
+        // Commit changes to new branch
+        const newCommitSha = await gitHelper.uploadToRepo(octokit, updatedFiles, owner, repo, releaseBranch, newVersion, branch);
 
-        await octokit.rest.repos.createRelease({
-            owner,
-            repo,
-            tag_name: newVersion,
-            name: newVersion,
-            body: newChangeLogContent,
-            draft: false,
-            prerelease: false
-        });
+        const pullRequestTitle = gitHelper.createPullRequestTitle(branch, newVersionNumber);
+
+        // Create Pull request to `branch`
+        await gitHelper.createPullRequest(octokit, owner, repo, releaseBranch, pullRequestTitle, fullChangeLogContent, branch);
+
+        // await octokit.rest.git.createTag({
+        //     owner,
+        //     repo,
+        //     tag: newVersion,
+        //     message: `Release ${newVersion}`,
+        //     object: newCommitSha,
+        //     type: 'commit'
+        // });
+
+        // await octokit.rest.git.createRef({
+        //     owner,
+        //     repo,
+        //     ref: `refs/tags/${newVersion}`,
+        //     sha: newCommitSha,
+        // });
+
+        // await octokit.rest.repos.createRelease({
+        //     owner,
+        //     repo,
+        //     tag_name: newVersion,
+        //     name: newVersion,
+        //     body: newChangeLogContent,
+        //     draft: false,
+        //     prerelease: false
+        // });
+
+        core.setOutput('version', newVersion);
+        core.setOutput('version-number', newVersionNumber);
+        core.setOutput('release-branch', releaseBranch);
+        core.setOutput('release-branch-sha', newCommitSha);
+        core.setOutput('release-content', newChangeLogContent)
 
     } catch (error) {
         core.setFailed(error.message);

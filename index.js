@@ -96,7 +96,7 @@ const main = async () => {
 
         const commitLimitReached = compare.commits.length === commitLimit - 1;
 
-        const commitsDiff = gitHelper.filterCommits(compare.commits);
+        const commitsDiff = gitHelper.filterCommits(compare.commits, branch);
         const changedFilesList = gitHelper.filterFiles(compare.files);
 
         const {
@@ -138,33 +138,51 @@ const main = async () => {
             }
         }
 
-        const newCommitSha = await gitHelper.uploadToRepo(octokit, updatedFiles, owner, repo, branch, newVersion);
+        // Create release branch name
+        const releaseBranch = gitHelper.generateReleaseBranchName(newVersion);
 
-        await octokit.rest.git.createTag({
-            owner,
-            repo,
-            tag: newVersion,
-            message: `Release ${newVersion}`,
-            object: newCommitSha,
-            type: 'commit'
-        });
+        // Create new branch in repo
+        await gitHelper.createBranch(octokit, owner, repo, releaseBranch, branch);
 
-        await octokit.rest.git.createRef({
-            owner,
-            repo,
-            ref: `refs/tags/${newVersion}`,
-            sha: newCommitSha,
-        });
+        // Commit changes to new branch
+        const newCommitSha = await gitHelper.uploadToRepo(octokit, updatedFiles, owner, repo, releaseBranch, newVersion, branch);
 
-        await octokit.rest.repos.createRelease({
-            owner,
-            repo,
-            tag_name: newVersion,
-            name: newVersion,
-            body: newChangeLogContent,
-            draft: false,
-            prerelease: false
-        });
+        const pullRequestTitle = gitHelper.createPullRequestTitle(branch, newVersionNumber);
+
+        // Create Pull request to `branch`
+        await gitHelper.createPullRequest(octokit, owner, repo, releaseBranch, pullRequestTitle, fullChangeLogContent, branch);
+
+        // await octokit.rest.git.createTag({
+        //     owner,
+        //     repo,
+        //     tag: newVersion,
+        //     message: `Release ${newVersion}`,
+        //     object: newCommitSha,
+        //     type: 'commit'
+        // });
+
+        // await octokit.rest.git.createRef({
+        //     owner,
+        //     repo,
+        //     ref: `refs/tags/${newVersion}`,
+        //     sha: newCommitSha,
+        // });
+
+        // await octokit.rest.repos.createRelease({
+        //     owner,
+        //     repo,
+        //     tag_name: newVersion,
+        //     name: newVersion,
+        //     body: newChangeLogContent,
+        //     draft: false,
+        //     prerelease: false
+        // });
+
+        core.setOutput('version', newVersion);
+        core.setOutput('version-number', newVersionNumber);
+        core.setOutput('release-branch', releaseBranch);
+        core.setOutput('release-branch-sha', newCommitSha);
+        core.setOutput('release-content', newChangeLogContent)
 
     } catch (error) {
         core.setFailed(error.message);

@@ -2,11 +2,12 @@ const path = require('path')
 const { readFile } = require('fs-extra');
 const capitalize = require('lodash.capitalize');
 const Crypto = require('./crypto');
-
-const COMMIT_MESSAGE_PREFIX = 'Auto generated - New Release';
-
 class Git {
-    async uploadToRepo(octokit, filesPaths, org, repo, branch, version) {
+    _getReleaseCommitPrefix(branchName) {
+        return `chore(${branchName}): Auto generated - Release`;
+    }
+
+    async uploadToRepo(octokit, filesPaths, org, repo, branch, version, baseBranch) {
         // gets commit's AND its tree's SHA
         const currentCommit = await this._getCurrentCommit(octokit, org, repo, branch)
         //const filesPaths = await glob(coursePath)
@@ -24,7 +25,7 @@ class Git {
             octokit,
             org,
             repo,
-            `${COMMIT_MESSAGE_PREFIX} (${version})`,
+            `${this._getReleaseCommitPrefix(baseBranch)} (${version})`,
             newTree.sha,
             currentCommit.commitSha
         );
@@ -122,7 +123,7 @@ class Git {
         return Buffer.from(response.data.content, response.data.encoding).toString();
     }
 
-    filterCommits(commits) {
+    filterCommits(commits, baseBranch) {
         const features = [];
         const bug_fixes = [];
         const other_commits = [];
@@ -130,7 +131,7 @@ class Git {
         commits.reverse().forEach((commitData) => {
             let { message } = commitData.commit;
 
-            if (!message.startsWith('Merge pull request') && !message.startsWith('Merge branch') && !message.startsWith('Auto generated')) {
+            if (!message.startsWith('Merge pull request') && !message.startsWith('Merge branch') && !message.startsWith(this._getReleaseCommitPrefix(baseBranch))) {
                 const splits = message.split(':');
 
                 const commit = {
@@ -309,6 +310,33 @@ class Git {
         }
     }
 
+    generateReleaseBranchName(version) {
+        return `release/release_${version.replace(/\./g, '-')}_${moment().format('YYYYMMDDHHmmss')}}`;
+    }
+
+    createBranch(octokit, owner, repo, branchName, sourceBranch) {
+        return octokit.rest.git.createRef({
+            owner,
+            repo,
+            ref: `refs/heads/${branchName}`,
+            sha: sourceBranch,
+        });
+    }
+
+    createPullRequestTitle(branchName, version) {
+        return `chore(${branchName}): release ${version}`
+    }
+
+    createPullRequest(octokit, owner, repo, branchName, title, body, baseBranch) {
+        return octokit.rest.pulls.create({
+            owner,
+            repo,
+            title,
+            body,
+            head: branchName,
+            base: baseBranch,
+        });
+    }
 }
 
 module.exports = Git;
