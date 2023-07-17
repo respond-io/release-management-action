@@ -114,12 +114,12 @@ class Git {
         })
     }
 
-    async fetchFileContent(octokit, org, repo, repoPath, commitSha) {
+    async fetchFileContent(octokit, org, repo, repoPath, ref) {
         const response = await octokit.rest.repos.getContent({
             owner: org,
             repo,
             path: repoPath,
-            ref: commitSha
+            ref
         });
 
         return Buffer.from(response.data.content, response.data.encoding).toString();

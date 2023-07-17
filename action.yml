@@ -7,6 +7,9 @@ inputs:
   "config-path":
     description: "Configuration file path to use for identifying sub project paths, Ex - .github/config/release-management.yaml"
     required: true
+  "action":
+    description: "Action to perform, Ex - release-pr, release"
+    required: true
   "commit-limit":
     description: "Number of commits use for analyzing to generate next release version, default limit is 250"
     required: false
