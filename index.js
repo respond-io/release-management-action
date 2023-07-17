@@ -138,16 +138,28 @@ const main = async () => {
             }
         }
 
+        console.log('>>>>> 1')
+
         // Create release branch name
         const releaseBranch = gitHelper.generateReleaseBranchName(newVersion);
+
+        console.log('>>>>> 2', releaseBranch)
 
         // Create new branch in repo
         await gitHelper.createBranch(octokit, owner, repo, releaseBranch, branch);
 
+        console.log('>>>>> 3')
+
         // Commit changes to new branch
         const newCommitSha = await gitHelper.uploadToRepo(octokit, updatedFiles, owner, repo, releaseBranch, newVersion, branch);
 
+        console.log('>>>>> 4', newCommitSha)
+
         const pullRequestTitle = gitHelper.createPullRequestTitle(branch, newVersionNumber);
+
+        console.log('>>>>> 5', pullRequestTitle)
+
+        console.log('>>>>> 6', fullChangeLogContent)
 
         // Create Pull request to `branch`
         await gitHelper.createPullRequest(octokit, owner, repo, releaseBranch, pullRequestTitle, fullChangeLogContent, branch);
