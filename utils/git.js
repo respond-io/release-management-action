@@ -2,6 +2,8 @@ const path = require('path')
 const { readFile } = require('fs-extra');
 const capitalize = require('lodash.capitalize');
 const Crypto = require('./crypto');
+const moment = require('moment');
+
 class Git {
     _getReleaseCommitPrefix(branchName) {
         return `chore(${branchName}): Auto generated - Release`;

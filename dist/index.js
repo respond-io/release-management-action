@@ -32394,6 +32394,8 @@ const path = __nccwpck_require__(1017)
 const { readFile } = __nccwpck_require__(5630);
 const capitalize = __nccwpck_require__(3340);
 const Crypto = __nccwpck_require__(5275);
+const moment = __nccwpck_require__(9623);
+
 class Git {
     _getReleaseCommitPrefix(branchName) {
         return `chore(${branchName}): Auto generated - Release`;
