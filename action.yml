@@ -4,6 +4,9 @@ inputs:
   token:
     description: "The token to use to access the GitHub API"
     required: true
+  "config-path":
+    description: "Configuration file path to use for identifying sub project paths, Ex - .github/config/release-management.yaml"
+    required: true
   "commit-limit":
     description: "Number of commits use for analyzing to generate next release version, default limit is 250"
     required: false

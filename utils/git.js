@@ -323,7 +323,6 @@ class Git {
             ref: `heads/${sourceBranch}`
         });
 
-        console.log('...', JSON.stringify(baseRef))
         const baseCommitSha = baseRef.object.sha;
 
         return octokit.rest.git.createRef({
