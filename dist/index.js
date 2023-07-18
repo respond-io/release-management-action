@@ -32305,6 +32305,30 @@ module.exports = Crypto;
 
 /***/ }),
 
+/***/ 471:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const diff = __nccwpck_require__(1290);
+
+class Diff {
+    static findNewlyAddedString(oldString, newString) {
+        const diffResult = diff.diffLines(oldString, newString);
+        let addedString = '';
+
+        for (const part of diffResult) {
+            if (part.added) {
+                addedString += part.value;
+            }
+        }
+
+        return addedString;
+    }
+}
+
+module.exports = Diff;
+
+/***/ }),
+
 /***/ 5982:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -32800,6 +32824,14 @@ module.exports = Version;
 
 /***/ }),
 
+/***/ 1290:
+/***/ ((module) => {
+
+module.exports = eval("require")("diff");
+
+
+/***/ }),
+
 /***/ 2877:
 /***/ ((module) => {
 
@@ -33005,6 +33037,7 @@ const PackageFile = __nccwpck_require__(9473);
 const Git = __nccwpck_require__(8050);
 const Config = __nccwpck_require__(2180);
 const moment = __nccwpck_require__(9623);
+const Diff = __nccwpck_require__(471);
 
 const main = async () => {
     const gitHelper = new Git();
@@ -33202,6 +33235,7 @@ const main = async () => {
 
                 const previousChangeLog = await gitHelper.fetchFileContent(octokit, owner, repo, 'CHANGELOG.md', lastTaggedHash);
                 console.log(previousChangeLog);
+                diff = Diff.findNewlyAddedString(previousChangeLog, changeLog);
             }
 
             //

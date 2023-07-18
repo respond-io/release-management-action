@@ -6,6 +6,7 @@ const PackageFile = require('./utils/fileHelpers/packageFile');
 const Git = require('./utils/git');
 const Config = require('./utils/config');
 const moment = require('moment');
+const Diff = require('./utils/diff');
 
 const main = async () => {
     const gitHelper = new Git();
@@ -203,6 +204,7 @@ const main = async () => {
 
                 const previousChangeLog = await gitHelper.fetchFileContent(octokit, owner, repo, 'CHANGELOG.md', lastTaggedHash);
                 console.log(previousChangeLog);
+                diff = Diff.findNewlyAddedString(previousChangeLog, changeLog);
             }
 
             //
