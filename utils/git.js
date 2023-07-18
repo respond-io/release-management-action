@@ -115,14 +115,19 @@ class Git {
     }
 
     async fetchFileContent(octokit, org, repo, repoPath, ref) {
-        const response = await octokit.rest.repos.getContent({
-            owner: org,
-            repo,
-            path: repoPath,
-            ref
-        });
-
-        return Buffer.from(response.data.content, response.data.encoding).toString();
+        try {
+            const response = await octokit.rest.repos.getContent({
+                owner: org,
+                repo,
+                path: repoPath,
+                ref
+            });
+    
+            return Buffer.from(response.data.content, response.data.encoding).toString();
+        } catch (error) {
+            console.log(`Unable to fetch file content for ${repoPath} in ${org}/${repo} at ${ref}`);
+            return '';
+        }
     }
 
     filterCommits(commits, baseBranch) {
