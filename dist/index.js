@@ -35913,7 +35913,7 @@ const main = async () => {
             //console.log(previousChangeLog);
             console.log(version);
             const newVersion = `v${version}`;
-            const newCommitSha = contextPayload.pull_request.head.sha;
+            const newCommitSha = contextPayload.pull_request.base.sha;
             console.log(newCommitSha);
 
             await octokit.rest.git.createTag({
