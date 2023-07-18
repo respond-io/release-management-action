@@ -202,7 +202,7 @@ const main = async () => {
             if (tagsList.length > 0) {
                 const lastTaggedHash = tagsList[0].commit.sha;
 
-                const previousChangeLog = await gitHelper.fetchFileContent(octokit, owner, repo, 'CHANGELOG.md', lastTaggedHash);
+                const previousChangeLog = await gitHelper.fetchFileContent(octokit, owner, repo, 'CHANGELOG.mdb', lastTaggedHash);
                 console.log(previousChangeLog);
                 diff = Diff.findNewlyAddedString(previousChangeLog, changeLog);
             }
