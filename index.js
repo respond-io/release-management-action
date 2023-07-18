@@ -201,20 +201,21 @@ const main = async () => {
 
             if (tagsList.length > 0) {
                 const lastTaggedHash = tagsList[0].commit.sha;
+                const previousChangeLog = await gitHelper.fetchFileContent(octokit, owner, repo, 'CHANGELOG.md', lastTaggedHash);
 
-                const previousChangeLog = await gitHelper.fetchFileContent(octokit, owner, repo, 'CHANGELOG.mdb', lastTaggedHash);
-                console.log(previousChangeLog);
-                diff = Diff.findNewlyAddedString(previousChangeLog, changeLog);
+                if (previousChangeLog === '') {
+                    diff = changeLog;
+                } else {
+                    diff = Diff.getDiff(previousChangeLog, changeLog);
+                }
             }
-
-            //
 
             // Get update package.json content
             const packageJson = await gitHelper.fetchFileContent(octokit, owner, repo, 'package.json', prRef);
-
+            const { version } = JSON.parse(packageJson);
             console.log(diff);
             //console.log(previousChangeLog);
-            console.log(packageJson);
+            console.log(version);
 
         }
 
