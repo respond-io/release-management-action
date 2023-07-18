@@ -35909,7 +35909,7 @@ const main = async () => {
             // Get update package.json content
             const packageJson = await gitHelper.fetchFileContent(octokit, owner, repo, 'package.json', prRef);
             const { version } = JSON.parse(packageJson);
-            console.log(diff);
+            console.log(newChangeLogContent);
             //console.log(previousChangeLog);
             console.log(version);
             const newVersion = `v${version}`;
