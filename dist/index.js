@@ -35913,8 +35913,18 @@ const main = async () => {
             //console.log(previousChangeLog);
             console.log(version);
             const newVersion = `v${version}`;
-            const newCommitSha = contextPayload.pull_request.base.sha;
-            console.log(newCommitSha);
+            //const newCommitSha = contextPayload.pull_request.head.sha;
+            //console.log(newCommitSha);
+
+            const { data: branchInfo } = await octokit.rest.git.getRef({
+            owner,
+            repo,
+            ref: `heads/${branch}`,
+            });
+
+            const newCommitSha = branchInfo.object.sha;
+
+            console.log('SHA>>', newCommitSha);
 
             await octokit.rest.git.createTag({
                 owner,
