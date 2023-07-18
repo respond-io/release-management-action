@@ -250,7 +250,7 @@ class Git {
         return response.data.filter((item) => item.type === "dir");
     };
 
-    async listAllCommits(octokit, owner, repo, branch, maxCommitCount, index = 1, commits = []) {
+    async listAllCommits(octokit, owner, repo, branch, index = 1, commits = []) {
         const PAGE_SIZE = 100;
 
         try {
@@ -264,14 +264,9 @@ class Git {
 
             commits = commits.concat(data);
 
-            // If maxCommitCount is set, return the first maxCommitCount commits
-            if (maxCommitCount !== undefined && commits.length >= maxCommitCount) {
-                return commits.slice(0, maxCommitCount);
-            }
-
             // If the response contains 100 commits, there might be more commits
             if (data.length === PAGE_SIZE) {
-                return this.listAllCommits(octokit, owner, repo, branch, maxCommitCount, index + 1, commits);
+                return this.listAllCommits(octokit, owner, repo, branch, index + 1, commits);
             }
 
             return commits;
@@ -304,7 +299,7 @@ class Git {
                 return compareCommits;
             }
 
-            // If the response contains 100 commits, there might be more commits
+            // If the response contains 250 commits, there might be more commits
             if (commits.length === PAGE_SIZE) {
                 return this.compareCommits(octokit, owner, repo, base, head, maxCommitCount, index + 1, compareCommits);
             }

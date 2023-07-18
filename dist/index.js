@@ -34919,11 +34919,6 @@ module.exports = `
 {{/each}}
 {{/if}}
 
-{{#if commitLimitReached}}
-<hr>
-
-> **Note:** This release reaches to the commit limit (Default Limit - 250), so above commits and files list were automatically capped.
-{{/if}}
 `;
 
 
@@ -35334,7 +35329,7 @@ class Git {
         return response.data.filter((item) => item.type === "dir");
     };
 
-    async listAllCommits(octokit, owner, repo, branch, maxCommitCount, index = 1, commits = []) {
+    async listAllCommits(octokit, owner, repo, branch, index = 1, commits = []) {
         const PAGE_SIZE = 100;
 
         try {
@@ -35348,14 +35343,9 @@ class Git {
 
             commits = commits.concat(data);
 
-            // If maxCommitCount is set, return the first maxCommitCount commits
-            if (maxCommitCount !== undefined && commits.length >= maxCommitCount) {
-                return commits.slice(0, maxCommitCount);
-            }
-
             // If the response contains 100 commits, there might be more commits
             if (data.length === PAGE_SIZE) {
-                return this.listAllCommits(octokit, owner, repo, branch, maxCommitCount, index + 1, commits);
+                return this.listAllCommits(octokit, owner, repo, branch, index + 1, commits);
             }
 
             return commits;
@@ -35388,7 +35378,7 @@ class Git {
                 return compareCommits;
             }
 
-            // If the response contains 100 commits, there might be more commits
+            // If the response contains 250 commits, there might be more commits
             if (commits.length === PAGE_SIZE) {
                 return this.compareCommits(octokit, owner, repo, base, head, maxCommitCount, index + 1, compareCommits);
             }
@@ -35711,7 +35701,6 @@ const main = async () => {
         const token = core.getInput('token', { required: true });
         const configPath = core.getInput('config-path', { required: true });
         const action = core.getInput('action', { required: true });
-        let commitLimit = parseInt(core.getInput('commit-limit', { required: false }));
         let timezone = core.getInput('timezone', { required: false });
         let releasePrefix = core.getInput('release-prefix', { required: false });
         let releaseSuffix = core.getInput('release-suffix', { required: false });
@@ -35721,9 +35710,6 @@ const main = async () => {
         } else {
             timezone = timezone.replace(/[^0-9\+]/g, '');
         }
-
-        // If commit limit is not a number, set it to 250 as default
-        if (isNaN(commitLimit)) commitLimit = 250;
 
         const { 
             context: { payload: contextPayload, eventName }
@@ -35758,7 +35744,6 @@ const main = async () => {
         if (action === 'release-pr') {
 
 
-
             // Files need to commit after version update
             const updatedFiles = [];
 
@@ -35768,7 +35753,7 @@ const main = async () => {
             if (tagsList.length > 0) {
                 baseHash = tagsList[0].commit.sha;
             } else {
-                const previousCommits = await gitHelper.listAllCommits(octokit, owner, repo, branch, commitLimit);
+                const previousCommits = await gitHelper.listAllCommits(octokit, owner, repo, branch);
 
                 // If there are no commits, exit
                 if (previousCommits.length === 0) {
@@ -35792,11 +35777,8 @@ const main = async () => {
                 owner,
                 repo,
                 baseHash,
-                branch,
-                commitLimit
+                branch
             );
-
-            const commitLimitReached = compare.commits.length === commitLimit - 1;
 
             const commitsDiff = gitHelper.filterCommits(compare.commits, branch);
             const changedFilesList = gitHelper.filterFiles(compare.files);
@@ -35814,8 +35796,7 @@ const main = async () => {
                 repo,
                 date: moment().utcOffset(timezone).format('YYYY-MM-DD'),
                 ...commitsDiff,
-                affected_areas: changedFilesList,
-                commitLimitReached
+                affected_areas: changedFilesList
             };
 
             const { newChangeLogContent, fullChangeLogContent } = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);

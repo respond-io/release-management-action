@@ -10,9 +10,6 @@ inputs:
   "action":
     description: "Action to perform, Ex - release-pr, release"
     required: true
-  "commit-limit":
-    description: "Number of commits use for analyzing to generate next release version, default limit is 250"
-    required: false
   timezone:
     description: "Timezone to use for generating release version, default timezone is Malaysia Time(+08:00). Ex - +04:00 (New york Time)"
     required: false

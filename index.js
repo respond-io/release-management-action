@@ -15,7 +15,6 @@ const main = async () => {
         const token = core.getInput('token', { required: true });
         const configPath = core.getInput('config-path', { required: true });
         const action = core.getInput('action', { required: true });
-        let commitLimit = parseInt(core.getInput('commit-limit', { required: false }));
         let timezone = core.getInput('timezone', { required: false });
         let releasePrefix = core.getInput('release-prefix', { required: false });
         let releaseSuffix = core.getInput('release-suffix', { required: false });
@@ -25,9 +24,6 @@ const main = async () => {
         } else {
             timezone = timezone.replace(/[^0-9\+]/g, '');
         }
-
-        // If commit limit is not a number, set it to 250 as default
-        if (isNaN(commitLimit)) commitLimit = 250;
 
         const { 
             context: { payload: contextPayload, eventName }
@@ -62,7 +58,6 @@ const main = async () => {
         if (action === 'release-pr') {
 
 
-
             // Files need to commit after version update
             const updatedFiles = [];
 
@@ -72,7 +67,7 @@ const main = async () => {
             if (tagsList.length > 0) {
                 baseHash = tagsList[0].commit.sha;
             } else {
-                const previousCommits = await gitHelper.listAllCommits(octokit, owner, repo, branch, commitLimit);
+                const previousCommits = await gitHelper.listAllCommits(octokit, owner, repo, branch);
 
                 // If there are no commits, exit
                 if (previousCommits.length === 0) {
@@ -96,11 +91,8 @@ const main = async () => {
                 owner,
                 repo,
                 baseHash,
-                branch,
-                commitLimit
+                branch
             );
-
-            const commitLimitReached = compare.commits.length === commitLimit - 1;
 
             const commitsDiff = gitHelper.filterCommits(compare.commits, branch);
             const changedFilesList = gitHelper.filterFiles(compare.files);
@@ -118,8 +110,7 @@ const main = async () => {
                 repo,
                 date: moment().utcOffset(timezone).format('YYYY-MM-DD'),
                 ...commitsDiff,
-                affected_areas: changedFilesList,
-                commitLimitReached
+                affected_areas: changedFilesList
             };
 
             const { newChangeLogContent, fullChangeLogContent } = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);
