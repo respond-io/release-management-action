@@ -35902,7 +35902,7 @@ const main = async () => {
                 if (previousChangeLog === '') {
                     diff = changeLog;
                 } else {
-                    diff = Diff.getDiff(previousChangeLog, changeLog);
+                    diff = Diff.findNewlyAddedString(previousChangeLog, changeLog);
                 }
             }
 
