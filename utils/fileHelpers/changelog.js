@@ -33,6 +33,22 @@ class ChangeLog {
         await fs.writeFile(CHANGELOG_PATH, content);
         return CHANGELOG_PATH
     }
+
+    static extractLatestVersion(content) {
+        // Regular expression to extract version inside square brackets after "<!--- EOR"
+        const versionRegex = /<!--- EOR\(End Of Release : \[([^\]]+)\]\)/;
+
+        // Extract the version from the text content
+        const match = content.match(versionRegex);
+
+        // Check if a match is found and extract the version
+        let version = '';
+        if (match && match.length > 1) {
+            version = match[1];
+        }
+
+        return version;
+    }
 }
 
 module.exports = ChangeLog;

@@ -35,5 +35,5 @@ module.exports = `
 {{/if}}
 {{/each}}
 {{/if}}
-
+<!--- EOR(End Of Release : [{{version}}]) -->
 `;

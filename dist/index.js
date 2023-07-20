@@ -34918,7 +34918,7 @@ module.exports = `
 {{/if}}
 {{/each}}
 {{/if}}
-
+<!--- EOR(End Of Release : [{{version}}]) -->
 `;
 
 
@@ -35029,6 +35029,22 @@ class ChangeLog {
     static async updateChangeLog(content) {
         await fs.writeFile(CHANGELOG_PATH, content);
         return CHANGELOG_PATH
+    }
+
+    static extractLatestVersion(content) {
+        // Regular expression to extract version inside square brackets after "<!--- EOR"
+        const versionRegex = /<!--- EOR\(End Of Release : \[([^\]]+)\]\)/;
+
+        // Extract the version from the text content
+        const match = content.match(versionRegex);
+
+        // Check if a match is found and extract the version
+        let version = '';
+        if (match && match.length > 1) {
+            version = match[1];
+        }
+
+        return version;
     }
 }
 
@@ -35713,11 +35729,11 @@ const main = async () => {
             timezone = timezone.replace(/[^0-9\+]/g, '');
         }
 
-        const { 
+        const {
             context: { payload: contextPayload, eventName }
         } = github;
 
-        const [ owner, repo ] = process.env.GITHUB_REPOSITORY.split('/');
+        const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
 
         if (eventName !== 'pull_request' || contextPayload.pull_request === undefined || contextPayload.action !== 'closed' || contextPayload.pull_request.merged !== true || contextPayload.pull_request.draft === true) {
             console.log('ERROR :: This action should only be run on a closed pull request that has been merged');
@@ -35732,7 +35748,7 @@ const main = async () => {
         await Config.loadConfig(octokit, owner, repo, configPath, contextPayload.pull_request.head.sha);
 
         let tagsList;
-            
+
         try {
             const tagsListData = await octokit.rest.repos.listTags({
                 owner,
@@ -35884,16 +35900,28 @@ const main = async () => {
                 const lastTaggedHash = tagsList[0].commit.sha;
                 const previousChangeLog = await gitHelper.fetchFileContent(octokit, owner, repo, 'CHANGELOG.md', lastTaggedHash);
 
-                if (previousChangeLog === '') {
-                    newChangeLogContent = changeLog;
-                } else {
+                if (previousChangeLog !== '') {
                     newChangeLogContent = Diff.findNewlyAddedString(previousChangeLog, changeLog);
                 }
             }
 
+            let version = '';
+
             // Get update package.json content
             const packageJson = await gitHelper.fetchFileContent(octokit, owner, repo, 'package.json', prRef);
-            const { version } = JSON.parse(packageJson);
+
+            if (packageJson !== '') {
+                const packageJsonObj = JSON.parse(packageJson);
+                version = packageJsonObj.version;
+            } else {
+                version = ChangeLog.extractLatestVersion(newChangeLogContent);
+            }
+
+            if (version === '') {
+                console.log('ERROR :: Unable to extract the latest version.');
+                process.exit(1);
+            }
+
             console.log(newChangeLogContent);
             //console.log(previousChangeLog);
             console.log(version);
@@ -35902,9 +35930,9 @@ const main = async () => {
             //console.log(newCommitSha);
 
             const { data: branchInfo } = await octokit.rest.git.getRef({
-            owner,
-            repo,
-            ref: `heads/${branch}`,
+                owner,
+                repo,
+                ref: `heads/${branch}`,
             });
 
             const newCommitSha = branchInfo.object.sha;
