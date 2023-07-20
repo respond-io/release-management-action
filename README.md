@@ -23,7 +23,7 @@ jobs:
     name: Tag and Release
     steps:
       - name: Release
-        uses: respond-io/release-management-action@v1.0.1
+        uses: respond-io/release-management-action@v1.2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           release-prefix: 'v'
