@@ -122,7 +122,7 @@ class Git {
                 path: repoPath,
                 ref
             });
-    
+
             return Buffer.from(response.data.content, response.data.encoding).toString();
         } catch (error) {
             console.log(`Unable to fetch file content for ${repoPath} in ${org}/${repo} at ${ref}`);
@@ -182,53 +182,55 @@ class Git {
         const fileList = [];
 
         files.forEach((file) => {
-            let visible = true;
-            const { filename } = file;
-            let entity = filename;
-            let type = 'Other';
-            let subProjectRoot = null;
+            if (file !== undefined && file !== null) {
+                let visible = true;
+                const { filename } = file;
+                let entity = filename;
+                let type = 'Other';
+                let subProjectRoot = null;
 
-            basePaths.forEach((basePath) => {
-                if (filename.startsWith(basePath.path)) {
-                    entity = capitalize(basePath.name);
-                    type = 'Lambda';
-                    subProjectRoot = basePath.path;
+                basePaths.forEach((basePath) => {
+                    if (filename.startsWith(basePath.path)) {
+                        entity = capitalize(basePath.name);
+                        type = 'Lambda';
+                        subProjectRoot = basePath.path;
 
-                    if (basePath.type === 'lambda') {
-                        const pathSuffix = filename.replace(`${basePath.path}/`, '');
-                        const pathSuffixSplits = pathSuffix.split('/');
-                        const folderType = pathSuffixSplits[0];
+                        if (basePath.type === 'lambda') {
+                            const pathSuffix = filename.replace(`${basePath.path}/`, '');
+                            const pathSuffixSplits = pathSuffix.split('/');
+                            const folderType = pathSuffixSplits[0];
 
-                        if (folderType !== undefined) {
-                            const folderTypeName = folderType.trim().toLowerCase();
-        
-                            if (folderTypeName === 'functions' || folderTypeName === 'layers') {
-                                const subEntity = pathSuffixSplits[1];
-                                subProjectRoot = `${subProjectRoot}/${folderType}/${subEntity}`;
-                                visible = false;
-        
-                                if (folderTypeName === 'layers') subProjectRoot = `${subProjectRoot}/nodejs/node_modules/${subEntity}`;
-        
-                                // If only layer or function is changed, need to update root level package.json also
-                                const entityHash = Crypto.generateHash(`${basePath.path}-${type}`);
-                                if (!fileSetHashMap.has(entityHash)) {
-                                    fileSetHashMap.add(entityHash);
-                                    fileList.push({ entity, type, subProjectRoot: basePath.path, visible: true });
+                            if (folderType !== undefined) {
+                                const folderTypeName = folderType.trim().toLowerCase();
+
+                                if (folderTypeName === 'functions' || folderTypeName === 'layers') {
+                                    const subEntity = pathSuffixSplits[1];
+                                    subProjectRoot = `${subProjectRoot}/${folderType}/${subEntity}`;
+                                    visible = false;
+
+                                    if (folderTypeName === 'layers') subProjectRoot = `${subProjectRoot}/nodejs/node_modules/${subEntity}`;
+
+                                    // If only layer or function is changed, need to update root level package.json also
+                                    const entityHash = Crypto.generateHash(`${basePath.path}-${type}`);
+                                    if (!fileSetHashMap.has(entityHash)) {
+                                        fileSetHashMap.add(entityHash);
+                                        fileList.push({ entity, type, subProjectRoot: basePath.path, visible: true });
+                                    }
                                 }
                             }
+                        } else if (basePath.type === 'ecs') {
+                            type = 'ECS';
+                        } else if (basePath.type === 'infrastructure') {
+                            type = 'Infrastructure';
                         }
-                    } else if (basePath.type === 'ecs') {
-                        type = 'ECS';
-                    } else if (basePath.type === 'infrastructure') {
-                        type = 'Infrastructure';
                     }
-                }
-            });
+                });
 
-            const entityHash = Crypto.generateHash(`${subProjectRoot}-${type}`);
-            if (!fileSetHashMap.has(entityHash)) {
-                fileSetHashMap.add(entityHash);
-                fileList.push({ entity, type, subProjectRoot, visible });
+                const entityHash = Crypto.generateHash(`${subProjectRoot}-${type}`);
+                if (!fileSetHashMap.has(entityHash)) {
+                    fileSetHashMap.add(entityHash);
+                    fileList.push({ entity, type, subProjectRoot, visible });
+                }
             }
         });
 
