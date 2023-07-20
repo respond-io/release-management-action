@@ -35914,7 +35914,9 @@ const main = async () => {
                 const packageJsonObj = JSON.parse(packageJson);
                 version = packageJsonObj.version;
             } else {
-                version = ChangeLog.extractLatestVersion(newChangeLogContent);
+                const fullVersion = ChangeLog.extractLatestVersion(newChangeLogContent);
+                // Remove any non alphanumeric characters
+                version = fullVersion.replace(/[^0-9\.]/g, '');
             }
 
             if (version === '') {
