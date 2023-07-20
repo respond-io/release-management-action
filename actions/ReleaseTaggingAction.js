@@ -58,6 +58,8 @@ class ReleaseTaggingAction extends BaseAction {
 
         const newCommitSha = branchInfo.object.sha;
 
+        const newVersion = `v${version}`;
+
         await octokit.rest.git.createTag({
             owner,
             repo,
