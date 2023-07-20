@@ -1,6 +1,19 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 2181:
+/***/ ((module) => {
+
+class BaseAction {
+    execute() {
+        throw new Error("Method 'execute()' must be implemented.");
+    }
+}
+
+module.exports = BaseAction;
+
+/***/ }),
+
 /***/ 5761:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -11,7 +24,7 @@ const moment = __nccwpck_require__(9623);
 const Version = __nccwpck_require__(9591);
 const ChangeLog = __nccwpck_require__(5982);
 const PackageFile = __nccwpck_require__(9473);
-const BaseAction = __nccwpck_require__(9817);
+const BaseAction = __nccwpck_require__(2181);
 
 class ReleasePRAction extends BaseAction {
     async execute(options) {
@@ -163,7 +176,7 @@ module.exports = ReleasePRAction;
 
 const ChangeLog = __nccwpck_require__(5982);
 const Diff = __nccwpck_require__(471);
-const BaseAction = __nccwpck_require__(9817);
+const BaseAction = __nccwpck_require__(2181);
 
 class ReleaseTaggingAction extends BaseAction {
     async execute(options) {
@@ -35762,14 +35775,6 @@ class Version {
 }
 
 module.exports = Version;
-
-/***/ }),
-
-/***/ 9817:
-/***/ ((module) => {
-
-module.exports = eval("require")("../BaseAction");
-
 
 /***/ }),
 

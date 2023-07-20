@@ -5,7 +5,7 @@ const moment = require('moment');
 const Version = require('../utils/version');
 const ChangeLog = require('../utils/fileHelpers/changelog');
 const PackageFile = require('../utils/fileHelpers/packageFile');
-const BaseAction = require("../BaseAction");
+const BaseAction = require("./BaseAction");
 
 class ReleasePRAction extends BaseAction {
     async execute(options) {
