@@ -35,10 +35,5 @@ module.exports = `
 {{/if}}
 {{/each}}
 {{/if}}
-
-{{#if commitLimitReached}}
-<hr>
-
-> **Note:** This release reaches to the commit limit (Default Limit - 250), so above commits and files list were automatically capped.
-{{/if}}
+<!--- EOR(End Of Release : [{{version}}]) -->
 `;

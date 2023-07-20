@@ -2,11 +2,14 @@ const path = require('path')
 const { readFile } = require('fs-extra');
 const capitalize = require('lodash.capitalize');
 const Crypto = require('./crypto');
-
-const COMMIT_MESSAGE_PREFIX = 'Auto generated - New Release';
+const moment = require('moment');
 
 class Git {
-    async uploadToRepo(octokit, filesPaths, org, repo, branch, version) {
+    _getReleaseCommitPrefix(branchName) {
+        return `chore(${branchName}): Auto generated - Release`;
+    }
+
+    async uploadToRepo(octokit, filesPaths, org, repo, branch, version, baseBranch) {
         // gets commit's AND its tree's SHA
         const currentCommit = await this._getCurrentCommit(octokit, org, repo, branch)
         //const filesPaths = await glob(coursePath)
@@ -24,7 +27,7 @@ class Git {
             octokit,
             org,
             repo,
-            `${COMMIT_MESSAGE_PREFIX} (${version})`,
+            `${this._getReleaseCommitPrefix(baseBranch)} (${version})`,
             newTree.sha,
             currentCommit.commitSha
         );
@@ -111,18 +114,23 @@ class Git {
         })
     }
 
-    async fetchFileContent(octokit, org, repo, repoPath, commitSha) {
-        const response = await octokit.rest.repos.getContent({
-            owner: org,
-            repo,
-            path: repoPath,
-            ref: commitSha
-        });
+    async fetchFileContent(octokit, org, repo, repoPath, ref) {
+        try {
+            const response = await octokit.rest.repos.getContent({
+                owner: org,
+                repo,
+                path: repoPath,
+                ref
+            });
 
-        return Buffer.from(response.data.content, response.data.encoding).toString();
+            return Buffer.from(response.data.content, response.data.encoding).toString();
+        } catch (error) {
+            console.log(`Unable to fetch file content for ${repoPath} in ${org}/${repo} at ${ref}`);
+            return '';
+        }
     }
 
-    filterCommits(commits) {
+    filterCommits(commits, baseBranch) {
         const features = [];
         const bug_fixes = [];
         const other_commits = [];
@@ -130,7 +138,7 @@ class Git {
         commits.reverse().forEach((commitData) => {
             let { message } = commitData.commit;
 
-            if (!message.startsWith('Merge pull request') && !message.startsWith('Merge branch') && !message.startsWith('Auto generated')) {
+            if (!message.startsWith('Merge pull request') && !message.startsWith('Merge branch') && !message.startsWith(this._getReleaseCommitPrefix(baseBranch))) {
                 const splits = message.split(':');
 
                 const commit = {
@@ -174,53 +182,55 @@ class Git {
         const fileList = [];
 
         files.forEach((file) => {
-            let visible = true;
-            const { filename } = file;
-            let entity = filename;
-            let type = 'Other';
-            let subProjectRoot = null;
+            if (file !== undefined && file !== null) {
+                let visible = true;
+                const { filename } = file;
+                let entity = filename;
+                let type = 'Other';
+                let subProjectRoot = null;
 
-            basePaths.forEach((basePath) => {
-                if (filename.startsWith(basePath.path)) {
-                    entity = capitalize(basePath.name);
-                    type = 'Lambda';
-                    subProjectRoot = basePath.path;
+                basePaths.forEach((basePath) => {
+                    if (filename.startsWith(basePath.path)) {
+                        entity = capitalize(basePath.name);
+                        type = 'Lambda';
+                        subProjectRoot = basePath.path;
 
-                    if (basePath.type === 'lambda') {
-                        const pathSuffix = filename.replace(`${basePath.path}/`, '');
-                        const pathSuffixSplits = pathSuffix.split('/');
-                        const folderType = pathSuffixSplits[0];
+                        if (basePath.type === 'lambda') {
+                            const pathSuffix = filename.replace(`${basePath.path}/`, '');
+                            const pathSuffixSplits = pathSuffix.split('/');
+                            const folderType = pathSuffixSplits[0];
 
-                        if (folderType !== undefined) {
-                            const folderTypeName = folderType.trim().toLowerCase();
-        
-                            if (folderTypeName === 'functions' || folderTypeName === 'layers') {
-                                const subEntity = pathSuffixSplits[1];
-                                subProjectRoot = `${subProjectRoot}/${folderType}/${subEntity}`;
-                                visible = false;
-        
-                                if (folderTypeName === 'layers') subProjectRoot = `${subProjectRoot}/nodejs/node_modules/${subEntity}`;
-        
-                                // If only layer or function is changed, need to update root level package.json also
-                                const entityHash = Crypto.generateHash(`${basePath.path}-${type}`);
-                                if (!fileSetHashMap.has(entityHash)) {
-                                    fileSetHashMap.add(entityHash);
-                                    fileList.push({ entity, type, subProjectRoot: basePath.path, visible: true });
+                            if (folderType !== undefined) {
+                                const folderTypeName = folderType.trim().toLowerCase();
+
+                                if (folderTypeName === 'functions' || folderTypeName === 'layers') {
+                                    const subEntity = pathSuffixSplits[1];
+                                    subProjectRoot = `${subProjectRoot}/${folderType}/${subEntity}`;
+                                    visible = false;
+
+                                    if (folderTypeName === 'layers') subProjectRoot = `${subProjectRoot}/nodejs/node_modules/${subEntity}`;
+
+                                    // If only layer or function is changed, need to update root level package.json also
+                                    const entityHash = Crypto.generateHash(`${basePath.path}-${type}`);
+                                    if (!fileSetHashMap.has(entityHash)) {
+                                        fileSetHashMap.add(entityHash);
+                                        fileList.push({ entity, type, subProjectRoot: basePath.path, visible: true });
+                                    }
                                 }
                             }
+                        } else if (basePath.type === 'ecs') {
+                            type = 'ECS';
+                        } else if (basePath.type === 'infrastructure') {
+                            type = 'Infrastructure';
                         }
-                    } else if (basePath.type === 'ecs') {
-                        type = 'ECS';
-                    } else if (basePath.type === 'infrastructure') {
-                        type = 'Infrastructure';
                     }
-                }
-            });
+                });
 
-            const entityHash = Crypto.generateHash(`${subProjectRoot}-${type}`);
-            if (!fileSetHashMap.has(entityHash)) {
-                fileSetHashMap.add(entityHash);
-                fileList.push({ entity, type, subProjectRoot, visible });
+                const entityHash = Crypto.generateHash(`${subProjectRoot}-${type}`);
+                if (!fileSetHashMap.has(entityHash)) {
+                    fileSetHashMap.add(entityHash);
+                    fileList.push({ entity, type, subProjectRoot, visible });
+                }
             }
         });
 
@@ -242,7 +252,7 @@ class Git {
         return response.data.filter((item) => item.type === "dir");
     };
 
-    async listAllCommits(octokit, owner, repo, branch, maxCommitCount, index = 1, commits = []) {
+    async listAllCommits(octokit, owner, repo, branch, index = 1, commits = []) {
         const PAGE_SIZE = 100;
 
         try {
@@ -256,14 +266,9 @@ class Git {
 
             commits = commits.concat(data);
 
-            // If maxCommitCount is set, return the first maxCommitCount commits
-            if (maxCommitCount !== undefined && commits.length >= maxCommitCount) {
-                return commits.slice(0, maxCommitCount);
-            }
-
             // If the response contains 100 commits, there might be more commits
             if (data.length === PAGE_SIZE) {
-                return this.listAllCommits(octokit, owner, repo, branch, maxCommitCount, index + 1, commits);
+                return this.listAllCommits(octokit, owner, repo, branch, index + 1, commits);
             }
 
             return commits;
@@ -296,7 +301,7 @@ class Git {
                 return compareCommits;
             }
 
-            // If the response contains 100 commits, there might be more commits
+            // If the response contains 250 commits, there might be more commits
             if (commits.length === PAGE_SIZE) {
                 return this.compareCommits(octokit, owner, repo, base, head, maxCommitCount, index + 1, compareCommits);
             }
@@ -309,6 +314,41 @@ class Git {
         }
     }
 
+    generateReleaseBranchName(version) {
+        return `release/release_${version.replace(/\./g, '-')}_${moment().format('YYYYMMDDHHmmss')}}`;
+    }
+
+    async createBranch(octokit, owner, repo, branchName, sourceBranch) {
+        const { data: baseRef } = await octokit.rest.git.getRef({
+            owner: owner,
+            repo: repo,
+            ref: `heads/${sourceBranch}`
+        });
+
+        const baseCommitSha = baseRef.object.sha;
+
+        return octokit.rest.git.createRef({
+            owner,
+            repo,
+            ref: `refs/heads/${branchName}`,
+            sha: baseCommitSha,
+        });
+    }
+
+    createPullRequestTitle(branchName, version) {
+        return `chore(${branchName}): release ${version}`
+    }
+
+    createPullRequest(octokit, owner, repo, branchName, title, body, baseBranch) {
+        return octokit.rest.pulls.create({
+            owner,
+            repo,
+            title,
+            body,
+            head: branchName,
+            base: baseBranch,
+        });
+    }
 }
 
 module.exports = Git;

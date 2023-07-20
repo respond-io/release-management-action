@@ -4,9 +4,12 @@ inputs:
   token:
     description: "The token to use to access the GitHub API"
     required: true
-  "commit-limit":
-    description: "Number of commits use for analyzing to generate next release version, default limit is 250"
-    required: false
+  "config-path":
+    description: "Configuration file path to use for identifying sub project paths, Ex - .github/config/release-management.yaml"
+    required: true
+  "action":
+    description: "Action to perform, Ex - release-pr, release"
+    required: true
   timezone:
     description: "Timezone to use for generating release version, default timezone is Malaysia Time(+08:00). Ex - +04:00 (New york Time)"
     required: false
