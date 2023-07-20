@@ -1,6 +1,6 @@
-const ChangeLog = require('./utils/fileHelpers/changelog');
-const Diff = require('./utils/diff');
-const BaseAction = require("./BaseAction");
+const ChangeLog = require('../utils/fileHelpers/changelog');
+const Diff = require('../utils/diff');
+const BaseAction = require("../BaseAction");
 
 class ReleaseTaggingAction extends BaseAction {
     async execute(options) {
