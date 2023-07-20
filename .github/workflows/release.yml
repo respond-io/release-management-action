@@ -1,4 +1,4 @@
-name: Tag and Release
+name: Release Management
 
 on:
   pull_request:
@@ -7,14 +7,27 @@ on:
       - main
 
 jobs:
-  release:
+  init-release:
     if: github.event.pull_request.merged && (startsWith(github.event.pull_request.head.ref, 'flight/') || startsWith(github.event.pull_request.head.ref, 'hotfix/'))
     runs-on: ubuntu-latest
-    name: Tag and Release
+    name: Create Release PR
     steps:
       - name: Release
-        uses: respond-io/release-management-action@main
+        uses: respond-io/release-management-action@flight/implement-pr-process
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           config-path: .github/config/release-management.yaml
           release-prefix: v
+          action: release-pr 
+  release:
+    if: github.event.pull_request.merged && startsWith(github.event.pull_request.head.ref, 'release/')
+    runs-on: ubuntu-latest
+    name: Tagging and Releasing
+    steps:
+      - name: Release
+        uses: respond-io/release-management-action@flight/implement-pr-process
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-path: .github/config/release-management.yaml
+          release-prefix: v
+          action: release
