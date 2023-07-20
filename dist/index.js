@@ -35261,7 +35261,6 @@ class Git {
         const fileList = [];
 
         files.forEach((file) => {
-            console.log(file);
             let visible = true;
             const { filename } = file;
             let entity = filename;
@@ -35780,6 +35779,8 @@ const main = async () => {
                 baseHash,
                 branch
             );
+
+            console.log(JSON.stringify(compare.files));
 
             const commitsDiff = gitHelper.filterCommits(compare.commits, branch);
             const changedFilesList = gitHelper.filterFiles(compare.files);

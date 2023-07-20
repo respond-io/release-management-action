@@ -94,6 +94,8 @@ const main = async () => {
                 branch
             );
 
+            console.log(JSON.stringify(compare.files));
+
             const commitsDiff = gitHelper.filterCommits(compare.commits, branch);
             const changedFilesList = gitHelper.filterFiles(compare.files);
 
