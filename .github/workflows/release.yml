@@ -13,7 +13,7 @@ jobs:
     name: Create Release PR
     steps:
       - name: Release
-        uses: respond-io/release-management-action@flight/implement-pr-process
+        uses: respond-io/release-management-action@flight/main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           config-path: .github/config/release-management.yaml
@@ -25,7 +25,7 @@ jobs:
     name: Tagging and Releasing
     steps:
       - name: Release
-        uses: respond-io/release-management-action@flight/implement-pr-process
+        uses: respond-io/release-management-action@flight/main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           config-path: .github/config/release-management.yaml
