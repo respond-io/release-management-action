@@ -182,6 +182,7 @@ class Git {
         const fileList = [];
 
         files.forEach((file) => {
+            console.log(file);
             let visible = true;
             const { filename } = file;
             let entity = filename;
