@@ -30,9 +30,9 @@ class ReleasePRAction extends BaseAction {
     async execute(options) {
         const {
             gitHelper,
-            timezone, //1
-            releasePrefix, //1
-            releaseSuffix, //1
+            timezone,
+            releasePrefix,
+            releaseSuffix,
             owner,
             repo,
             branch,
@@ -75,8 +75,6 @@ class ReleasePRAction extends BaseAction {
             baseHash,
             branch
         );
-
-        console.log(JSON.stringify(compare.files));
 
         const commitsDiff = gitHelper.filterCommits(compare.commits, branch);
         const changedFilesList = gitHelper.filterFiles(compare.files);
@@ -133,32 +131,6 @@ class ReleasePRAction extends BaseAction {
         // Create Pull request to `branch`
         await gitHelper.createPullRequest(octokit, owner, repo, releaseBranch, pullRequestTitle, newChangeLogContent, branch);
 
-        // await octokit.rest.git.createTag({
-        //     owner,
-        //     repo,
-        //     tag: newVersion,
-        //     message: `Release ${newVersion}`,
-        //     object: newCommitSha,
-        //     type: 'commit'
-        // });
-
-        // await octokit.rest.git.createRef({
-        //     owner,
-        //     repo,
-        //     ref: `refs/tags/${newVersion}`,
-        //     sha: newCommitSha,
-        // });
-
-        // await octokit.rest.repos.createRelease({
-        //     owner,
-        //     repo,
-        //     tag_name: newVersion,
-        //     name: newVersion,
-        //     body: newChangeLogContent,
-        //     draft: false,
-        //     prerelease: false
-        // });
-
         core.setOutput('version', newVersion);
         core.setOutput('version-number', newVersionNumber);
         core.setOutput('release-branch', releaseBranch);
@@ -177,6 +149,7 @@ module.exports = ReleasePRAction;
 const ChangeLog = __nccwpck_require__(5982);
 const Diff = __nccwpck_require__(471);
 const BaseAction = __nccwpck_require__(2181);
+const { version } = __nccwpck_require__(9623);
 
 class ReleaseTaggingAction extends BaseAction {
     async execute(options) {
@@ -206,31 +179,24 @@ class ReleaseTaggingAction extends BaseAction {
             }
         }
 
-        let version = '';
+        const fullVersion = ChangeLog.extractLatestVersion(newChangeLogContent);
+        // Remove any non alphanumeric characters
+        let version = fullVersion.replace(/[^0-9\.]/g, '');
 
-        // Get update package.json content
-        const packageJson = await gitHelper.fetchFileContent(octokit, owner, repo, 'package.json', prRef);
+        if (version === '') {
+            // Get update package.json content
+            const packageJson = await gitHelper.fetchFileContent(octokit, owner, repo, 'package.json', prRef);
 
-        if (packageJson !== '') {
-            const packageJsonObj = JSON.parse(packageJson);
-            version = packageJsonObj.version;
-        } else {
-            const fullVersion = ChangeLog.extractLatestVersion(newChangeLogContent);
-            // Remove any non alphanumeric characters
-            version = fullVersion.replace(/[^0-9\.]/g, '');
+            if (packageJson !== '') {
+                const packageJsonObj = JSON.parse(packageJson);
+                version = packageJsonObj.version || '';
+            }
         }
 
         if (version === '') {
             console.log('ERROR :: Unable to extract the latest version.');
             process.exit(1);
         }
-
-        console.log(newChangeLogContent);
-        //console.log(previousChangeLog);
-        console.log(version);
-        const newVersion = `v${version}`;
-        //const newCommitSha = contextPayload.pull_request.head.sha;
-        //console.log(newCommitSha);
 
         const { data: branchInfo } = await octokit.rest.git.getRef({
             owner,
@@ -239,8 +205,6 @@ class ReleaseTaggingAction extends BaseAction {
         });
 
         const newCommitSha = branchInfo.object.sha;
-
-        console.log('SHA>>', newCommitSha);
 
         await octokit.rest.git.createTag({
             owner,
@@ -35991,6 +35955,7 @@ const main = async () => {
     const gitHelper = new Git();
 
     try {
+        // Get Action Input Parameters
         const token = core.getInput('token', { required: true });
         const configPath = core.getInput('config-path', { required: true });
         const action = core.getInput('action', { required: true });
@@ -36010,6 +35975,7 @@ const main = async () => {
 
         const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
 
+        // Validate input parameters
         if (eventName !== 'pull_request' || contextPayload.pull_request === undefined || contextPayload.action !== 'closed' || contextPayload.pull_request.merged !== true || contextPayload.pull_request.draft === true) {
             console.log('ERROR :: This action should only be run on a closed pull request that has been merged');
             process.exit(1);
@@ -36024,6 +35990,7 @@ const main = async () => {
 
         let tagsList;
 
+        // Get all previous tags
         try {
             const tagsListData = await octokit.rest.repos.listTags({
                 owner,
@@ -36035,6 +36002,7 @@ const main = async () => {
         }
 
         if (action === 'release-pr') {
+            // Handling release pull request related logics
             await releasePullRequestAction.execute({
                 gitHelper,
                 timezone,
@@ -36047,6 +36015,7 @@ const main = async () => {
                 tagsList
             });
         } else if (action === 'release') {
+            // Handling release tagging related action's logics
             await releaseTaggingAction.execute({
                 gitHelper,
                 contextPayload,

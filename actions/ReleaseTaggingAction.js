@@ -1,6 +1,7 @@
 const ChangeLog = require('../utils/fileHelpers/changelog');
 const Diff = require('../utils/diff');
 const BaseAction = require("./BaseAction");
+const { version } = require('moment');
 
 class ReleaseTaggingAction extends BaseAction {
     async execute(options) {
@@ -30,31 +31,24 @@ class ReleaseTaggingAction extends BaseAction {
             }
         }
 
-        let version = '';
+        const fullVersion = ChangeLog.extractLatestVersion(newChangeLogContent);
+        // Remove any non alphanumeric characters
+        let version = fullVersion.replace(/[^0-9\.]/g, '');
 
-        // Get update package.json content
-        const packageJson = await gitHelper.fetchFileContent(octokit, owner, repo, 'package.json', prRef);
+        if (version === '') {
+            // Get update package.json content
+            const packageJson = await gitHelper.fetchFileContent(octokit, owner, repo, 'package.json', prRef);
 
-        if (packageJson !== '') {
-            const packageJsonObj = JSON.parse(packageJson);
-            version = packageJsonObj.version;
-        } else {
-            const fullVersion = ChangeLog.extractLatestVersion(newChangeLogContent);
-            // Remove any non alphanumeric characters
-            version = fullVersion.replace(/[^0-9\.]/g, '');
+            if (packageJson !== '') {
+                const packageJsonObj = JSON.parse(packageJson);
+                version = packageJsonObj.version || '';
+            }
         }
 
         if (version === '') {
             console.log('ERROR :: Unable to extract the latest version.');
             process.exit(1);
         }
-
-        console.log(newChangeLogContent);
-        //console.log(previousChangeLog);
-        console.log(version);
-        const newVersion = `v${version}`;
-        //const newCommitSha = contextPayload.pull_request.head.sha;
-        //console.log(newCommitSha);
 
         const { data: branchInfo } = await octokit.rest.git.getRef({
             owner,
@@ -63,8 +57,6 @@ class ReleaseTaggingAction extends BaseAction {
         });
 
         const newCommitSha = branchInfo.object.sha;
-
-        console.log('SHA>>', newCommitSha);
 
         await octokit.rest.git.createTag({
             owner,

@@ -14,6 +14,7 @@ const main = async () => {
     const gitHelper = new Git();
 
     try {
+        // Get Action Input Parameters
         const token = core.getInput('token', { required: true });
         const configPath = core.getInput('config-path', { required: true });
         const action = core.getInput('action', { required: true });
@@ -33,6 +34,7 @@ const main = async () => {
 
         const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
 
+        // Validate input parameters
         if (eventName !== 'pull_request' || contextPayload.pull_request === undefined || contextPayload.action !== 'closed' || contextPayload.pull_request.merged !== true || contextPayload.pull_request.draft === true) {
             console.log('ERROR :: This action should only be run on a closed pull request that has been merged');
             process.exit(1);
@@ -47,6 +49,7 @@ const main = async () => {
 
         let tagsList;
 
+        // Get all previous tags
         try {
             const tagsListData = await octokit.rest.repos.listTags({
                 owner,
@@ -58,6 +61,7 @@ const main = async () => {
         }
 
         if (action === 'release-pr') {
+            // Handling release pull request related logics
             await releasePullRequestAction.execute({
                 gitHelper,
                 timezone,
@@ -70,6 +74,7 @@ const main = async () => {
                 tagsList
             });
         } else if (action === 'release') {
+            // Handling release tagging related action's logics
             await releaseTaggingAction.execute({
                 gitHelper,
                 contextPayload,

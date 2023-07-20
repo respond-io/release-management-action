@@ -11,9 +11,9 @@ class ReleasePRAction extends BaseAction {
     async execute(options) {
         const {
             gitHelper,
-            timezone, //1
-            releasePrefix, //1
-            releaseSuffix, //1
+            timezone,
+            releasePrefix,
+            releaseSuffix,
             owner,
             repo,
             branch,
@@ -56,8 +56,6 @@ class ReleasePRAction extends BaseAction {
             baseHash,
             branch
         );
-
-        console.log(JSON.stringify(compare.files));
 
         const commitsDiff = gitHelper.filterCommits(compare.commits, branch);
         const changedFilesList = gitHelper.filterFiles(compare.files);
@@ -113,32 +111,6 @@ class ReleasePRAction extends BaseAction {
 
         // Create Pull request to `branch`
         await gitHelper.createPullRequest(octokit, owner, repo, releaseBranch, pullRequestTitle, newChangeLogContent, branch);
-
-        // await octokit.rest.git.createTag({
-        //     owner,
-        //     repo,
-        //     tag: newVersion,
-        //     message: `Release ${newVersion}`,
-        //     object: newCommitSha,
-        //     type: 'commit'
-        // });
-
-        // await octokit.rest.git.createRef({
-        //     owner,
-        //     repo,
-        //     ref: `refs/tags/${newVersion}`,
-        //     sha: newCommitSha,
-        // });
-
-        // await octokit.rest.repos.createRelease({
-        //     owner,
-        //     repo,
-        //     tag_name: newVersion,
-        //     name: newVersion,
-        //     body: newChangeLogContent,
-        //     draft: false,
-        //     prerelease: false
-        // });
 
         core.setOutput('version', newVersion);
         core.setOutput('version-number', newVersionNumber);
