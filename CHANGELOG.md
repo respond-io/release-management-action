@@ -1,5 +1,21 @@
 
             
+## [v1.4.0](https://github.com/respond-io/release-management-action/compare/v1.3.0...v1.4.0) (2024-05-08)
+
+
+### Bug Fixes
+
+* Fix release branch naming issue ([2d1f383](https://github.com/respond-io/release-management-action/commit/2d1f383934652065ccfca539d406e272f14c2ddb))
+
+
+### Affected Areas
+| **Service**        | **Type**                                         |
+|--------------------|---------------------------------------------------------|
+| `utils/git.js` | Other |
+<!--- EOR(End Of Release : [v1.4.0]) -->
+
+            
+            
 ## [v1.3.0](https://github.com/respond-io/release-management-action/compare/v1.2.0...v1.3.0) (2024-05-08)
 
 ### Features
@@ -94,6 +110,7 @@
 
 
             
+        
         
         
         
