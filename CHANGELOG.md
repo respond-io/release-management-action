@@ -1,5 +1,21 @@
 
             
+## [v1.8.0](https://github.com/respond-io/release-management-action/compare/v1.7.0...v1.8.0) (2024-05-08)
+
+### Features
+
+* Add release pr creation logic and tagging functionality ([8392341](https://github.com/respond-io/release-management-action/commit/8392341bef2ac5504b280bd7133ccbe6511c1cc3))
+
+
+
+### Affected Areas
+| **Service**        | **Type**                                         |
+|--------------------|---------------------------------------------------------|
+| `actions/ReleasePullRequestAction.js` | Other |
+<!--- EOR(End Of Release : [v1.8.0]) -->
+
+            
+            
 ## [v1.7.0](https://github.com/respond-io/release-management-action/compare/v1.6.0...v1.7.0) (2024-05-08)
 
 
@@ -158,6 +174,7 @@
 
 
             
+        
         
         
         
