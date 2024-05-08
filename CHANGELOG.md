@@ -1,5 +1,21 @@
 
             
+## [v1.10.0](https://github.com/respond-io/release-management-action/compare/v1.9.0...v1.10.0) (2024-05-08)
+
+
+### Bug Fixes
+
+* Update versioning logic to start from 0.1.0 ([1867817](https://github.com/respond-io/release-management-action/commit/18678173d4ef9a67bb70b5b6660afb464c102f28))
+
+
+### Affected Areas
+| **Service**        | **Type**                                         |
+|--------------------|---------------------------------------------------------|
+| `dist/index.js` | Other |
+<!--- EOR(End Of Release : [v1.10.0]) -->
+
+            
+            
 ## [v1.9.0](https://github.com/respond-io/release-management-action/compare/v1.8.0...v1.9.0) (2024-05-08)
 
 ### Features
@@ -190,6 +206,7 @@
 
 
             
+        
         
         
         
