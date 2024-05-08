@@ -35649,7 +35649,7 @@ class Git {
     }
 
     generateReleaseBranchName(version) {
-        return `release/release_${version.replace(/\./g, '-')}_${moment().format('YYYYMMDDHHmmss')}}`;
+        return `release/release_${version.replace(/\./g, '-')}_${moment().format('YYYYMMDDHHmmss')}`;
     }
 
     async createBranch(octokit, owner, repo, branchName, sourceBranch) {
@@ -35706,7 +35706,7 @@ class Version {
         const branch = github.context.payload.pull_request.head.ref;
         const branchPrefix = branch.split('/')[0];
 
-        let [major = 0, minor = 0, patch = 0] = latestTag.replace(/[^0-9\.]/g, '').split('.');
+        let [major = 0, minor = 0, patch = 0] = latestTag.split('-')[0].replace(/[^0-9\.]/g, '').split('.');
 
         major = parseInt(major);
         minor = parseInt(minor);
@@ -35733,7 +35733,7 @@ class Version {
         }
 
         return {
-            newVersionNumber: newTag,
+            newVersionNumber: `${newTag}${tagSuffix}`,
             newVersion: `${tagPrefix}${newTag}${tagSuffix}`,
             currentVersion: latestTag,
         };
