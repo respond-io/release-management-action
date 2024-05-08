@@ -1,5 +1,21 @@
 
             
+## [v1.3.0](https://github.com/respond-io/release-management-action/compare/v1.2.0...v1.3.0) (2024-05-08)
+
+### Features
+
+* Impleasment dev version generation ([7f27fdf](https://github.com/respond-io/release-management-action/commit/7f27fdf8383d6cb6eaf364f85078c09ec410ff25))
+
+
+
+### Affected Areas
+| **Service**        | **Type**                                         |
+|--------------------|---------------------------------------------------------|
+| `utils/version.js` | Other |
+<!--- EOR(End Of Release : [v1.3.0]) -->
+
+            
+            
 ## [v1.2.0](https://github.com/respond-io/release-management-action/compare/v1.1.1...v1.2.0) (2023-07-20)
 
 
@@ -78,6 +94,7 @@
 
 
             
+        
         
         
         
