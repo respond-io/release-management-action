@@ -149,13 +149,14 @@ module.exports = ReleasePRAction;
 const ChangeLog = __nccwpck_require__(5982);
 const Diff = __nccwpck_require__(471);
 const BaseAction = __nccwpck_require__(2181);
-const { version } = __nccwpck_require__(9623);
+const Version = __nccwpck_require__(9591);
 
 class ReleaseTaggingAction extends BaseAction {
     async execute(options) {
         const {
             gitHelper,
             contextPayload,
+            releasePrefix,
             owner,
             repo,
             branch,
@@ -180,8 +181,7 @@ class ReleaseTaggingAction extends BaseAction {
         }
 
         const fullVersion = ChangeLog.extractLatestVersion(newChangeLogContent);
-        // Remove any non alphanumeric characters
-        let version = fullVersion.replace(/[^0-9\.]/g, '');
+        let version = Version.removePrefix(fullVersion, releasePrefix);
 
         if (version === '') {
             // Get update package.json content
@@ -206,7 +206,7 @@ class ReleaseTaggingAction extends BaseAction {
 
         const newCommitSha = branchInfo.object.sha;
 
-        const newVersion = `v${version}`;
+        const newVersion = `${releasePrefix}${version}`;
 
         await octokit.rest.git.createTag({
             owner,
@@ -35738,6 +35738,13 @@ class Version {
             currentVersion: latestTag,
         };
     }
+
+    static removePrefix(text, prefix) {
+        if (text.startsWith(prefix)) {
+            return text.slice(prefix.length);
+        }
+        return text;
+    }
 }
 
 module.exports = Version;
@@ -36021,6 +36028,7 @@ const main = async () => {
             await releaseTaggingAction.execute({
                 gitHelper,
                 contextPayload,
+                releasePrefix,
                 owner,
                 repo,
                 branch,
