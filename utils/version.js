@@ -28,13 +28,16 @@ class Version {
 
         let newTag = `${major}.${minor}.${patch}`;
 
-        if (isMajorRelease) {
-            newTag = `${major + 1}.0.0`;
-        } else {
-            if (branchPrefix === 'flight') {
-                newTag = `${major}.${minor + 1}.0`;
-            } else if (branchPrefix === 'hotfix') {
-                newTag = `${major}.${minor}.${patch + 1}`;
+        // If tagSuffix is empty, then it is a major release not dev release
+        if (tagSuffix === '') {
+            if (isMajorRelease) {
+                newTag = `${major + 1}.0.0`;
+            } else {
+                if (branchPrefix === 'flight') {
+                    newTag = `${major}.${minor + 1}.0`;
+                } else if (branchPrefix === 'hotfix') {
+                    newTag = `${major}.${minor}.${patch + 1}`;
+                }
             }
         }
 

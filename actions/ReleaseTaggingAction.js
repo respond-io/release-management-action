@@ -1,3 +1,4 @@
+const core = require('@actions/core');
 const ChangeLog = require('../utils/fileHelpers/changelog');
 const Diff = require('../utils/diff');
 const BaseAction = require("./BaseAction");
