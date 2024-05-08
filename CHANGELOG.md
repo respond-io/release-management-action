@@ -1,5 +1,21 @@
 
             
+## [v1.9.0](https://github.com/respond-io/release-management-action/compare/v1.8.0...v1.9.0) (2024-05-08)
+
+### Features
+
+* Add core dependency for release tagging functionality ([1267488](https://github.com/respond-io/release-management-action/commit/12674882467fc7983c65c40f74a35bedac78046d))
+
+
+
+### Affected Areas
+| **Service**        | **Type**                                         |
+|--------------------|---------------------------------------------------------|
+| `actions/ReleaseTaggingAction.js` | Other |
+<!--- EOR(End Of Release : [v1.9.0]) -->
+
+            
+            
 ## [v1.8.0](https://github.com/respond-io/release-management-action/compare/v1.7.0...v1.8.0) (2024-05-08)
 
 ### Features
@@ -174,6 +190,7 @@
 
 
             
+        
         
         
         
