@@ -78,6 +78,7 @@ const main = async () => {
             await releaseTaggingAction.execute({
                 gitHelper,
                 contextPayload,
+                releasePrefix,
                 owner,
                 repo,
                 branch,

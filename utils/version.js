@@ -44,6 +44,13 @@ class Version {
             currentVersion: latestTag,
         };
     }
+
+    static removePrefix(text, prefix) {
+        if (text.startsWith(prefix)) {
+            return text.slice(prefix.length);
+        }
+        return text;
+    }
 }
 
 module.exports = Version;

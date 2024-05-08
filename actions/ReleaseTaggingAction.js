@@ -1,13 +1,14 @@
 const ChangeLog = require('../utils/fileHelpers/changelog');
 const Diff = require('../utils/diff');
 const BaseAction = require("./BaseAction");
-const { version } = require('moment');
+const Version = require('../utils/version');
 
 class ReleaseTaggingAction extends BaseAction {
     async execute(options) {
         const {
             gitHelper,
             contextPayload,
+            releasePrefix,
             owner,
             repo,
             branch,
@@ -32,8 +33,7 @@ class ReleaseTaggingAction extends BaseAction {
         }
 
         const fullVersion = ChangeLog.extractLatestVersion(newChangeLogContent);
-        // Remove any non alphanumeric characters
-        let version = fullVersion.replace(/[^0-9\.]/g, '');
+        let version = Version.removePrefix(fullVersion, releasePrefix);
 
         if (version === '') {
             // Get update package.json content
@@ -58,7 +58,7 @@ class ReleaseTaggingAction extends BaseAction {
 
         const newCommitSha = branchInfo.object.sha;
 
-        const newVersion = `v${version}`;
+        const newVersion = `${releasePrefix}${version}`;
 
         await octokit.rest.git.createTag({
             owner,
