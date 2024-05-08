@@ -1,5 +1,21 @@
 
             
+## [v1.7.0](https://github.com/respond-io/release-management-action/compare/v1.6.0...v1.7.0) (2024-05-08)
+
+
+### Bug Fixes
+
+* Fix release version corrupt issue ([b40d1a9](https://github.com/respond-io/release-management-action/commit/b40d1a9ed0634e19bb44d0a53462e726368e8ec1))
+
+
+### Affected Areas
+| **Service**        | **Type**                                         |
+|--------------------|---------------------------------------------------------|
+| `actions/ReleaseTaggingAction.js` | Other |
+<!--- EOR(End Of Release : [v1.7.0]) -->
+
+            
+            
 ## [v1.6.0](https://github.com/respond-io/release-management-action/compare/v1.5.0...v1.6.0) (2024-05-08)
 
 ### Features
@@ -142,6 +158,7 @@
 
 
             
+        
         
         
         
