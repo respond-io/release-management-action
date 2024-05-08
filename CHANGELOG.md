@@ -1,5 +1,21 @@
 
             
+## [v1.6.0](https://github.com/respond-io/release-management-action/compare/v1.5.0...v1.6.0) (2024-05-08)
+
+### Features
+
+* Update executable file ([5b23df1](https://github.com/respond-io/release-management-action/commit/5b23df11286f98fa98480b18bdb48cfa4afcc719))
+
+
+
+### Affected Areas
+| **Service**        | **Type**                                         |
+|--------------------|---------------------------------------------------------|
+| `dist/index.js` | Other |
+<!--- EOR(End Of Release : [v1.6.0]) -->
+
+            
+            
 ## [v1.5.0](https://github.com/respond-io/release-management-action/compare/v1.4.0...v1.5.0) (2024-05-08)
 
 
@@ -126,6 +142,7 @@
 
 
             
+        
         
         
         
