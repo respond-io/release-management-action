@@ -1,5 +1,21 @@
 
             
+## [v1.5.0](https://github.com/respond-io/release-management-action/compare/v1.4.0...v1.5.0) (2024-05-08)
+
+
+### Bug Fixes
+
+* Include version suffix for new version number ([75e587e](https://github.com/respond-io/release-management-action/commit/75e587e15ba52f9f6bc9bfe4268ecea39d00da6e))
+
+
+### Affected Areas
+| **Service**        | **Type**                                         |
+|--------------------|---------------------------------------------------------|
+| `utils/version.js` | Other |
+<!--- EOR(End Of Release : [v1.5.0]) -->
+
+            
+            
 ## [v1.4.0](https://github.com/respond-io/release-management-action/compare/v1.3.0...v1.4.0) (2024-05-08)
 
 
@@ -110,6 +126,7 @@
 
 
             
+        
         
         
         
