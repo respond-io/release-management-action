@@ -85,6 +85,8 @@ class ReleaseTaggingAction extends BaseAction {
             draft: false,
             prerelease: false
         });
+
+        core.setOutput('release-tagged', true);
     }
 }
 

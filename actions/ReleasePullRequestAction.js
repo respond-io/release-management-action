@@ -116,7 +116,8 @@ class ReleasePRAction extends BaseAction {
         core.setOutput('version-number', newVersionNumber);
         core.setOutput('release-branch', releaseBranch);
         core.setOutput('release-branch-sha', newCommitSha);
-        core.setOutput('release-content', newChangeLogContent)
+        core.setOutput('release-content', newChangeLogContent);
+        core.setOutput('release-pr-created', true);
     }
 }
 
