@@ -35739,6 +35739,11 @@ class Version {
             }
         }
 
+        // Versioning starts from 0.1.0
+        if (newTag === '0.0.0') {
+            newTag = '0.1.0';
+        }
+
         return {
             newVersionNumber: `${newTag}${tagSuffix}`,
             newVersion: `${tagPrefix}${newTag}${tagSuffix}`,
