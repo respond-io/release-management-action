@@ -58,7 +58,10 @@ const main = async () => {
             tagsList = tagsListData.data;
         } catch (error) {
             tagsList = [];
+            console.log(error.message);
         }
+
+        console.log(JSON.stringify(tagsList));
 
         if (action === 'release-pr') {
             // Handling release pull request related logics
