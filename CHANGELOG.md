@@ -1,5 +1,21 @@
 
             
+## [v1.13.0](https://github.com/respond-io/release-management-action/compare/v1.12.0...v1.13.0) (2024-05-09)
+
+
+
+### Other Commits
+
+* Update logging statements in index.js ([3784246](https://github.com/respond-io/release-management-action/commit/37842464b5a78cd58d97e6eb6a70fc0adddaeba8))
+
+### Affected Areas
+| **Service**        | **Type**                                         |
+|--------------------|---------------------------------------------------------|
+| `dist/index.js` | Other |
+<!--- EOR(End Of Release : [v1.13.0]) -->
+
+            
+            
 ## [v1.12.0](https://github.com/respond-io/release-management-action/compare/v1.11.0...v1.12.0) (2024-05-09)
 
 
@@ -238,6 +254,7 @@
 
 
             
+        
         
         
         
