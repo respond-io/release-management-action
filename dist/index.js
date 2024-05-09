@@ -35632,6 +35632,14 @@ class Git {
                 page: index
             });
 
+            console.log(JSON.stringify({
+                owner,
+                repo,
+                base,
+                head,
+                page: index
+            }));
+
             compareCommits.commits = compareCommits.commits.concat(commits);
             compareCommits.files = compareCommits.files.concat(files);
             compareCommits.total_commits = compareCommits.total_commits + commits.length;
@@ -36006,12 +36014,6 @@ const main = async () => {
         }
 
         const branch = contextPayload.pull_request.base.ref;
-
-        core.warning('Owner:', owner);
-        core.warning('Owner222:', branch);
-        core.warning('Owner333:', contextPayload.pull_request);
-
-        console.log('Branch:', contextPayload.pull_request.base.ref);
 
         const octokit = new github.getOctokit(token);
 

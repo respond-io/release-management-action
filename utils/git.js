@@ -291,6 +291,14 @@ class Git {
                 page: index
             });
 
+            console.log(JSON.stringify({
+                owner,
+                repo,
+                base,
+                head,
+                page: index
+            }));
+
             compareCommits.commits = compareCommits.commits.concat(commits);
             compareCommits.files = compareCommits.files.concat(files);
             compareCommits.total_commits = compareCommits.total_commits + commits.length;
