@@ -95,7 +95,7 @@ class ReleasePRAction extends BaseAction {
             affected_areas: changedFilesList
         };
 
-        const { newChangeLogContent, fullChangeLogContent } = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);
+        const { newChangeLogContent, fullChangeLogContent } = await ChangeLog.generateChangeLogContent(octokit, owner, repo, branch, changelogDataSet);
         const changeLogPath = await ChangeLog.updateChangeLog(fullChangeLogContent);
         updatedFiles.push(changeLogPath);
 
@@ -35248,7 +35248,7 @@ const CHANGELOG_TEMPLATE = __nccwpck_require__(3646);
 const CHANGELOG_PATH = 'CHANGELOG.md';
 
 class ChangeLog {
-    static async generateChangeLogContent(octokit, owner, repo, data) {
+    static async generateChangeLogContent(octokit, owner, repo, branch, data) {
         let currentChangelog = '';
 
         try {
@@ -35256,6 +35256,7 @@ class ChangeLog {
                 owner,
                 repo,
                 path: CHANGELOG_PATH,
+                ref: branch
             });
             currentChangelog = Buffer.from(response.data.content, 'base64').toString();
         } catch (e) { }

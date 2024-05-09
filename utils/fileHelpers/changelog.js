@@ -6,7 +6,7 @@ const CHANGELOG_TEMPLATE = require('../../templates/CHANGELOG.md.js');
 const CHANGELOG_PATH = 'CHANGELOG.md';
 
 class ChangeLog {
-    static async generateChangeLogContent(octokit, owner, repo, data) {
+    static async generateChangeLogContent(octokit, owner, repo, branch, data) {
         let currentChangelog = '';
 
         try {
@@ -14,6 +14,7 @@ class ChangeLog {
                 owner,
                 repo,
                 path: CHANGELOG_PATH,
+                ref: branch
             });
             currentChangelog = Buffer.from(response.data.content, 'base64').toString();
         } catch (e) { }
