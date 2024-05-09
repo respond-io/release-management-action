@@ -76,7 +76,7 @@ class ReleasePRAction extends BaseAction {
             affected_areas: changedFilesList
         };
 
-        const { newChangeLogContent, fullChangeLogContent } = await ChangeLog.generateChangeLogContent(octokit, owner, repo, changelogDataSet);
+        const { newChangeLogContent, fullChangeLogContent } = await ChangeLog.generateChangeLogContent(octokit, owner, repo, branch, changelogDataSet);
         const changeLogPath = await ChangeLog.updateChangeLog(fullChangeLogContent);
         updatedFiles.push(changeLogPath);
 
