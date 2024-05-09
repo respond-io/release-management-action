@@ -42,6 +42,12 @@ const main = async () => {
 
         const branch = contextPayload.pull_request.base.ref;
 
+        core.warning('Owner:', owner);
+        core.warning('Owner222:', branch);
+        core.warning('Owner333:', contextPayload.pull_request);
+
+        console.log('Branch:', contextPayload.pull_request.base.ref);
+
         const octokit = new github.getOctokit(token);
 
         // Load configuration file
