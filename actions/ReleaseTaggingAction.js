@@ -88,6 +88,8 @@ class ReleaseTaggingAction extends BaseAction {
         });
 
         core.setOutput('release-tagged', true);
+        core.setOutput('release-version', newVersion);
+        core.setOutput('release-version-number', version);
     }
 }
 
