@@ -1,5 +1,21 @@
 
             
+## [v1.12.0](https://github.com/respond-io/release-management-action/compare/v1.11.0...v1.12.0) (2024-05-09)
+
+
+### Bug Fixes
+
+* Update changelog.generatechangelogcontent to include branch parameter ([47b1b54](https://github.com/respond-io/release-management-action/commit/47b1b54bfcdd1c3f92884b83e3b8f0280d3f9760))
+
+
+### Affected Areas
+| **Service**        | **Type**                                         |
+|--------------------|---------------------------------------------------------|
+| `actions/ReleasePullRequestAction.js` | Other |
+<!--- EOR(End Of Release : [v1.12.0]) -->
+
+            
+            
 ## [v1.11.0](https://github.com/respond-io/release-management-action/compare/v1.10.0...v1.11.0) (2024-05-09)
 
 ### Features
@@ -222,6 +238,7 @@
 
 
             
+        
         
         
         
