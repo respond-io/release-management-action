@@ -1,6 +1,6 @@
 {
   "name": "release-management-action",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "description": "Github action for managing the release version and tags based on the release type.",
   "main": "index.js",
   "scripts": {
