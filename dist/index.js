@@ -57,6 +57,8 @@ class ReleasePRAction extends BaseAction {
                 process.exit(1);
             }
 
+            console.log('pc', JSON.stringify(previousCommits));
+
             // Max returns 100 commits, assume that the oldest commit is in the last index
             const oldestCommit = previousCommits[previousCommits.length - 1];
             baseHash = oldestCommit.sha;
@@ -36031,7 +36033,10 @@ const main = async () => {
             tagsList = tagsListData.data;
         } catch (error) {
             tagsList = [];
+            console.log(error.message);
         }
+
+        console.log(JSON.stringify(tagsList));
 
         if (action === 'release-pr') {
             // Handling release pull request related logics
