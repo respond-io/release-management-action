@@ -1,5 +1,21 @@
 
             
+## [v1.11.0](https://github.com/respond-io/release-management-action/compare/v1.10.0...v1.11.0) (2024-05-09)
+
+### Features
+
+* Update release tagging action to include version outputs ([8317f5b](https://github.com/respond-io/release-management-action/commit/8317f5b59018b3aba4c0b084b1ede76b9ac9662c))
+
+
+
+### Affected Areas
+| **Service**        | **Type**                                         |
+|--------------------|---------------------------------------------------------|
+| `actions/ReleaseTaggingAction.js` | Other |
+<!--- EOR(End Of Release : [v1.11.0]) -->
+
+            
+            
 ## [v1.10.0](https://github.com/respond-io/release-management-action/compare/v1.9.0...v1.10.0) (2024-05-08)
 
 
@@ -206,6 +222,7 @@
 
 
             
+        
         
         
         
